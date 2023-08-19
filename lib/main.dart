@@ -45,9 +45,6 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<ModuleScreenProvider>(
           create: (context) => ModuleScreenProvider(),
         ),
-        ChangeNotifierProvider<PedidosProvider>(
-          create: (context) => PedidosProvider(),
-        ),
       ],
       child: const MyApp(),
     );
@@ -65,25 +62,22 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       navigatorKey: locator<NavigationService>().navigatorKey,
       scaffoldMessengerKey: Notifications.messengerKey,
-      title: 'Hope Móvil',
+      title: 'Clínica Hoper',
       initialRoute: ActivationScreen.routeName,
       routes: {
-        LoginScreen.routeName: (context) => const LoginScreen(),
+        LoginScreen.routeName: (context) => LoginScreen(),
         RegisterScreen.routeName: (context) => const RegisterScreen(),
-        HomeScreen.routeName: (context) => const HomeScreen(),
+        Home.routeName: (context) => const Home(),
         AuthTokenScreen.routeName: (context) => const AuthTokenScreen(),
-        PedidosScreen.routeName: (context) => const PedidosScreen(),
-        ModuleScreen.routeName: (context) => const ModuleScreen(),
-        MenuModulesScreen.routeName: (context) => const MenuModulesScreen(),
+        HomeScreen.routeName: (context) => HomeScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
         ActivationScreen.routeName: (context) => const ActivationScreen(),
         NotificationScreen.routeName: (context) => NotificationScreen(),
-        SolpedScreen.routeName: (context) => const SolpedScreen(),
-        MigoScreen.routeName: (context) => const MigoScreen(),
-        MonitorSolpedScreen.routeName: (context) => const MonitorSolpedScreen(),
-        ME21NScreen.routeName: (context) => const ME21NScreen(),
+        DoctorScreen.routeName: (context) => DoctorScreen(),
+        MyAppointmentsScreen.routeName: (context) =>
+            const MyAppointmentsScreen(),
         UnderConstructionScreen.routeName: (context) =>
             const UnderConstructionScreen(),
       },

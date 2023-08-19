@@ -26,6 +26,6 @@ class CardContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(
-                color: Colors.black87, blurRadius: 20, offset: Offset(0, 5))
+                color: Colors.black45, blurRadius: 20, offset: Offset(0, 5))
           ]);
 }

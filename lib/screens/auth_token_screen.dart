@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:hope_app/screens/home_screen.dart';
+import 'package:hope_app/screens/home.dart';
 import 'package:hope_app/screens/login_screen.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -14,7 +14,6 @@ class AuthTokenScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    final orderProvider = Provider.of<PedidosProvider>(context);
 
     return Scaffold(
       backgroundColor: ThemeProvider.lightColor,
@@ -22,7 +21,8 @@ class AuthTokenScreen extends StatelessWidget {
         child: FutureBuilder(
           future: authService.getToken(),
           builder: ((context, snapshot) {
-            if (!snapshot.hasData) return const CircularProgressIndicator.adaptive();
+            if (!snapshot.hasData)
+              return const CircularProgressIndicator.adaptive();
 
             if (snapshot.data == '') {
               if (Preferences.apiUser == '') {
@@ -36,12 +36,11 @@ class AuthTokenScreen extends StatelessWidget {
                       PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  const LoginScreen(),
+                                  LoginScreen(),
                           transitionDuration: const Duration(seconds: 0)));
                 },
               );
             } else {
-              orderProvider.getOrdenes();
               Future.microtask(
                 () {
                   // Navigator.pushReplacementNamed(context, LoginScreen.routeName);
@@ -50,7 +49,7 @@ class AuthTokenScreen extends StatelessWidget {
                       PageRouteBuilder(
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
-                                  const HomeScreen(),
+                                  const Home(),
                           transitionDuration: const Duration(seconds: 0)));
                 },
               );

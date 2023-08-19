@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/providers/providers.dart';
 
 class AuthBackground extends StatelessWidget {
   final Widget child;
@@ -10,7 +11,6 @@ class AuthBackground extends StatelessWidget {
     final currentRoute = ModalRoute.of(context)!.settings.name;
 
     return Container(
-      decoration: _LinearGradient(),
       width: double.infinity,
       height: double.infinity,
       child: Stack(
@@ -21,7 +21,6 @@ class AuthBackground extends StatelessWidget {
             right: 30,
             child: LogoBrand(),
           ),
-          if (currentRoute != 'registro') const UserIcon(),
           Center(
             child: child,
           )
@@ -31,13 +30,13 @@ class AuthBackground extends StatelessWidget {
     );
   }
 
-  BoxDecoration _LinearGradient() => const BoxDecoration(
+  BoxDecoration _LinearGradient() => BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-            Color.fromARGB(255, 68, 66, 66),
-            Color.fromRGBO(35, 35, 35, 1),
+            ThemeProvider.lightColor,
+            ThemeProvider.blueColor,
           ]));
 }
 
@@ -50,10 +49,11 @@ class _BackgroundImage extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: size.height - 90,
+      height: size.height,
       child: const Image(
-        image: AssetImage('assets/merida-background.jpg'),
+        image: AssetImage('assets/clinic01.jpg'),
         fit: BoxFit.cover,
+        opacity: AlwaysStoppedAnimation(.5),
       ),
     );
   }
@@ -65,31 +65,8 @@ class LogoBrand extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SizedBox(
-      width: 150,
-      height: 50,
-      child: Image(image: AssetImage('assets/hope-logo.png')),
-    );
-  }
-}
-
-class UserIcon extends StatelessWidget {
-  const UserIcon({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final distance = size.height - (size.height - 80);
-
-    return SafeArea(
-      child: Container(
-        alignment: Alignment.topCenter,
-        margin: EdgeInsets.only(top: distance),
-        child: const Icon(
-          Icons.person_pin,
-          size: 100,
-          color: Colors.white,
-        ),
-      ),
+      height: 70,
+      child: Image(image: AssetImage('assets/hoper-logo.png')),
     );
   }
 }

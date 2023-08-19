@@ -27,22 +27,12 @@ class LoginScreen extends StatelessWidget {
               CardContainer(
                 child: Column(
                   children: [
-                    Text(
-                      'Login',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[700]),
-                    ),
-                    // _LoginForm(),
                     ChangeNotifierProvider(
                       create: (context) => LoginFormProvider(),
                       child: const _LoginForm(),
                     ),
-                    // _newAccountButton(),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
+                    _newAccountButton(),
                   ],
                 ),
               ),
@@ -71,7 +61,7 @@ class _newAccountButton extends StatelessWidget {
       child: Text(
         'Crear nueva cuenta',
         style: TextStyle(
-          fontSize: 17,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Colors.grey[700],
         ),
@@ -99,38 +89,45 @@ class _LoginForm extends StatelessWidget {
     return Container(
       child: Form(
           key: loginForm.formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
               TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 textCapitalization: TextCapitalization.none,
                 autocorrect: false,
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecorations.authInputDecoration(
                     color: myColor,
-                    hintText: 'john.doe',
-                    labelText: 'Nickname',
+                    hintText: 'correo@mail.com',
+                    labelText: 'Email',
                     prefixIcon: Icons.person_outline),
                 onChanged: (value) => loginForm.email = value,
                 validator: (value) {
-                  return (value != null) ? null : 'Nickname inválido.';
+                  return (value != null) ? null : 'no válido.';
+                  // String pattern =
+                  //     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                  // RegExp regExp = RegExp(pattern);
+                  // return regExp.hasMatch(value ?? '')
+                  //     ? null
+                  //     : 'Correo inválido.';
                 },
               ),
               const SizedBox(
                 height: 15,
               ),
               TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 autocorrect: false,
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: true,
                 decoration: InputDecorations.authInputDecoration(
                     color: myColor,
-                    hintText: 'Mínimo 8 caracteres',
+                    hintText: 'Mínimo 9 caracteres',
                     labelText: 'Contraseña',
                     prefixIcon: Icons.lock_outlined),
                 onChanged: (value) => loginForm.password = value,
                 validator: (value) {
-                  return (value != null && value.length >= 8)
+                  return (value != null && value.length >= 6)
                       ? null
                       : 'Contraseña inválida.';
                 },
@@ -152,22 +149,21 @@ class _LoginForm extends StatelessWidget {
                         final String? loginMessage = await authService
                             .loginUser(loginForm.email, loginForm.password);
 
-                        if (loginMessage == 'true') {
-                          oneSignalProvider.saveUpdateId();
-                          loginForm.isLoading = false;
-                          // ignore: use_build_context_synchronously
-                          Provider.of<PedidosProvider>(context, listen: false)
-                              .getOrdenes();
+                        if (loginMessage != 'true') {
+                          print('${loginForm.email}, ${loginForm.password}');
 
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushReplacementNamed(
-                            context,
-                            HomeScreen.routeName,
-                          );
-                        } else {
                           Notifications.showSnackBar(loginMessage.toString());
                           loginForm.isLoading = false;
+                          return;
                         }
+
+                        oneSignalProvider.saveUpdateId();
+                        loginForm.isLoading = false;
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacementNamed(
+                          context,
+                          Home.routeName,
+                        );
                       },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),

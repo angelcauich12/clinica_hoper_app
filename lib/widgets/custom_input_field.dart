@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/providers/providers.dart';
 
 class CustomInputField extends StatelessWidget {
   final String? hintText;
@@ -30,7 +31,7 @@ class CustomInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: ThemeProvider.blueColor),
       textInputAction: TextInputAction.done,
       textCapitalization: textCapitalization,
       keyboardType: keyboardType,
@@ -40,12 +41,13 @@ class CustomInputField extends StatelessWidget {
       },
       validator: (value) {
         if (value == null) return 'Este campo es requerido';
-        return value.length == 4 ? null : 'Se requieren 4 caracteres.';
+        return value.length > 3 ? null : 'Se requieren al menos 3 caracteres.';
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
-        labelStyle: const TextStyle(color: Colors.white54),
+        labelStyle: const TextStyle(color: Colors.black38),
         hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+        suffixIconColor: ThemeProvider.lightColor,
         hintText: hintText,
         labelText: labelText,
         helperText: helperText,

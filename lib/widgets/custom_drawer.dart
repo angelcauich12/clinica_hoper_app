@@ -30,7 +30,7 @@ class CustomDrawer extends StatelessWidget {
         child: InkWell(
           onTap: () => Navigator.pushNamed(context, ProfileScreen.routeName),
           child: Container(
-            color: const Color.fromARGB(255, 46, 46, 46),
+            color: ThemeProvider.lightColor,
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top,
               left: 5,
@@ -79,10 +79,10 @@ class CustomDrawer extends StatelessWidget {
           title: const Text('Inicio', style: TextStyle(fontSize: 20)),
           onTap: () {
             mp.selectedIndex = 0;
-            Navigator.pushNamed(context, HomeScreen.routeName);
+            Navigator.pushNamed(context, Home.routeName);
           },
         ),
-        MenuCategories(),
+        // MenuCategories(),
         // const SizedBox(height: 12),
         // const Divider(color: Colors.black12),
         ListTile(

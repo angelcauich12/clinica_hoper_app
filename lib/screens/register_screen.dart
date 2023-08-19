@@ -20,18 +20,11 @@ class RegisterScreen extends StatelessWidget {
               CardContainer(
                 child: Column(
                   children: [
-                    Text(
-                      'Crear Cuenta',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[700]),
-                    ),
-                    // _LoginForm(),
                     ChangeNotifierProvider(
                       create: (context) => LoginFormProvider(),
                       child: const _RegisterForm(),
                     ),
+                    const SizedBox(height: 10),
                     const _signInButton()
                   ],
                 ),
@@ -62,7 +55,7 @@ class _signInButton extends StatelessWidget {
       child: Text(
         '¿Ya tienes una cuenta?',
         style: TextStyle(
-          fontSize: 17,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Colors.grey[700],
         ),
@@ -79,7 +72,7 @@ class _RegisterForm extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final width80 = (size.width * 0.15);
     final loginForm = Provider.of<LoginFormProvider>(context);
-    const Color myColor = Color.fromARGB(255, 17, 92, 153);
+    final Color myColor = ThemeProvider.blueColor;
 
     return Container(
       child: Form(
@@ -97,26 +90,13 @@ class _RegisterForm extends StatelessWidget {
                     prefixIcon: Icons.person_pin_outlined),
                 onChanged: (value) => loginForm.email = value,
                 validator: (value) {
-                  return (value != null)
+                  return (value != null && value.length >= 3)
                       ? null
-                      : 'Nombre debe contener mas de 3 caracteres.';
+                      : 'Nombre debe contener más de 3 caracteres.';
                 },
               ),
               const SizedBox(
                 height: 15,
-              ),
-              TextFormField(
-                autocorrect: false,
-                keyboardType: TextInputType.name,
-                decoration: InputDecorations.authInputDecoration(
-                    color: myColor,
-                    hintText: 'john.doe',
-                    labelText: 'Nickname',
-                    prefixIcon: Icons.person),
-                onChanged: (value) => loginForm.email = value,
-                validator: (value) {
-                  return (value != null) ? null : 'Nickname inválido.';
-                },
               ),
               const SizedBox(
                 height: 15,
@@ -173,8 +153,7 @@ class _RegisterForm extends StatelessWidget {
                         loginForm.isLoading = false;
 
                         // ignore: use_build_context_synchronously
-                        Navigator.pushReplacementNamed(
-                            context, HomeScreen.routeName);
+                        Navigator.pushReplacementNamed(context, Home.routeName);
                       },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),

@@ -2,18 +2,23 @@ import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeData currentTheme;
-  static Color lightColor = const Color.fromRGBO(35, 35, 35, 0.9);
+  static Color lightColor = const Color.fromARGB(255, 1, 16, 93);
   static Color darkColor = const Color.fromRGBO(240, 171, 0, 1);
-  static Color blueColor = const Color.fromARGB(255, 17, 92, 153);
+  static Color blueColor = const Color.fromARGB(255, 14, 30, 151);
+  static Color lightGrey = const Color.fromARGB(255, 126, 126, 126);
+  static Color white = const Color.fromARGB(255, 255, 255, 255);
+  static Color brown = const Color.fromARGB(255, 41, 41, 41);
+
+  static Color transparent = Colors.transparent;
 
   ThemeProvider({
     required isDarkmode,
-    lightColor = const Color.fromRGBO(35, 35, 35, 0.9),
+    lightColor = const Color.fromARGB(255, 1, 16, 93),
     darkColor = const Color.fromRGBO(240, 171, 0, 1),
   }) : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(
                 appBarTheme: AppBarTheme(
-                  backgroundColor: lightColor,
+                  backgroundColor: transparent,
                 ),
                 floatingActionButtonTheme:
                     FloatingActionButtonThemeData(backgroundColor: darkColor),
@@ -35,7 +40,9 @@ class ThemeProvider extends ChangeNotifier {
                 // ),
               )
             : ThemeData.light().copyWith(
-                appBarTheme: AppBarTheme(backgroundColor: lightColor),
+                appBarTheme: AppBarTheme(
+                  backgroundColor: transparent,
+                ),
                 floatingActionButtonTheme:
                     FloatingActionButtonThemeData(backgroundColor: lightColor),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -45,7 +52,7 @@ class ThemeProvider extends ChangeNotifier {
                 switchTheme: SwitchThemeData(
                   thumbColor: MaterialStateProperty.all(lightColor),
                   trackColor: MaterialStateProperty.all(
-                      const Color.fromRGBO(35, 35, 35, 0.5)),
+                      const Color.fromRGBO(23, 0, 155, 0.5)),
                 ),
                 expansionTileTheme: ExpansionTileThemeData(
                   backgroundColor: Colors.grey.shade200,
@@ -59,7 +66,7 @@ class ThemeProvider extends ChangeNotifier {
 
   setLightMode() {
     currentTheme = ThemeData.light().copyWith(
-      appBarTheme: AppBarTheme(backgroundColor: lightColor),
+      appBarTheme: AppBarTheme(backgroundColor: transparent),
       floatingActionButtonTheme:
           FloatingActionButtonThemeData(backgroundColor: lightColor),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -69,7 +76,7 @@ class ThemeProvider extends ChangeNotifier {
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.all(lightColor),
         trackColor:
-            MaterialStateProperty.all(const Color.fromRGBO(35, 35, 35, 0.5)),
+            MaterialStateProperty.all(const Color.fromRGBO(23, 0, 155, 0.5)),
       ),
       expansionTileTheme: ExpansionTileThemeData(
         backgroundColor: Colors.grey.shade200,
@@ -86,7 +93,7 @@ class ThemeProvider extends ChangeNotifier {
   setDarkMode() {
     currentTheme = ThemeData.dark().copyWith(
       appBarTheme: AppBarTheme(
-        backgroundColor: lightColor,
+        backgroundColor: transparent,
       ),
       floatingActionButtonTheme:
           FloatingActionButtonThemeData(backgroundColor: darkColor),

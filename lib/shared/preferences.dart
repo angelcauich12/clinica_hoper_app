@@ -10,8 +10,8 @@ class Preferences {
   static String _apiServer = '172.17.1.45';
   static String _projectName = '/hopesucursales/public_html';
   static bool _isActive = false;
-  static String _expirationDate = '1979-04-10 00:00:00';
-  static String _licenseExp = '1979-04-10 00:00:00';
+  static String _expirationDate = '2099-04-10 00:00:00';
+  static String _licenseExp = '2099-04-10 00:00:00';
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
   static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';

@@ -27,11 +27,12 @@ class ActivationScreen extends StatelessWidget {
         child: FutureBuilder(
           future: activationService.isLicenseExpired(),
           builder: ((context, snapshot) {
-            if (!snapshot.hasData) return const CircularProgressIndicator.adaptive();
+            if (!snapshot.hasData) {
+              return const CircularProgressIndicator.adaptive();
+            }
             final isLicenseExpired = snapshot.data ?? true;
 
             if (isLicenseExpired) {
-              print('licencia vencida');
               return SingleChildScrollView(
                   child: Padding(
                 padding:
@@ -39,7 +40,7 @@ class ActivationScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const Image(
-                      image: AssetImage('assets/hope-logo.png'),
+                      image: AssetImage('assets/hoper-logo.png'),
                       width: 150,
                     ),
                     const SizedBox(

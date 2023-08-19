@@ -5,14 +5,14 @@ import 'package:hope_app/screens/screens.dart';
 class NavbarProvider extends ChangeNotifier {
   List<NavbarDTO> items = [
     NavbarDTO(
-      label: 'Modulos',
-      iconData: const FaIcon(FontAwesomeIcons.tableCellsLarge),
-      widget: const MenuModulesScreen(),
+      label: 'Inicio',
+      iconData: const Icon(Icons.home_outlined, size: 30),
+      widget: HomeScreen(),
     ),
     NavbarDTO(
-      label: 'Ordenes',
-      iconData: const FaIcon(FontAwesomeIcons.newspaper),
-      widget: const PedidosScreen(),
+      label: 'Mis Citas',
+      iconData: const Icon(Icons.calendar_month_outlined, size: 30),
+      widget: const MyAppointmentsScreen(),
     ),
     NavbarDTO(
       label: 'Acerca de',
