@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
 
@@ -156,7 +157,9 @@ class ExperienceCard extends StatelessWidget {
       width: 100,
       height: 100,
       decoration: BoxDecoration(
-          color: Colors.grey[200], borderRadius: BorderRadius.circular(15)),
+        color: Preferences.isDarkMode ? Colors.black : Colors.grey[200],
+        borderRadius: BorderRadius.circular(15),
+      ),
       padding: const EdgeInsets.all(8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -253,7 +256,8 @@ class BookAppointmentBtn extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 35),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () =>
+            Navigator.pushNamed(context, CreateAppointmentScreen.routeName),
         style: ElevatedButton.styleFrom(
             backgroundColor: ThemeProvider.lightColor,
             shape: const StadiumBorder()),

@@ -14,44 +14,129 @@ class MyAppointmentsScreen extends StatelessWidget {
     // bool isLoading = orderProvider.isLoading;
     bool isLoading = false;
 
-    Future<void> onRefresh() async {
-      print('se ejecuta el refresh');
-      // await orderProvider.getOrdenes();
-    }
+    return AppointmentsTabs();
+    // child: (!isLoading)
+    //     ? Container(
+    //         child: Center(
+    //           child: Text('My Appointments'),
+    //         ),
+    //       ) //PedidosList(pedidosProv: orderProvider.pedidosXProv)
+    //     : Center(
+    //         child: SpinKitSpinningLines(
+    //           color: ThemeProvider.darkColor,
+    //         ),
+    //       ),
+  }
+}
 
-    return Scaffold(
-      body: RefreshIndicator(
-        color: ThemeProvider.darkColor,
-        onRefresh: onRefresh,
-        child: Column(
-          children: [
-            const SizedBox(height: 25),
-            Text(
-              'Citas',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto',
-                color: Preferences.isDarkMode
-                    ? ThemeProvider.white
-                    : ThemeProvider.brown,
-              ),
+class AppointmentsTabs extends StatelessWidget {
+  const AppointmentsTabs({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            'Citas',
+            style: TextStyle(
+              color: Preferences.isDarkMode
+                  ? ThemeProvider.white
+                  : ThemeProvider.lightColor,
             ),
-            const SizedBox(height: 15),
-            AppointmentList(),
-          ],
+          ),
+          backgroundColor: Preferences.isDarkMode
+              ? ThemeProvider.transparent
+              : ThemeProvider.white,
         ),
-        // child: (!isLoading)
-        //     ? Container(
-        //         child: Center(
-        //           child: Text('My Appointments'),
-        //         ),
-        //       ) //PedidosList(pedidosProv: orderProvider.pedidosXProv)
-        //     : Center(
-        //         child: SpinKitSpinningLines(
-        //           color: ThemeProvider.darkColor,
-        //         ),
-        //       ),
+        body: AppointmentsTabsBody(),
+      ),
+    );
+  }
+}
+
+class AppointmentsTabsBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: TabBar(
+              unselectedLabelColor: Colors.grey,
+              labelColor: ThemeProvider.white,
+              indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  color: Preferences.isDarkMode
+                      ? ThemeProvider.darkColor
+                      : ThemeProvider.lightColor),
+              tabs: [
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Proximas",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Confirmadas",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Canceladas",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 25),
+          Expanded(
+            child: TabBarView(
+              children: [
+                AppointmentList(length: 2),
+                AppointmentList(length: 1),
+                AppointmentList(length: 5),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

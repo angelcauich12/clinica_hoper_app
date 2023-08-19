@@ -8,6 +8,7 @@ class ThemeProvider extends ChangeNotifier {
   static Color lightGrey = const Color.fromARGB(255, 126, 126, 126);
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color brown = const Color.fromARGB(255, 41, 41, 41);
+  static Color lightBrown = const Color.fromARGB(255, 85, 83, 83);
 
   static Color transparent = Colors.transparent;
 
@@ -19,9 +20,17 @@ class ThemeProvider extends ChangeNotifier {
             ? ThemeData.dark().copyWith(
                 appBarTheme: AppBarTheme(
                   backgroundColor: transparent,
+                  iconTheme: const IconThemeData(
+                    color: Colors.white,
+                  ),
+                  titleTextStyle: const TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
-                floatingActionButtonTheme:
-                    FloatingActionButtonThemeData(backgroundColor: darkColor),
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
+                  backgroundColor: darkColor,
+                  foregroundColor: Colors.white,
+                ),
                 bottomNavigationBarTheme:
                     BottomNavigationBarThemeData(selectedItemColor: darkColor),
                 switchTheme: SwitchThemeData(
@@ -42,9 +51,17 @@ class ThemeProvider extends ChangeNotifier {
             : ThemeData.light().copyWith(
                 appBarTheme: AppBarTheme(
                   backgroundColor: transparent,
+                  iconTheme: const IconThemeData(
+                    color: Colors.grey,
+                  ),
+                  titleTextStyle: const TextStyle(
+                    color: Colors.black,
+                  ),
                 ),
-                floatingActionButtonTheme:
-                    FloatingActionButtonThemeData(backgroundColor: lightColor),
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
+                  backgroundColor: lightColor,
+                  foregroundColor: Colors.white,
+                ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
                   selectedItemColor: lightColor,
                   unselectedItemColor: Colors.grey,
@@ -66,9 +83,19 @@ class ThemeProvider extends ChangeNotifier {
 
   setLightMode() {
     currentTheme = ThemeData.light().copyWith(
-      appBarTheme: AppBarTheme(backgroundColor: transparent),
-      floatingActionButtonTheme:
-          FloatingActionButtonThemeData(backgroundColor: lightColor),
+      appBarTheme: AppBarTheme(
+        backgroundColor: transparent,
+        iconTheme: const IconThemeData(
+          color: Colors.grey,
+        ),
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+        ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: lightColor,
+        foregroundColor: Colors.white,
+      ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         selectedItemColor: lightColor,
         unselectedItemColor: Colors.grey,
@@ -94,9 +121,17 @@ class ThemeProvider extends ChangeNotifier {
     currentTheme = ThemeData.dark().copyWith(
       appBarTheme: AppBarTheme(
         backgroundColor: transparent,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+        ),
       ),
-      floatingActionButtonTheme:
-          FloatingActionButtonThemeData(backgroundColor: darkColor),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: darkColor,
+        foregroundColor: Colors.white,
+      ),
       bottomNavigationBarTheme:
           BottomNavigationBarThemeData(selectedItemColor: darkColor),
       switchTheme: SwitchThemeData(

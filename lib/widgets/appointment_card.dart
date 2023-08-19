@@ -16,11 +16,13 @@ class AppointmentCard extends StatelessWidget {
       width: double.infinity,
       height: 240,
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Preferences.isDarkMode
+              ? ThemeProvider.lightBrown
+              : ThemeProvider.white,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 2,
               spreadRadius: 4,
             ),
@@ -64,7 +66,9 @@ class AppointmentCard extends StatelessWidget {
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Roboto',
-                        color: Colors.grey[700],
+                        color: Preferences.isDarkMode
+                            ? Colors.grey
+                            : Colors.grey[700],
                       ),
                     ),
                   ],
@@ -76,7 +80,9 @@ class AppointmentCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 3),
             height: 70,
             decoration: BoxDecoration(
-              color: Colors.blue[50],
+              color: Preferences.isDarkMode
+                  ? Colors.grey.withOpacity(0.6)
+                  : Colors.blue[50],
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -84,7 +90,9 @@ class AppointmentCard extends StatelessWidget {
               children: [
                 Icon(
                   Icons.calendar_month,
-                  color: ThemeProvider.lightColor,
+                  color: Preferences.isDarkMode
+                      ? Colors.white
+                      : ThemeProvider.lightColor,
                 ),
                 Text(
                   "Lun, 21 Agosto 2023",
@@ -93,13 +101,15 @@ class AppointmentCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Roboto',
                     color: Preferences.isDarkMode
-                        ? ThemeProvider.white
+                        ? Colors.white
                         : ThemeProvider.lightColor,
                   ),
                 ),
                 Icon(
                   Icons.timer_outlined,
-                  color: ThemeProvider.lightColor,
+                  color: Preferences.isDarkMode
+                      ? Colors.white
+                      : ThemeProvider.lightColor,
                 ),
                 Text(
                   "11:00 - 12:00",
@@ -108,7 +118,7 @@ class AppointmentCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Roboto',
                     color: Preferences.isDarkMode
-                        ? ThemeProvider.white
+                        ? Colors.white
                         : ThemeProvider.lightColor,
                   ),
                 ),
@@ -121,17 +131,21 @@ class AppointmentCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 248, 248, 248),
-                    shape: const StadiumBorder()),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                  backgroundColor:
+                      Preferences.isDarkMode ? Colors.grey : Colors.grey,
+                  shape: const StadiumBorder(),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                   child: Text(
                     'Cancelar',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Arial',
-                      color: Colors.grey,
+                      color:
+                          Preferences.isDarkMode ? Colors.white : Colors.white,
                     ),
                   ),
                 ),

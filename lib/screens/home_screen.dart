@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/widgets/widgets.dart';
 
 const LatLng currentLocation = LatLng(20.988331640730305, -89.60906162570994);
 
@@ -22,6 +24,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _homeGreetings(),
             const SizedBox(height: 35),
+            DangerMessageWithButton(
+              color: const Color.fromRGBO(255, 191, 191, 1),
+              paragraph1:
+                  'Hemos detectado que no tiene completo su expediente clínico.',
+              paragraph2: '',
+              title: 'Estimado Paciente',
+            ),
+            const SizedBox(height: 25),
             const _homeButtons(),
             const SizedBox(height: 25),
             SpecialtySlider(specialties: specialties),
@@ -144,48 +154,54 @@ class HomeActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 6,
-                spreadRadius: 4,
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => Navigator.pushNamed(
+          context,
+          CreateAppointmentScreen.routeName,
+        ),
+        child: Container(
+          margin: const EdgeInsets.only(left: 15, right: 15),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  spreadRadius: 4,
+                ),
+              ]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration:
+                    BoxDecoration(color: iconColor, shape: BoxShape.circle),
+                child: Icon(
+                  icon,
+                  color: backgroundColor,
+                  size: 35,
+                ),
               ),
-            ]),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration:
-                  BoxDecoration(color: iconColor, shape: BoxShape.circle),
-              child: Icon(
-                icon,
-                color: backgroundColor,
-                size: 35,
+              const SizedBox(height: 30),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: iconColor,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 30),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                color: iconColor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              subtitle,
-              style: TextStyle(color: iconColor.withOpacity(0.7)),
-            )
-          ],
+              const SizedBox(height: 5),
+              Text(
+                subtitle,
+                style: TextStyle(color: iconColor.withOpacity(0.7)),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -276,7 +292,7 @@ class SpecialtyImageCard extends StatelessWidget {
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.white.withOpacity(0.3),
               borderRadius: BorderRadius.circular(15),
             ),
           ),

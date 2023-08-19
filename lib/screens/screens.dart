@@ -1,3 +1,6 @@
+export 'package:hope_app/screens/medical_records_screen.dart';
+export 'package:hope_app/screens/create_appointment_screen.dart';
+
 export 'package:hope_app/screens/doctor_screen.dart';
 export 'package:hope_app/screens/home_screen.dart';
 export 'package:hope_app/screens/my_appointments_screen.dart';
