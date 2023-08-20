@@ -30,8 +30,6 @@ class MyAppointmentsScreen extends StatelessWidget {
 }
 
 class AppointmentsTabs extends StatelessWidget {
-  const AppointmentsTabs({super.key});
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -43,9 +41,11 @@ class AppointmentsTabs extends StatelessWidget {
           title: Text(
             'Citas',
             style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
               color: Preferences.isDarkMode
                   ? ThemeProvider.white
-                  : ThemeProvider.lightColor,
+                  : ThemeProvider.brown,
             ),
           ),
           backgroundColor: Preferences.isDarkMode

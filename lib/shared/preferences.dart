@@ -9,7 +9,7 @@ class Preferences {
   static String _activacionRoute = '/hopeConfiguraciones/public_html';
   static String _apiServer = '172.17.1.45';
   static String _projectName = '/hopesucursales/public_html';
-  static bool _isActive = false;
+  static bool _isActive = true;
   static String _expirationDate = '2099-04-10 00:00:00';
   static String _licenseExp = '2099-04-10 00:00:00';
   static bool _isDarkMode = false;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/auth_service.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
@@ -78,7 +79,9 @@ class _LoginForm extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final width80 = (size.width * 0.15);
     final loginForm = Provider.of<LoginFormProvider>(context);
-    final Color myColor = ThemeProvider.blueColor;
+    final Color myColor = Preferences.isDarkMode
+        ? ThemeProvider.darkColor
+        : ThemeProvider.blueColor;
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
 
     Timer(
@@ -150,7 +153,8 @@ class _LoginForm extends StatelessWidget {
                             .loginUser(loginForm.email, loginForm.password);
 
                         if (loginMessage != 'true') {
-                          print('${loginForm.email}, ${loginForm.password}');
+                          print(
+                              'No se logueo: ${loginForm.email}, ${loginForm.password}');
 
                           Notifications.showSnackBar(loginMessage.toString());
                           loginForm.isLoading = false;

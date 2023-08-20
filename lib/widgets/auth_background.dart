@@ -51,7 +51,7 @@ class _BackgroundImage extends StatelessWidget {
       width: double.infinity,
       height: size.height,
       child: const Image(
-        image: AssetImage('assets/clinic01.jpg'),
+        image: AssetImage('assets/clinic00.jpg'),
         fit: BoxFit.cover,
         opacity: AlwaysStoppedAnimation(.5),
       ),

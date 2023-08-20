@@ -14,7 +14,7 @@ class AboutScreen extends StatelessWidget {
           children: [
             Image(
               image: AssetImage('assets/itsoft.png'),
-              height: 100,
+              height: 150,
             ),
             Text(
               'Desarrollado por:',
