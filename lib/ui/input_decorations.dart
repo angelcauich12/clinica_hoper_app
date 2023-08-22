@@ -5,6 +5,7 @@ class InputDecorations {
     required String hintText,
     required String labelText,
     IconData? prefixIcon,
+    IconData? suffixIcon,
     required Color color,
   }) {
     return InputDecoration(
@@ -19,6 +20,13 @@ class InputDecorations {
       prefixIcon: prefixIcon != null
           ? Icon(
               prefixIcon,
+              color: color,
+              size: 20,
+            )
+          : null,
+      suffixIcon: suffixIcon != null
+          ? Icon(
+              suffixIcon,
               color: color,
               size: 20,
             )

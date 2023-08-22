@@ -7,7 +7,7 @@ class Preferences {
   static String _apiUser = '';
   static String _activacionServer = '172.17.1.45';
   static String _activacionRoute = '/hopeConfiguraciones/public_html';
-  static String _apiServer = '192.168.0.100';
+  static String _apiServer = '192.168.100.8';
   static String _projectName = '/sistemacitasmedicas/public_html';
   static bool _isActive = true;
   static String _expirationDate = '2099-04-10 00:00:00';
@@ -18,6 +18,8 @@ class Preferences {
   static String _oneSignalAppId = '2f3616b8-42eb-441c-992b-19fad44ac012';
   static String _onesignalUserId = '';
   static String _clientImage = '';
+  static String _gender = 'F';
+  static int _specialty = 1;
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;
@@ -134,6 +136,24 @@ class Preferences {
   static set clientImage(String value) {
     _clientImage = value;
     _prefs.setString('clientImage', value);
+  }
+
+  static String get gender {
+    return _prefs.getString('gender') ?? _gender;
+  }
+
+  static set gender(String value) {
+    _gender = value;
+    _prefs.setString('gender', value);
+  }
+
+  static int get specialty {
+    return _prefs.getInt('specialty') ?? _specialty;
+  }
+
+  static set specialty(int value) {
+    _specialty = value;
+    _prefs.setInt('specialty', value);
   }
 
   static Future init() async {

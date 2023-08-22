@@ -17,6 +17,8 @@ class DoctorScreen extends StatelessWidget {
         slivers: [
           CustomAppBar(
             title: doctor,
+            image:
+                'https://previews.123rf.com/images/fongfong/fongfong1909/fongfong190900087/130110064-doctor-in-hospital-background-with-copy-space.jpg',
           ),
           SliverList(
             delegate: SliverChildListDelegate([

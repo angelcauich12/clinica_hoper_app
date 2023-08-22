@@ -76,101 +76,100 @@ class _RegisterForm extends StatelessWidget {
 
     return Container(
       child: Form(
-          key: loginForm.formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Column(
-            children: [
-              TextFormField(
-                autocorrect: false,
-                keyboardType: TextInputType.name,
-                decoration: InputDecorations.authInputDecoration(
-                    color: myColor,
-                    hintText: 'John Doe',
-                    labelText: 'Nombre',
-                    prefixIcon: Icons.person_pin_outlined),
-                onChanged: (value) => loginForm.email = value,
-                validator: (value) {
-                  return (value != null && value.length >= 3)
-                      ? null
-                      : 'Nombre debe contener más de 3 caracteres.';
-                },
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              TextFormField(
-                autocorrect: false,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecorations.authInputDecoration(
-                    color: myColor,
-                    hintText: 'john.doe@mail.com',
-                    labelText: 'Email',
-                    prefixIcon: Icons.alternate_email_outlined),
-                onChanged: (value) => loginForm.email = value,
-                validator: (value) {
-                  String pattern =
-                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                  RegExp regExp = RegExp(pattern);
-                  return regExp.hasMatch(value ?? '')
-                      ? null
-                      : 'Correo inválido.';
-                },
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              TextFormField(
-                autocorrect: false,
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
-                decoration: InputDecorations.authInputDecoration(
-                    color: myColor,
-                    hintText: 'Mínimo 8 caracteres',
-                    labelText: 'Contraseña',
-                    prefixIcon: Icons.lock_outlined),
-                onChanged: (value) => loginForm.password = value,
-                validator: (value) {
-                  return (value != null && value.length >= 8)
-                      ? null
-                      : 'Contraseña inválida.';
-                },
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              MaterialButton(
-                onPressed: loginForm.isLoading
+        key: loginForm.formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: Column(
+          children: [
+            TextFormField(
+              autocorrect: false,
+              keyboardType: TextInputType.name,
+              decoration: InputDecorations.authInputDecoration(
+                  color: myColor,
+                  hintText: 'John Doe',
+                  labelText: 'Nombre',
+                  prefixIcon: Icons.person_pin_outlined),
+              onChanged: (value) => loginForm.email = value,
+              validator: (value) {
+                return (value != null && value.length >= 3)
                     ? null
-                    : () async {
-                        if (!loginForm.isValidForm()) return;
-                        loginForm.isLoading = true;
-                        FocusScope.of(context).unfocus();
-                        await Future.delayed(const Duration(seconds: 2));
+                    : 'Nombre debe contener más de 3 caracteres.';
+              },
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            TextFormField(
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecorations.authInputDecoration(
+                  color: myColor,
+                  hintText: 'john.doe@mail.com',
+                  labelText: 'Email',
+                  prefixIcon: Icons.alternate_email_outlined),
+              onChanged: (value) => loginForm.email = value,
+              validator: (value) {
+                String pattern =
+                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                RegExp regExp = RegExp(pattern);
+                return regExp.hasMatch(value ?? '') ? null : 'Correo inválido.';
+              },
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            TextFormField(
+              autocorrect: false,
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: true,
+              decoration: InputDecorations.authInputDecoration(
+                  color: myColor,
+                  hintText: 'Mínimo 8 caracteres',
+                  labelText: 'Contraseña',
+                  prefixIcon: Icons.lock_outlined),
+              onChanged: (value) => loginForm.password = value,
+              validator: (value) {
+                return (value != null && value.length >= 8)
+                    ? null
+                    : 'Contraseña inválida.';
+              },
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            MaterialButton(
+              onPressed: loginForm.isLoading
+                  ? null
+                  : () async {
+                      if (!loginForm.isValidForm()) return;
+                      loginForm.isLoading = true;
+                      FocusScope.of(context).unfocus();
+                      await Future.delayed(const Duration(seconds: 2));
 
-                        loginForm.isLoading = false;
+                      loginForm.isLoading = false;
 
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushReplacementNamed(context, Home.routeName);
-                      },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                disabledColor: Colors.grey,
-                elevation: 0,
-                color: myColor,
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: width80, vertical: 15),
-                  child: Text(
-                    loginForm.isLoading ? 'Espere' : 'Regístrame',
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushReplacementNamed(context, Home.routeName);
+                    },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              disabledColor: Colors.grey,
+              elevation: 0,
+              color: myColor,
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: width80, vertical: 15),
+                child: Text(
+                  loginForm.isLoading ? 'Espere' : 'Regístrame',
+                  style: const TextStyle(color: Colors.white),
                 ),
-              )
-            ],
-          )),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

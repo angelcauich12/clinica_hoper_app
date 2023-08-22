@@ -45,6 +45,12 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<ModuleScreenProvider>(
           create: (context) => ModuleScreenProvider(),
         ),
+        ChangeNotifierProvider<MedicalRecordsFormProvider>(
+          create: (context) => MedicalRecordsFormProvider(),
+        ),
+        ChangeNotifierProvider<AppointmentFormProvider>(
+          create: (context) => AppointmentFormProvider(),
+        ),
       ],
       child: const MyApp(),
     );

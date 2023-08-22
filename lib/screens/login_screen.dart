@@ -182,7 +182,7 @@ class _LoginForm extends StatelessWidget {
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
-              )
+              ),
             ],
           )),
     );

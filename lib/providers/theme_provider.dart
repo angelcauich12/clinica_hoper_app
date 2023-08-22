@@ -20,9 +20,9 @@ class ThemeProvider extends ChangeNotifier {
             ? ThemeData.dark().copyWith(
                 appBarTheme: AppBarTheme(
                   backgroundColor: transparent,
-                  iconTheme: const IconThemeData(
-                    color: Colors.white,
-                  ),
+                  // iconTheme: const IconThemeData(
+                  //   color: Colors.white,
+                  // ),
                   titleTextStyle: const TextStyle(
                     color: Colors.white,
                   ),
@@ -51,9 +51,13 @@ class ThemeProvider extends ChangeNotifier {
             : ThemeData.light().copyWith(
                 appBarTheme: AppBarTheme(
                   backgroundColor: transparent,
-                  iconTheme: const IconThemeData(
-                    color: Colors.grey,
-                  ),
+                  iconTheme: const IconThemeData(color: Colors.white, shadows: [
+                    Shadow(
+                      offset: Offset(2.0, 2.0),
+                      blurRadius: 10.0,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ]),
                   titleTextStyle: const TextStyle(
                     color: Colors.black,
                   ),
@@ -85,9 +89,13 @@ class ThemeProvider extends ChangeNotifier {
     currentTheme = ThemeData.light().copyWith(
       appBarTheme: AppBarTheme(
         backgroundColor: transparent,
-        iconTheme: const IconThemeData(
-          color: Colors.grey,
-        ),
+        iconTheme: const IconThemeData(color: Colors.white, shadows: [
+          Shadow(
+            offset: Offset(2.0, 2.0),
+            blurRadius: 10.0,
+            color: Color.fromARGB(255, 0, 0, 0),
+          ),
+        ]),
         titleTextStyle: const TextStyle(
           color: Colors.black,
         ),
@@ -121,9 +129,9 @@ class ThemeProvider extends ChangeNotifier {
     currentTheme = ThemeData.dark().copyWith(
       appBarTheme: AppBarTheme(
         backgroundColor: transparent,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        // iconTheme: const IconThemeData(
+        //   color: Colors.white,
+        // ),
         titleTextStyle: const TextStyle(
           color: Colors.white,
         ),

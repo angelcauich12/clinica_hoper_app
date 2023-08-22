@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/providers/providers.dart';
 
 class CustomAppBar extends StatelessWidget {
   String title;
+  String image;
 
-  CustomAppBar({required this.title});
+  CustomAppBar({required this.title, required this.image});
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 200,
-      backgroundColor: Colors.indigo,
+      backgroundColor: ThemeProvider.lightColor,
       floating: false,
       // pinned: true,
       flexibleSpace: FlexibleSpaceBar(
@@ -41,10 +43,9 @@ class CustomAppBar extends StatelessWidget {
             ),
           ),
         ),
-        background: const FadeInImage(
-          placeholder: AssetImage('assets/loading.gif'),
-          image: NetworkImage(
-              'https://previews.123rf.com/images/fongfong/fongfong1909/fongfong190900087/130110064-doctor-in-hospital-background-with-copy-space.jpg'),
+        background: FadeInImage(
+          placeholder: const AssetImage('assets/loading.gif'),
+          image: NetworkImage(this.image),
           fit: BoxFit.cover,
         ),
       ),
