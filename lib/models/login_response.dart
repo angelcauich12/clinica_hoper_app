@@ -43,34 +43,24 @@ class LoginResponse {
 class User {
   User({
     required this.id,
-    required this.nombre,
-    required this.apellido,
-    required this.nickname,
+    required this.name,
+    required this.lastname,
     required this.email,
-    required this.perfilId,
-    required this.tipoTrabajador,
-    this.ceco,
-    this.telefono,
-    this.fechaBaja,
-    required this.bloqueado,
-    required this.estatus,
+    required this.role,
+    this.phone,
+    required this.status,
     required this.createdAt,
     this.deviceToken,
     required this.miPerfil,
   });
 
   int id;
-  String nombre;
-  String apellido;
-  String nickname;
+  String name;
+  String lastname;
   String email;
-  int perfilId;
-  String tipoTrabajador;
-  String? ceco;
-  String? telefono;
-  String? fechaBaja;
-  int bloqueado;
-  int estatus;
+  int role;
+  String? phone;
+  int status;
   String createdAt;
   String? deviceToken;
   MiPerfil miPerfil;
@@ -81,17 +71,12 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> json) => User(
         id: json["id"],
-        nombre: json["nombre"],
-        apellido: json["apellido"],
-        nickname: json["nickname"],
+        name: json["name"],
+        lastname: json["lastname"] ?? '',
         email: json["email"],
-        perfilId: json["perfil_id"],
-        tipoTrabajador: json["tipo_trabajador"],
-        ceco: json["ceco"],
-        telefono: json["telefono"],
-        fechaBaja: json["fecha_baja"],
-        bloqueado: json["bloqueado"],
-        estatus: json["estatus"],
+        role: json["role"],
+        phone: json["phone"],
+        status: json["status"],
         createdAt: json["created_at"],
         deviceToken: json["device_token"],
         miPerfil: MiPerfil.fromMap(json["mi_perfil"]),
@@ -99,17 +84,12 @@ class User {
 
   Map<String, dynamic> toMap() => {
         "id": id,
-        "nombre": nombre,
-        "apellido": apellido,
-        "nickname": nickname,
+        "name": name,
+        "lastname": lastname,
         "email": email,
-        "perfil_id": perfilId,
-        "tipo_trabajador": tipoTrabajador,
-        "ceco": ceco,
-        "telefono": telefono,
-        "fecha_baja": fechaBaja,
-        "bloqueado": bloqueado,
-        "estatus": estatus,
+        "role": role,
+        "phone": phone,
+        "status": status,
         "created_at": createdAt,
         "device_token": deviceToken,
         "mi_perfil": miPerfil.toMap(),

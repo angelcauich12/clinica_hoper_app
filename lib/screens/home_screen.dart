@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 const LatLng currentLocation = LatLng(20.988331640730305, -89.60906162570994);
 
@@ -16,13 +19,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    User apiUser = User.fromJson(Preferences.apiUser);
+
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _homeGreetings(),
+            _homeGreetings(
+              apiUser: apiUser,
+            ),
             const SizedBox(height: 35),
             DangerMessageWithButton(
               color: const Color.fromRGBO(255, 191, 191, 1),
@@ -46,6 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _homeGreetings extends StatelessWidget {
+  User apiUser;
+
+  _homeGreetings({required this.apiUser});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -70,7 +82,7 @@ class _homeGreetings extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    "David F",
+                    apiUser.name,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -96,11 +108,9 @@ class _homeGreetings extends StatelessWidget {
               ),
             ],
           ),
-          const CircleAvatar(
-            radius: 30,
-            backgroundImage: NetworkImage(
-                'https://ochsner-craft.s3.amazonaws.com/imager/wwwdoctors/6162509/Samant-Hrishikesh-1982087755-3053e96218.jpg'),
-          )
+          PopupMenuList(
+            apiUser: apiUser,
+          ),
         ],
       ),
     );

@@ -7,14 +7,15 @@ class Preferences {
   static String _apiUser = '';
   static String _activacionServer = '172.17.1.45';
   static String _activacionRoute = '/hopeConfiguraciones/public_html';
-  static String _apiServer = '172.17.1.45';
-  static String _projectName = '/hopesucursales/public_html';
+  static String _apiServer = '192.168.0.100';
+  static String _projectName = '/sistemacitasmedicas/public_html';
   static bool _isActive = true;
   static String _expirationDate = '2099-04-10 00:00:00';
   static String _licenseExp = '2099-04-10 00:00:00';
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
-  static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';
+  // static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';
+  static String _oneSignalAppId = '2f3616b8-42eb-441c-992b-19fad44ac012';
   static String _onesignalUserId = '';
   static String _clientImage = '';
 

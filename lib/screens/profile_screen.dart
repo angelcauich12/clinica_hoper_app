@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 20),
                 Text(
                   getCapitalizedString(
-                      str: '${apiUser.nombre} ${apiUser.apellido}'),
+                      str: '${apiUser.name} ${apiUser.lastname}'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     letterSpacing: 1.5,
@@ -66,17 +66,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Divider(
                     thickness: 2,
                     color: Colors.white,
-                  ),
-                ),
-                Text(
-                  'Nickname: ${apiUser.nickname}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: 25,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
-                    fontFamily: "Barlow",
                   ),
                 ),
                 Text(

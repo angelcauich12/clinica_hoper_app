@@ -6,7 +6,9 @@ import 'package:hope_app/shared/preferences.dart';
 import 'package:provider/provider.dart';
 
 class PopupMenuList extends StatelessWidget {
-  const PopupMenuList({super.key});
+  User apiUser;
+
+  PopupMenuList({required this.apiUser});
 
   @override
   Widget build(BuildContext context) {
@@ -15,31 +17,21 @@ class PopupMenuList extends StatelessWidget {
 
     return PopUpMenu(
       menuList: [
-        const PopupMenuItem(
+        PopupMenuItem(
           height: 30,
           padding: EdgeInsets.symmetric(horizontal: 15),
           enabled: false,
-          child: Text(
-            'Bienvenido',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        PopupMenuItem(
-          height: 30,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          enabled: false,
-          child: Text(
-            apiUser.nombre,
-            //style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        PopupMenuItem(
-          height: 30,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          enabled: false,
-          child: Text(
-            apiUser.nickname,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          child: Column(
+            children: [
+              const Text(
+                'Bienvenido',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              Text(
+                apiUser.email,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ],
           ),
         ),
         const PopupMenuDivider(),
@@ -67,12 +59,10 @@ class PopupMenuList extends StatelessWidget {
           },
         ),
       ],
-      icon: Container(
-        margin: const EdgeInsets.all(5),
-        child: const CircleAvatar(
-          maxRadius: 20,
-          backgroundImage: AssetImage('assets/user1.png'),
-        ),
+      icon: const CircleAvatar(
+        radius: 30,
+        backgroundImage: NetworkImage(
+            'https://ochsner-craft.s3.amazonaws.com/imager/wwwdoctors/6162509/Samant-Hrishikesh-1982087755-3053e96218.jpg'),
       ),
     );
   }

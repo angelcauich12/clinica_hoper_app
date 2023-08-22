@@ -44,7 +44,7 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  apiUser.nombre,
+                  apiUser.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(

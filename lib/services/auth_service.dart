@@ -11,19 +11,19 @@ class AuthService extends ChangeNotifier {
   final String _proyectName = Preferences.projectName;
   final storage = const FlutterSecureStorage();
 
-  Future<String?> loginUser(String nickname, String password) async {
+  Future<String?> loginUser(String email, String password) async {
     final Map<String, dynamic> authData = {
-      'nickname': nickname,
+      'email': email,
       'password': password
     };
 
     final url = Uri.http(_apiUrl, '$_proyectName/api/login', authData);
 
     try {
+      print('Url: $url');
       final response = await http
           .post(url, body: json.encode(authData))
           .timeout(const Duration(seconds: 10));
-      print('Url: $url');
       final Map<String, dynamic> decodedResp = json.decode(response.body);
 
       if (decodedResp['code'] == 200) {
