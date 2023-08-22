@@ -82,7 +82,7 @@ class AppointmentCard extends StatelessWidget {
             height: 70,
             decoration: BoxDecoration(
               color: Preferences.isDarkMode
-                  ? Colors.grey.withOpacity(0.6)
+                  ? Colors.grey.withOpacity(0.15)
                   : Colors.blue[50],
               borderRadius: BorderRadius.circular(10),
             ),
@@ -133,7 +133,7 @@ class AppointmentCard extends StatelessWidget {
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Preferences.isDarkMode
-                      ? Colors.grey
+                      ? ThemeProvider.lightRed
                       : ThemeProvider.lightRed,
                   shape: const StadiumBorder(),
                 ),

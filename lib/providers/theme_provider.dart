@@ -10,13 +10,15 @@ class ThemeProvider extends ChangeNotifier {
   static Color brown = const Color.fromARGB(255, 41, 41, 41);
   static Color lightRed = const Color(0xffD11149);
   static Color darkColor = const Color(0xff1E2019);
+  static Color yellowColor = const Color(0xFFF0AB00);
+  static Color roundedButtonColor = const Color(0xFF667761);
 
   static Color transparent = Colors.transparent;
 
   ThemeProvider({
     required isDarkmode,
     lightColor = const Color(0xff3DA5D9),
-    darkColor = const Color.fromRGBO(240, 171, 0, 1),
+    yellowColor = const Color(0xFFF0AB00),
   }) : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(
                 appBarTheme: AppBarTheme(
@@ -32,10 +34,10 @@ class ThemeProvider extends ChangeNotifier {
                   backgroundColor: darkColor,
                   foregroundColor: Colors.white,
                 ),
-                bottomNavigationBarTheme:
-                    BottomNavigationBarThemeData(selectedItemColor: darkColor),
+                bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                    selectedItemColor: yellowColor),
                 switchTheme: SwitchThemeData(
-                  thumbColor: MaterialStateProperty.all(darkColor),
+                  thumbColor: MaterialStateProperty.all(yellowColor),
                   trackColor: MaterialStateProperty.all(
                       const Color.fromRGBO(240, 171, 0, 0.5)),
                 ),
@@ -150,7 +152,7 @@ class ThemeProvider extends ChangeNotifier {
         foregroundColor: Colors.white,
       ),
       bottomNavigationBarTheme:
-          BottomNavigationBarThemeData(selectedItemColor: darkColor),
+          BottomNavigationBarThemeData(selectedItemColor: yellowColor),
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.all(darkColor),
         trackColor:

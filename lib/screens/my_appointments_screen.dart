@@ -72,7 +72,7 @@ class AppointmentsTabsBody extends StatelessWidget {
               indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(50),
                   color: Preferences.isDarkMode
-                      ? ThemeProvider.darkColor
+                      ? ThemeProvider.yellowColor
                       : ThemeProvider.blueColor),
               tabs: [
                 Tab(
