@@ -30,7 +30,7 @@ class CustomDrawer extends StatelessWidget {
         child: InkWell(
           onTap: () => Navigator.pushNamed(context, ProfileScreen.routeName),
           child: Container(
-            color: ThemeProvider.lightColor,
+            color: ThemeProvider.blueColor,
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top,
               left: 5,

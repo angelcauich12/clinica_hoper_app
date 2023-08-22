@@ -130,14 +130,14 @@ class _homeButtons extends StatelessWidget {
         HomeActionButton(
           title: "En Clínica",
           subtitle: "Agenda una cita",
-          backgroundColor: ThemeProvider.lightColor,
+          backgroundColor: ThemeProvider.blueColor,
           iconColor: ThemeProvider.white,
           icon: Icons.medical_information_outlined,
         ),
         HomeActionButton(
           title: "A Domicilio",
           subtitle: "El doctor te visita.",
-          iconColor: ThemeProvider.lightColor,
+          iconColor: ThemeProvider.blueColor,
           backgroundColor: ThemeProvider.white,
           icon: Icons.home_outlined,
         ),
@@ -200,7 +200,8 @@ class HomeActionButton extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontFamily: 'Roboto',
+                  fontSize: 22,
                   color: iconColor,
                   fontWeight: FontWeight.w500,
                 ),
@@ -208,7 +209,11 @@ class HomeActionButton extends StatelessWidget {
               const SizedBox(height: 5),
               Text(
                 subtitle,
-                style: TextStyle(color: iconColor.withOpacity(0.7)),
+                style: TextStyle(
+                  color: iconColor.withOpacity(0.7),
+                  fontSize: 16,
+                  fontFamily: 'Roboto',
+                ),
               )
             ],
           ),
@@ -302,7 +307,7 @@ class SpecialtyImageCard extends StatelessWidget {
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.3),
+              // color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(15),
             ),
           ),
@@ -316,16 +321,16 @@ class SpecialtyImageCard extends StatelessWidget {
                 children: [
                   Text(
                     specialty.title!,
-                    style: const TextStyle(
-                      fontSize: 30.0,
-                      color: Colors.white,
+                    style: TextStyle(
+                      fontSize: 32.0,
+                      color: ThemeProvider.darkColor,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Roboto',
                       shadows: [
                         Shadow(
-                          offset: Offset(2.0, 2.0),
-                          blurRadius: 10.0,
-                          color: Color.fromARGB(255, 0, 0, 0),
+                          offset: const Offset(3.0, 3.0),
+                          blurRadius: 7.5,
+                          color: ThemeProvider.white,
                         ),
                       ],
                     ),
@@ -334,16 +339,16 @@ class SpecialtyImageCard extends StatelessWidget {
                   Text(
                     specialty.subtitle!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.white,
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        color: ThemeProvider.darkColor,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'LibreBaskerville',
                         shadows: [
                           Shadow(
-                            offset: Offset(2.0, 2.0),
+                            offset: const Offset(2.0, 2.0),
                             blurRadius: 10.0,
-                            color: Color.fromARGB(255, 0, 0, 0),
+                            color: ThemeProvider.white,
                           ),
                         ]),
                   ),
@@ -441,9 +446,9 @@ class SpecialtyDTO {
 List<SpecialtyDTO> specialties = [
   SpecialtyDTO(
     title: "Odontología",
-    subtitle: "Los mejores tratamientos",
+    subtitle: "Servicio integral a nuestros pacientes",
     image:
-        "https://post.healthline.com/wp-content/uploads/2019/04/Dentist_Teeth_Female_Patient-732x549-Thumbnail.jpg",
+        "https://www.clinicalorenzo.com/wp-content/uploads/2019/02/estomatologia-odontologia-zaragoza-1030x577.jpg",
   ),
   SpecialtyDTO(
     title: "Ginecología",
@@ -454,27 +459,25 @@ List<SpecialtyDTO> specialties = [
   SpecialtyDTO(
     title: "Pediatría",
     subtitle:
-        "Atención médica profesional. Los mejores especialistas médicos cuidando la salud de tu familia",
+        "Los mejores especialistas médicos cuidando la salud de tus hijos",
     image:
-        "https://tupediatra.mx/wp-content/uploads/2019/05/pediatra-especialista.jpg",
+        "https://escuelaorigen.com/wp-content/uploads/Disen%CC%83o-sin-ti%CC%81tulo-92.jpg",
   ),
   SpecialtyDTO(
     title: "Alergología",
-    subtitle:
-        "Atención médica profesional. Los mejores especialistas médicos cuidando la salud de tu familia",
-    image: "https://escuelaelbs.lat/wp-content/uploads/alergologia.jpg",
+    subtitle: "Tratamos todo tipo de Alergias",
+    image:
+        "https://statics-diariomedico.uecdn.es/cms/styles/lista_portadilla/azblob/2021-12/asma2.jpg.webp?itok=x5k36ukv",
   ),
   SpecialtyDTO(
     title: "Nutrición",
-    subtitle:
-        "Atención médica profesional. Los mejores especialistas médicos cuidando la salud de tu familia",
+    subtitle: "El Comienzo de la Salud",
     image:
-        "https://www.uvg.edu.mx/hubfs/Imported_Blog_Media/uvg-ramas-de-la-nutricion-1.jpg",
+        "https://physiosportsmx.com/wp-content/uploads/consulta-nutricional-foto.jpg",
   ),
   SpecialtyDTO(
     title: "Medicina General",
-    subtitle:
-        "Atención médica profesional. Los mejores especialistas médicos cuidando la salud de tu familia",
+    subtitle: "Cuidamos la salud de tu familia",
     image:
         "https://centromedicopeninsular.com/wp-content/uploads/2020/03/service__details1.jpg",
   ),

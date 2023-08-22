@@ -196,7 +196,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                 width: double.infinity,
                                 height: 50,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                  color: Colors.grey.withOpacity(0.5),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Center(
@@ -225,7 +225,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                 width: double.infinity,
                                 height: 50,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                  color: Colors.grey.withOpacity(0.5),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Center(
@@ -266,7 +266,11 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                             appointmentForm.isLoading
                                 ? 'Espere'
                                 : 'Agendar Cita',
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Roboto',
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                       ),

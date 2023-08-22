@@ -17,19 +17,15 @@ class PopupMenuList extends StatelessWidget {
 
     return PopUpMenu(
       menuList: [
-        PopupMenuItem(
+        const PopupMenuItem(
           height: 30,
           padding: EdgeInsets.symmetric(horizontal: 15),
           enabled: false,
           child: Column(
             children: [
-              const Text(
+              Text(
                 'Bienvenido',
                 style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-              Text(
-                apiUser.email,
-                style: const TextStyle(fontWeight: FontWeight.w500),
               ),
             ],
           ),

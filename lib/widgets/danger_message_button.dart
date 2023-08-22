@@ -30,34 +30,34 @@ class DangerMessageWithButton extends StatelessWidget {
             _Paragraph(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              size: 16,
+              size: 20,
               text: title,
             ),
             const SizedBox(height: 10),
             _Paragraph(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              size: 16,
+              size: 18,
               text: paragraph1,
             ),
             SizedBox(height: (paragraph2 != '') ? 15 : 0),
             _Paragraph(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              size: 16,
+              size: 18,
               text: paragraph2,
             ),
             ElevatedButton(
               onPressed: () =>
                   Navigator.pushNamed(context, MedicalRecordsScreen.routeName),
               style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 251, 106, 106),
+                  backgroundColor: ThemeProvider.lightRed,
                   shape: const StadiumBorder()),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                 child: Text(
-                  'Rellenar Expediente',
+                  'Completar mi Expediente',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -67,6 +67,7 @@ class DangerMessageWithButton extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 10),
           ],
         ),
       ),

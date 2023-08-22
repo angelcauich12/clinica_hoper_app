@@ -17,7 +17,7 @@ class AppointmentCard extends StatelessWidget {
       height: 240,
       decoration: BoxDecoration(
           color: Preferences.isDarkMode
-              ? ThemeProvider.lightBrown
+              ? ThemeProvider.brown
               : ThemeProvider.white,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
@@ -43,6 +43,7 @@ class AppointmentCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Dra. Nayli Hoil Pérez",
@@ -54,7 +55,7 @@ class AppointmentCard extends StatelessWidget {
                         fontFamily: 'Roboto',
                         color: Preferences.isDarkMode
                             ? ThemeProvider.white
-                            : ThemeProvider.lightColor,
+                            : ThemeProvider.blueColor,
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -63,7 +64,7 @@ class AppointmentCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Roboto',
                         color: Preferences.isDarkMode
@@ -92,7 +93,7 @@ class AppointmentCard extends StatelessWidget {
                   Icons.calendar_month,
                   color: Preferences.isDarkMode
                       ? Colors.white
-                      : ThemeProvider.lightColor,
+                      : ThemeProvider.blueColor,
                 ),
                 Text(
                   "Lun, 21 Agosto 2023",
@@ -102,14 +103,14 @@ class AppointmentCard extends StatelessWidget {
                     fontFamily: 'Roboto',
                     color: Preferences.isDarkMode
                         ? Colors.white
-                        : ThemeProvider.lightColor,
+                        : ThemeProvider.blueColor,
                   ),
                 ),
                 Icon(
                   Icons.timer_outlined,
                   color: Preferences.isDarkMode
                       ? Colors.white
-                      : ThemeProvider.lightColor,
+                      : ThemeProvider.blueColor,
                 ),
                 Text(
                   "11:00 - 12:00",
@@ -119,7 +120,7 @@ class AppointmentCard extends StatelessWidget {
                     fontFamily: 'Roboto',
                     color: Preferences.isDarkMode
                         ? Colors.white
-                        : ThemeProvider.lightColor,
+                        : ThemeProvider.blueColor,
                   ),
                 ),
               ],
@@ -131,8 +132,9 @@ class AppointmentCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Preferences.isDarkMode ? Colors.grey : Colors.redAccent,
+                  backgroundColor: Preferences.isDarkMode
+                      ? Colors.grey
+                      : ThemeProvider.lightRed,
                   shape: const StadiumBorder(),
                 ),
                 child: Padding(
@@ -153,7 +155,7 @@ class AppointmentCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeProvider.lightColor,
+                    backgroundColor: ThemeProvider.blueColor,
                     shape: const StadiumBorder()),
                 child: Padding(
                   padding:

@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
+// const Color(0xffE84855);
+
 class ThemeProvider extends ChangeNotifier {
   ThemeData currentTheme;
-  static Color lightColor = const Color.fromARGB(255, 1, 16, 93);
-  static Color darkColor = const Color.fromRGBO(240, 171, 0, 1);
-  static Color blueColor = const Color.fromARGB(255, 14, 30, 151);
+  static Color blueColor = const Color(0xff3DA5D9);
   static Color lightGrey = const Color.fromARGB(255, 126, 126, 126);
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color brown = const Color.fromARGB(255, 41, 41, 41);
-  static Color lightBrown = const Color.fromARGB(255, 85, 83, 83);
+  static Color lightRed = const Color(0xffD11149);
+  static Color darkColor = const Color(0xff1E2019);
 
   static Color transparent = Colors.transparent;
 
   ThemeProvider({
     required isDarkmode,
-    lightColor = const Color.fromARGB(255, 1, 16, 93),
+    lightColor = const Color(0xff3DA5D9),
     darkColor = const Color.fromRGBO(240, 171, 0, 1),
   }) : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(
@@ -73,12 +74,16 @@ class ThemeProvider extends ChangeNotifier {
                 switchTheme: SwitchThemeData(
                   thumbColor: MaterialStateProperty.all(lightColor),
                   trackColor: MaterialStateProperty.all(
-                      const Color.fromRGBO(23, 0, 155, 0.5)),
+                    const Color.fromARGB(255, 129, 208, 248),
+                  ),
                 ),
                 expansionTileTheme: ExpansionTileThemeData(
                   backgroundColor: Colors.grey.shade200,
                   textColor: lightColor,
                   iconColor: lightColor,
+                ),
+                datePickerTheme: DatePickerThemeData(
+                  headerBackgroundColor: lightColor,
                 ),
                 // popupMenuTheme: const PopupMenuThemeData(
                 //   color: Colors.black,
@@ -101,22 +106,26 @@ class ThemeProvider extends ChangeNotifier {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: lightColor,
+        backgroundColor: blueColor,
         foregroundColor: Colors.white,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedItemColor: lightColor,
+        selectedItemColor: blueColor,
         unselectedItemColor: Colors.grey,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.all(lightColor),
-        trackColor:
-            MaterialStateProperty.all(const Color.fromRGBO(23, 0, 155, 0.5)),
+        thumbColor: MaterialStateProperty.all(blueColor),
+        trackColor: MaterialStateProperty.all(
+          const Color.fromARGB(255, 129, 208, 248),
+        ),
       ),
       expansionTileTheme: ExpansionTileThemeData(
         backgroundColor: Colors.grey.shade200,
-        textColor: lightColor,
-        iconColor: lightColor,
+        textColor: blueColor,
+        iconColor: blueColor,
+      ),
+      datePickerTheme: DatePickerThemeData(
+        headerBackgroundColor: blueColor,
       ),
       // popupMenuTheme: const PopupMenuThemeData(
       //   color: Colors.black,

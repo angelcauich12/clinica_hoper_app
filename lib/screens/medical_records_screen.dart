@@ -238,7 +238,11 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                             medicalRecordsForm.isLoading
                                 ? 'Espere'
                                 : 'Guardar Historia',
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Roboto',
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                       ),
