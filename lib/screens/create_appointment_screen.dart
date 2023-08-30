@@ -27,7 +27,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   @override
   Widget build(BuildContext context) {
     final appointmentForm = Provider.of<AppointmentFormProvider>(context);
-    final Color myColor = ThemeProvider.lightColor;
+    final Color myColor = ThemeProvider.secondaryColor;
 
     return Scaffold(
       body: CustomScrollView(

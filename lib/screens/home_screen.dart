@@ -128,8 +128,8 @@ class _homeButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         HomeActionButton(
-          title: "En Clínica",
-          subtitle: "Agenda una cita en la clínica",
+          title: "En Clínica 👩‍⚕️",
+          subtitle: "Programa tu cita! 🤒",
           backgroundColor: ThemeProvider.lightColor,
           iconColor: ThemeProvider.white,
           icon: Icons.medical_information_outlined,
@@ -171,8 +171,8 @@ class HomeActionButton extends StatelessWidget {
           CreateAppointmentScreen.routeName,
         ),
         child: Container(
+          height: 180,
           margin: const EdgeInsets.only(left: 15, right: 15),
-          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
               color: backgroundColor,
               gradient: ThemeProvider.goldenColor,
@@ -184,38 +184,75 @@ class HomeActionButton extends StatelessWidget {
                   spreadRadius: 4,
                 ),
               ]),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: const Image(
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/bgGolden.png'),
+                ),
+              ),
               Container(
-                padding: const EdgeInsets.all(8),
-                decoration:
-                    BoxDecoration(color: iconColor, shape: BoxShape.circle),
-                child: Icon(
-                  icon,
-                  color: backgroundColor,
-                  size: 35,
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: iconColor,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              offset: const Offset(-2.0, 2.0),
+                              blurRadius: 5,
+                              color: ThemeProvider.brown,
+                            ),
+                          ]),
+                      child: Icon(
+                        icon,
+                        color: backgroundColor,
+                        size: 35,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 22,
+                        color: iconColor,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(-2.0, 2.0),
+                            blurRadius: 5,
+                            color: ThemeProvider.brown,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: iconColor,
+                        fontSize: 20,
+                        fontFamily: 'Roboto',
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(-2.0, 2.0),
+                            blurRadius: 5,
+                            color: ThemeProvider.brown,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
-              const SizedBox(height: 30),
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 22,
-                  color: iconColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  color: iconColor.withOpacity(0.7),
-                  fontSize: 16,
-                  fontFamily: 'Roboto',
-                ),
-              )
             ],
           ),
         ),
@@ -243,7 +280,7 @@ class SpecialtySlider extends StatelessWidget {
             'Nuestras Especialidades',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               fontFamily: 'Roboto',
               color: Preferences.isDarkMode
                   ? ThemeProvider.white
@@ -384,7 +421,7 @@ class _findUsState extends State<_findUs> {
             'Ubícanos',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               fontFamily: 'Roboto',
               color: Preferences.isDarkMode
                   ? ThemeProvider.white

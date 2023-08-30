@@ -30,7 +30,13 @@ class CustomDrawer extends StatelessWidget {
         child: InkWell(
           onTap: () => Navigator.pushNamed(context, ProfileScreen.routeName),
           child: Container(
-            color: ThemeProvider.lightColor,
+            decoration: BoxDecoration(
+              color: ThemeProvider.lightColor,
+              image: const DecorationImage(
+                image: AssetImage('assets/images/bgGolden.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top,
               left: 5,
@@ -39,8 +45,9 @@ class CustomDrawer extends StatelessWidget {
             child: Column(
               children: [
                 const CircleAvatar(
-                  maxRadius: 50,
-                  backgroundImage: AssetImage('assets/user1.png'),
+                  maxRadius: 45,
+                  backgroundImage:
+                      AssetImage('assets/images/user-icon-trans.png'),
                 ),
                 const SizedBox(height: 5),
                 Text(

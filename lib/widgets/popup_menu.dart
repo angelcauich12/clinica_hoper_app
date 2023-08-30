@@ -57,8 +57,7 @@ class PopupMenuList extends StatelessWidget {
       ],
       icon: const CircleAvatar(
         radius: 30,
-        backgroundImage: NetworkImage(
-            'https://ochsner-craft.s3.amazonaws.com/imager/wwwdoctors/6162509/Samant-Hrishikesh-1982087755-3053e96218.jpg'),
+        backgroundImage: AssetImage('assets/images/user-icon.png'),
       ),
     );
   }
