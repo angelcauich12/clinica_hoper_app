@@ -35,7 +35,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        title: const Text('Configuración'),
+        title: Text(
+          'Configuración',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Preferences.isDarkMode
+                ? ThemeProvider.white
+                : ThemeProvider.brown,
+          ),
+        ),
         actions: const [
           // PopupMenuList(),
         ],
@@ -119,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       //           ),
                       //         ),
                       //         backgroundColor: MaterialStateProperty.all(
-                      //             ThemeProvider.blueColor),
+                      //             ThemeProvider.lightColor),
                       //       ),
                       //       onPressed: () async {
                       //         await const FlutterSecureStorage().deleteAll();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/models/models.dart';
+import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/shared/preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -21,7 +22,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        title: const Text('Mi Perfil'),
+        title: Text(
+          'Mi Perfil',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Preferences.isDarkMode
+                ? ThemeProvider.white
+                : ThemeProvider.white,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -79,17 +89,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontFamily: "Barlow",
                   ),
                 ),
-                Text(
-                  Preferences.licenseExp,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: 25,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
-                    fontFamily: "Barlow",
-                  ),
-                ),
+                // Text(
+                //   Preferences.licenseExp,
+                //   textAlign: TextAlign.center,
+                //   style: const TextStyle(
+                //     overflow: TextOverflow.ellipsis,
+                //     fontSize: 25,
+                //     fontWeight: FontWeight.normal,
+                //     color: Colors.white,
+                //     fontFamily: "Barlow",
+                //   ),
+                // ),
               ],
             ),
           ),

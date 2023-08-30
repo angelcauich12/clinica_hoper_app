@@ -48,6 +48,49 @@ class AuthService extends ChangeNotifier {
     //print(decodedResp);
   }
 
+  Future<String?> registerUser(String name, String lastName, String email,
+      String phone, String password) async {
+    final Map<String, dynamic> registerData = {
+      'name': name,
+      'last_name': name,
+      'email': email,
+      'phone': phone,
+      'password': password
+    };
+
+    final url = Uri.http(_apiUrl, '$_proyectName/api/register', registerData);
+
+    try {
+      final response = await http
+          .post(url, body: json.encode(registerData))
+          .timeout(const Duration(seconds: 30));
+      final Map<String, dynamic> decodedResp = json.decode(response.body);
+
+      print('Response: $decodedResp');
+
+      if (decodedResp['code'] == 200) {
+        //guardar el token y la info del usuario
+        print("decodedResp $decodedResp");
+        print("token ${decodedResp['jwt']}");
+        await storage.write(key: 'jwtToken', value: decodedResp['jwt']);
+        Preferences.apiUser = jsonEncode(decodedResp['user']);
+        Preferences.expirationDate =
+            Preferences.timestampToDate(decodedResp['exp']);
+        return true.toString();
+      } else {
+        return decodedResp['message'] ?? "Servidor no disponible.";
+      }
+    } catch (e) {
+      print(e.toString());
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar('Tiempo de espera agotado');
+      }
+    }
+    return null;
+
+    //print(decodedResp);
+  }
+
   Future logout() async {
     await storage.deleteAll();
     Preferences.apiUser = '';

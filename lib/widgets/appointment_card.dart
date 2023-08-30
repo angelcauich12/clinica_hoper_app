@@ -55,7 +55,7 @@ class AppointmentCard extends StatelessWidget {
                         fontFamily: 'Roboto',
                         color: Preferences.isDarkMode
                             ? ThemeProvider.white
-                            : ThemeProvider.blueColor,
+                            : ThemeProvider.lightColor,
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -93,7 +93,7 @@ class AppointmentCard extends StatelessWidget {
                   Icons.calendar_month,
                   color: Preferences.isDarkMode
                       ? Colors.white
-                      : ThemeProvider.blueColor,
+                      : ThemeProvider.lightColor,
                 ),
                 Text(
                   "Lun, 21 Agosto 2023",
@@ -103,14 +103,14 @@ class AppointmentCard extends StatelessWidget {
                     fontFamily: 'Roboto',
                     color: Preferences.isDarkMode
                         ? Colors.white
-                        : ThemeProvider.blueColor,
+                        : ThemeProvider.lightColor,
                   ),
                 ),
                 Icon(
                   Icons.timer_outlined,
                   color: Preferences.isDarkMode
                       ? Colors.white
-                      : ThemeProvider.blueColor,
+                      : ThemeProvider.lightColor,
                 ),
                 Text(
                   "11:00 - 12:00",
@@ -120,7 +120,7 @@ class AppointmentCard extends StatelessWidget {
                     fontFamily: 'Roboto',
                     color: Preferences.isDarkMode
                         ? Colors.white
-                        : ThemeProvider.blueColor,
+                        : ThemeProvider.lightColor,
                   ),
                 ),
               ],
@@ -155,7 +155,7 @@ class AppointmentCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeProvider.blueColor,
+                    backgroundColor: ThemeProvider.secondaryColor,
                     shape: const StadiumBorder()),
                 child: Padding(
                   padding:

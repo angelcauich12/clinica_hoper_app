@@ -7,8 +7,8 @@ class Preferences {
   static String _apiUser = '';
   static String _activacionServer = '172.17.1.45';
   static String _activacionRoute = '/hopeConfiguraciones/public_html';
-  static String _apiServer = '192.168.0.100';
-  static String _projectName = '/sistemacitasmedicas/public_html';
+  static String _apiServer = '154.56.46.97';
+  static String _projectName = '/hoper/public_html';
   static bool _isActive = true;
   static String _expirationDate = '2099-04-10 00:00:00';
   static String _licenseExp = '2099-04-10 00:00:00';

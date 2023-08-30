@@ -81,7 +81,7 @@ class _LoginForm extends StatelessWidget {
     final loginForm = Provider.of<LoginFormProvider>(context);
     final Color myColor = Preferences.isDarkMode
         ? ThemeProvider.darkColor
-        : ThemeProvider.blueColor;
+        : ThemeProvider.secondaryColor;
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
 
     Timer(
@@ -106,13 +106,13 @@ class _LoginForm extends StatelessWidget {
                     prefixIcon: Icons.person_outline),
                 onChanged: (value) => loginForm.email = value,
                 validator: (value) {
-                  return (value != null) ? null : 'no válido.';
-                  // String pattern =
-                  //     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                  // RegExp regExp = RegExp(pattern);
-                  // return regExp.hasMatch(value ?? '')
-                  //     ? null
-                  //     : 'Correo inválido.';
+                  // return (value != null) ? null : 'no válido.';
+                  String pattern =
+                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                  RegExp regExp = RegExp(pattern);
+                  return regExp.hasMatch(value ?? '')
+                      ? null
+                      : 'Correo inválido.';
                 },
               ),
               const SizedBox(

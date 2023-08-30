@@ -95,7 +95,7 @@ class DoctorPosterAndName extends StatelessWidget {
                 fontFamily: 'Roboto',
                 color: Preferences.isDarkMode
                     ? ThemeProvider.white
-                    : ThemeProvider.blueColor,
+                    : ThemeProvider.lightColor,
               ),
             ),
             const SizedBox(height: 5),
@@ -187,7 +187,7 @@ class ExperienceCard extends StatelessWidget {
               fontSize: 25,
               color: Preferences.isDarkMode
                   ? ThemeProvider.white
-                  : ThemeProvider.blueColor,
+                  : ThemeProvider.lightColor,
               fontWeight: FontWeight.bold,
               fontFamily: 'Roboto',
             ),
@@ -214,7 +214,7 @@ class _AboutDoctor extends StatelessWidget {
               fontFamily: 'Roboto',
               color: Preferences.isDarkMode
                   ? ThemeProvider.white
-                  : ThemeProvider.blueColor,
+                  : ThemeProvider.lightColor,
             ),
           ),
           const SizedBox(height: 15),
@@ -261,7 +261,7 @@ class BookAppointmentBtn extends StatelessWidget {
         onPressed: () =>
             Navigator.pushNamed(context, CreateAppointmentScreen.routeName),
         style: ElevatedButton.styleFrom(
-            backgroundColor: ThemeProvider.blueColor,
+            backgroundColor: ThemeProvider.lightColor,
             shape: const StadiumBorder()),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),

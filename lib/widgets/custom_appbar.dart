@@ -11,7 +11,7 @@ class CustomAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 200,
-      backgroundColor: ThemeProvider.blueColor,
+      backgroundColor: ThemeProvider.lightColor,
       floating: false,
       // pinned: true,
       flexibleSpace: FlexibleSpaceBar(

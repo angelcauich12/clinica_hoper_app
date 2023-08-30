@@ -35,8 +35,8 @@ class AuthBackground extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-            ThemeProvider.blueColor,
-            ThemeProvider.blueColor,
+            ThemeProvider.lightColor,
+            ThemeProvider.lightColor,
           ]));
 }
 

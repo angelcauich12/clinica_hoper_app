@@ -16,7 +16,7 @@ class AuthTokenScreen extends StatelessWidget {
     final authService = Provider.of<AuthService>(context);
 
     return Scaffold(
-      backgroundColor: ThemeProvider.blueColor,
+      backgroundColor: ThemeProvider.lightColor,
       body: Center(
         child: FutureBuilder(
           future: authService.getToken(),

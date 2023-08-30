@@ -129,18 +129,18 @@ class _homeButtons extends StatelessWidget {
       children: [
         HomeActionButton(
           title: "En Clínica",
-          subtitle: "Agenda una cita",
-          backgroundColor: ThemeProvider.blueColor,
+          subtitle: "Agenda una cita en la clínica",
+          backgroundColor: ThemeProvider.lightColor,
           iconColor: ThemeProvider.white,
           icon: Icons.medical_information_outlined,
         ),
-        HomeActionButton(
-          title: "A Domicilio",
-          subtitle: "El doctor te visita.",
-          iconColor: ThemeProvider.blueColor,
-          backgroundColor: ThemeProvider.white,
-          icon: Icons.home_outlined,
-        ),
+        // HomeActionButton(
+        //   title: "A Domicilio",
+        //   subtitle: "El doctor te visita.",
+        //   iconColor: ThemeProvider.lightColor,
+        //   backgroundColor: ThemeProvider.white,
+        //   icon: Icons.home_outlined,
+        // ),
       ],
     );
   }
@@ -175,6 +175,7 @@ class HomeActionButton extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
               color: backgroundColor,
+              gradient: ThemeProvider.goldenColor,
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
                 BoxShadow(

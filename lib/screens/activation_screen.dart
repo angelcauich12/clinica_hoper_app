@@ -22,7 +22,7 @@ class ActivationScreen extends StatelessWidget {
     };
 
     return Scaffold(
-      backgroundColor: ThemeProvider.blueColor,
+      backgroundColor: ThemeProvider.lightColor,
       body: Center(
         child: FutureBuilder(
           future: activationService.isLicenseExpired(),

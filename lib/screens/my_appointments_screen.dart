@@ -73,7 +73,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                   color: Preferences.isDarkMode
                       ? ThemeProvider.yellowColor
-                      : ThemeProvider.blueColor),
+                      : ThemeProvider.secondaryColor),
               tabs: [
                 Tab(
                   child: Container(
@@ -86,8 +86,9 @@ class AppointmentsTabsBody extends StatelessWidget {
                         "Próximas",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -103,8 +104,9 @@ class AppointmentsTabsBody extends StatelessWidget {
                         "Confirmadas",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -120,8 +122,9 @@ class AppointmentsTabsBody extends StatelessWidget {
                         "Canceladas",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),

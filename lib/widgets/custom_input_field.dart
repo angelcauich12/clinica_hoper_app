@@ -31,7 +31,7 @@ class CustomInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: TextStyle(color: ThemeProvider.blueColor),
+      style: TextStyle(color: ThemeProvider.lightColor),
       textInputAction: TextInputAction.done,
       textCapitalization: textCapitalization,
       keyboardType: keyboardType,
@@ -47,7 +47,7 @@ class CustomInputField extends StatelessWidget {
       decoration: InputDecoration(
         labelStyle: const TextStyle(color: Colors.black38),
         hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-        suffixIconColor: ThemeProvider.blueColor,
+        suffixIconColor: ThemeProvider.lightColor,
         hintText: hintText,
         labelText: labelText,
         helperText: helperText,

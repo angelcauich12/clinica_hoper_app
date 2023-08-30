@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:hope_app/screens/home_screen.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
-import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +26,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   @override
   Widget build(BuildContext context) {
     final medicalRecordsForm = Provider.of<MedicalRecordsFormProvider>(context);
-    final Color myColor = ThemeProvider.blueColor;
+    final Color myColor = ThemeProvider.lightColor;
 
     return Scaffold(
       body: CustomScrollView(

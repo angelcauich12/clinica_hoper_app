@@ -4,22 +4,25 @@ import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeData currentTheme;
-  static Color blueColor = const Color(0xff3DA5D9);
+  static Color lightColor = const Color(0xff454545);
+  static Color secondaryColor = const Color(0xff126276);
   static Color lightGrey = const Color.fromARGB(255, 126, 126, 126);
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color brown = const Color.fromARGB(255, 41, 41, 41);
   static Color lightRed = const Color(0xffD11149);
   static Color darkColor = const Color(0xff1E2019);
   static Color yellowColor = const Color(0xFFF0AB00);
+  static LinearGradient goldenColor = const LinearGradient(
+    colors: [Color(0xffe8e22e), Color(0xfff5b223)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
   static Color roundedButtonColor = const Color(0xFF667761);
 
   static Color transparent = Colors.transparent;
 
-  ThemeProvider({
-    required isDarkmode,
-    lightColor = const Color(0xff3DA5D9),
-    yellowColor = const Color(0xFFF0AB00),
-  }) : currentTheme = isDarkmode
+  ThemeProvider({required isDarkmode})
+      : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(
                 appBarTheme: AppBarTheme(
                   backgroundColor: transparent,
@@ -66,15 +69,15 @@ class ThemeProvider extends ChangeNotifier {
                   ),
                 ),
                 floatingActionButtonTheme: FloatingActionButtonThemeData(
-                  backgroundColor: lightColor,
+                  backgroundColor: secondaryColor,
                   foregroundColor: Colors.white,
                 ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                  selectedItemColor: lightColor,
+                  selectedItemColor: secondaryColor,
                   unselectedItemColor: Colors.grey,
                 ),
                 switchTheme: SwitchThemeData(
-                  thumbColor: MaterialStateProperty.all(lightColor),
+                  thumbColor: MaterialStateProperty.all(secondaryColor),
                   trackColor: MaterialStateProperty.all(
                     const Color.fromARGB(255, 129, 208, 248),
                   ),
@@ -108,26 +111,26 @@ class ThemeProvider extends ChangeNotifier {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: blueColor,
+        backgroundColor: secondaryColor,
         foregroundColor: Colors.white,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedItemColor: blueColor,
+        selectedItemColor: secondaryColor,
         unselectedItemColor: Colors.grey,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.all(blueColor),
+        thumbColor: MaterialStateProperty.all(secondaryColor),
         trackColor: MaterialStateProperty.all(
           const Color.fromARGB(255, 129, 208, 248),
         ),
       ),
       expansionTileTheme: ExpansionTileThemeData(
         backgroundColor: Colors.grey.shade200,
-        textColor: blueColor,
-        iconColor: blueColor,
+        textColor: lightColor,
+        iconColor: lightColor,
       ),
       datePickerTheme: DatePickerThemeData(
-        headerBackgroundColor: blueColor,
+        headerBackgroundColor: lightColor,
       ),
       // popupMenuTheme: const PopupMenuThemeData(
       //   color: Colors.black,
