@@ -26,7 +26,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   @override
   Widget build(BuildContext context) {
     final medicalRecordsForm = Provider.of<MedicalRecordsFormProvider>(context);
-    final Color myColor = ThemeProvider.secondaryColor;
+    final Color myColor = ThemeProvider.secondColor;
 
     return Scaffold(
       body: CustomScrollView(

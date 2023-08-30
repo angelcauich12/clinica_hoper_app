@@ -5,17 +5,29 @@ import 'package:flutter/material.dart';
 class ThemeProvider extends ChangeNotifier {
   ThemeData currentTheme;
   static Color lightColor = const Color(0xff454545);
-  static Color secondaryColor = const Color(0xff126276);
+  static Color secondColor = const Color(0xff126276);
+  static Color thirdColor = const Color.fromARGB(255, 54, 54, 54);
   static Color lightGrey = const Color.fromARGB(255, 126, 126, 126);
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color brown = const Color.fromARGB(255, 41, 41, 41);
   static Color lightRed = const Color(0xffD11149);
+  static Color green = Colors.green;
+  static Color darkGreen = const Color.fromARGB(255, 59, 121, 60);
   static Color darkColor = const Color(0xff1E2019);
   static Color yellowColor = const Color(0xFFF0AB00);
   static LinearGradient goldenColor = const LinearGradient(
     colors: [Color(0xffe8e22e), Color(0xfff5b223)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
+  );
+  static LinearGradient secondaryGradientColor = const LinearGradient(
+    colors: [
+      Color(0xff126276),
+      Color.fromARGB(255, 23, 134, 162),
+      Color(0xffffffff)
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
   );
   static Color roundedButtonColor = const Color(0xFF667761);
 
@@ -69,15 +81,15 @@ class ThemeProvider extends ChangeNotifier {
                   ),
                 ),
                 floatingActionButtonTheme: FloatingActionButtonThemeData(
-                  backgroundColor: secondaryColor,
+                  backgroundColor: thirdColor,
                   foregroundColor: Colors.white,
                 ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                  selectedItemColor: secondaryColor,
+                  selectedItemColor: thirdColor,
                   unselectedItemColor: Colors.grey,
                 ),
                 switchTheme: SwitchThemeData(
-                  thumbColor: MaterialStateProperty.all(secondaryColor),
+                  thumbColor: MaterialStateProperty.all(secondColor),
                   trackColor: MaterialStateProperty.all(
                     const Color.fromARGB(255, 129, 208, 248),
                   ),
@@ -111,15 +123,15 @@ class ThemeProvider extends ChangeNotifier {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: secondaryColor,
+        backgroundColor: thirdColor,
         foregroundColor: Colors.white,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedItemColor: secondaryColor,
+        selectedItemColor: thirdColor,
         unselectedItemColor: Colors.grey,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.all(secondaryColor),
+        thumbColor: MaterialStateProperty.all(secondColor),
         trackColor: MaterialStateProperty.all(
           const Color.fromARGB(255, 129, 208, 248),
         ),

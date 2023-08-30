@@ -31,11 +31,7 @@ class CustomDrawer extends StatelessWidget {
           onTap: () => Navigator.pushNamed(context, ProfileScreen.routeName),
           child: Container(
             decoration: BoxDecoration(
-              color: ThemeProvider.lightColor,
-              image: const DecorationImage(
-                image: AssetImage('assets/images/bgGolden.png'),
-                fit: BoxFit.cover,
-              ),
+              color: ThemeProvider.thirdColor,
             ),
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top,

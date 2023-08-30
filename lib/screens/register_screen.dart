@@ -76,7 +76,7 @@ class _RegisterForm extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final width80 = (size.width * 0.15);
     final registerForm = Provider.of<RegisterFormProvider>(context);
-    final Color myColor = ThemeProvider.secondaryColor;
+    final Color myColor = ThemeProvider.secondColor;
 
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
 

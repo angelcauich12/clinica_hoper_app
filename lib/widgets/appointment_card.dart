@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -24,58 +26,73 @@ class AppointmentCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 2,
-              spreadRadius: 4,
+              spreadRadius: 2,
+              offset: const Offset(-2, 2),
             ),
           ]),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          GestureDetector(
-            onTap: () => Navigator.pushNamed(context, DoctorScreen.routeName,
-                arguments: 'Dra. Nayli Hoil Pérez'),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(
-                      'https://ochsner-craft.s3.amazonaws.com/imager/wwwdoctors/6162509/Samant-Hrishikesh-1982087755-3053e96218.jpg'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pushNamed(
+                        context, DoctorScreen.routeName,
+                        arguments: 'Dra. Nayli Hoil Pérez'),
+                    child: const CircleAvatar(
+                      radius: 30,
+                      backgroundImage:
+                          AssetImage('assets/images/medical-team.png'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Dra. Nayli Hoil Pérez",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Roboto',
+                          color: Preferences.isDarkMode
+                              ? ThemeProvider.white
+                              : ThemeProvider.lightColor,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        "Consulta - Ginecología",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Roboto',
+                          color: Preferences.isDarkMode
+                              ? Colors.grey
+                              : Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () => showCancelAppointment(context),
+                child: const FaIcon(
+                  FontAwesomeIcons.trashCan,
+                  color: Colors.red,
                 ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Dra. Nayli Hoil Pérez",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Roboto',
-                        color: Preferences.isDarkMode
-                            ? ThemeProvider.white
-                            : ThemeProvider.lightColor,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      "Consulta - Ginecología",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Roboto',
-                        color: Preferences.isDarkMode
-                            ? Colors.grey
-                            : Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
+              ),
+            ],
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -127,51 +144,97 @@ class AppointmentCard extends StatelessWidget {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Preferences.isDarkMode
-                      ? ThemeProvider.lightRed
-                      : ThemeProvider.lightRed,
-                  shape: const StadiumBorder(),
+                  backgroundColor: ThemeProvider.green,
                 ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                  child: Text(
-                    'Cancelar',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Arial',
-                      color:
-                          Preferences.isDarkMode ? Colors.white : Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeProvider.secondaryColor,
-                    shape: const StadiumBorder()),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                  child: Text(
-                    'Reagendar',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Arial',
-                      color: ThemeProvider.white,
-                    ),
-                  ),
+                child: const Row(
+                  children: [
+                    FaIcon(FontAwesomeIcons.thumbsUp),
+                    // SizedBox(width: 5),
+                    // Text(
+                    //   'Confirmar',
+                    //   style: TextStyle(fontWeight: FontWeight.w700),
+                    // ),
+                  ],
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> showCancelAppointment(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text(
+          'Cancelar Cita',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Container(
+          height: 100,
+          child: Column(
+            children: [
+              const Text(
+                '¿Está seguro que desea cancelar esta cita?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Form(
+                  child: Column(
+                children: [
+                  TextFormField(),
+                ],
+              ))
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cerrar'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                ThemeProvider.lightRed,
+              ),
+            ),
+            child: Text(
+              'Cerrar',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 16,
+                color: ThemeProvider.white,
+              ),
+            ),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                ThemeProvider.secondColor,
+              ),
+            ),
+            onPressed: () => Navigator.pop(context, 'Confirmar'),
+            child: Text(
+              'Confirmar',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 16,
+                color: ThemeProvider.white,
+              ),
+            ),
           ),
         ],
       ),

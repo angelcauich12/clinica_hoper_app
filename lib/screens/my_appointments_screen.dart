@@ -64,68 +64,57 @@ class AppointmentsTabsBody extends StatelessWidget {
     return SafeArea(
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 15),
+            decoration: BoxDecoration(
+              border: Border.all(width: 1, color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(5),
+            ),
             child: TabBar(
               unselectedLabelColor: Colors.grey,
               labelColor: ThemeProvider.white,
               indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(5),
                   color: Preferences.isDarkMode
                       ? ThemeProvider.yellowColor
-                      : ThemeProvider.secondaryColor),
-              tabs: [
+                      : ThemeProvider.thirdColor),
+              tabs: const [
                 Tab(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Próximas",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Próximas",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
                 Tab(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Confirmadas",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Confirmadas",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
                 Tab(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Canceladas",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Atendidas",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
