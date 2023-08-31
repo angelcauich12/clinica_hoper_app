@@ -144,10 +144,10 @@ class Doctor {
   int id;
   String name;
   String lastName;
-  String email;
-  String emailVerifiedAt;
+  String? email;
+  String? emailVerifiedAt;
   String? cedula;
-  String address;
+  String? address;
   String phone;
   int role;
   String? tokenGoogle;
@@ -156,16 +156,15 @@ class Doctor {
   String createdAt;
   String updatedAt;
   List<ConsultingRoom> consultingRooms;
-  dynamic medicalHistory;
 
   Doctor({
     required this.id,
     required this.name,
     required this.lastName,
-    required this.email,
-    required this.emailVerifiedAt,
+    this.email,
+    this.emailVerifiedAt,
     this.cedula,
-    required this.address,
+    this.address,
     required this.phone,
     required this.role,
     this.tokenGoogle,
@@ -174,7 +173,6 @@ class Doctor {
     required this.createdAt,
     required this.updatedAt,
     required this.consultingRooms,
-    this.medicalHistory,
   });
 
   factory Doctor.fromJson(String str) => Doctor.fromMap(json.decode(str));
@@ -198,7 +196,6 @@ class Doctor {
         updatedAt: json["updated_at"],
         consultingRooms: List<ConsultingRoom>.from(
             json["consulting_rooms"].map((x) => ConsultingRoom.fromMap(x))),
-        medicalHistory: json["medical_history"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -218,7 +215,6 @@ class Doctor {
         "updated_at": updatedAt,
         "consulting_rooms":
             List<dynamic>.from(consultingRooms.map((x) => x.toMap())),
-        "medical_history": medicalHistory,
       };
 }
 
@@ -226,10 +222,10 @@ class Patient {
   int id;
   String name;
   String lastName;
-  String email;
-  String emailVerifiedAt;
+  String? email;
+  String? emailVerifiedAt;
   String? cedula;
-  String address;
+  String? address;
   String phone;
   int role;
   String? tokenGoogle;
@@ -237,16 +233,15 @@ class Patient {
   int status;
   String createdAt;
   String updatedAt;
-  dynamic medicalHistory;
 
   Patient({
     required this.id,
     required this.name,
     required this.lastName,
-    required this.email,
-    required this.emailVerifiedAt,
+    this.email,
+    this.emailVerifiedAt,
     this.cedula,
-    required this.address,
+    this.address,
     required this.phone,
     required this.role,
     this.tokenGoogle,
@@ -254,7 +249,6 @@ class Patient {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
-    this.medicalHistory,
   });
 
   factory Patient.fromJson(String str) => Patient.fromMap(json.decode(str));
@@ -276,7 +270,6 @@ class Patient {
         status: json["status"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
-        medicalHistory: json["medical_history"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -294,7 +287,6 @@ class Patient {
         "status": status,
         "created_at": createdAt,
         "updated_at": updatedAt,
-        "medical_history": medicalHistory,
       };
 }
 

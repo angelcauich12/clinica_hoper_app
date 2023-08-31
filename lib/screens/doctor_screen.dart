@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -9,20 +10,21 @@ class DoctorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String doctor =
-        ModalRoute.of(context)?.settings.arguments.toString() ?? 'No-doctor';
+    final Appointment appointment =
+        ModalRoute.of(context)!.settings.arguments as Appointment;
+    final Doctor doctor = appointment.doctor;
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           CustomAppBar(
-            title: doctor,
+            title: '${doctor.name} ${doctor.lastName}',
             image:
                 'https://previews.123rf.com/images/fongfong/fongfong1909/fongfong190900087/130110064-doctor-in-hospital-background-with-copy-space.jpg',
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              _DoctorImage(),
+              _DoctorImage(doctor: doctor, specialty: appointment.specialty),
               const Experience(),
               _AboutDoctor(),
               const BookAppointmentBtn(),
@@ -36,6 +38,11 @@ class DoctorScreen extends StatelessWidget {
 }
 
 class _DoctorImage extends StatelessWidget {
+  final Doctor doctor;
+  final Specialty specialty;
+
+  _DoctorImage({required this.doctor, required this.specialty});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,13 +53,18 @@ class _DoctorImage extends StatelessWidget {
         top: 20,
       ),
       child: Row(
-        children: [DoctorPosterAndName()],
+        children: [DoctorPosterAndName(doctor: doctor, specialty: specialty)],
       ),
     );
   }
 }
 
 class DoctorPosterAndName extends StatelessWidget {
+  final Doctor doctor;
+  final Specialty specialty;
+
+  DoctorPosterAndName({required this.doctor, required this.specialty});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -86,7 +98,7 @@ class DoctorPosterAndName extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Dra. Nayli Hoil Pérez",
+              '${doctor.name} ${doctor.lastName}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -100,7 +112,7 @@ class DoctorPosterAndName extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Text(
-              "Ginecología",
+              specialty.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

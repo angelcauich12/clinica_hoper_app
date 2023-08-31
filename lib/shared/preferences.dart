@@ -190,4 +190,19 @@ class Preferences {
 
     return time;
   }
+
+  static String formatScheduledTime(String inputTime) {
+    List<String> parts = inputTime.split(":"); // Dividir el string en partes
+
+    if (parts.length >= 2) {
+      String hour = parts[0]; // Obtener la hora
+      String minute = parts[1]; // Obtener los minutos
+
+      String formattedTime = "$hour:$minute"; // Crear el string de hora:minutos
+
+      return formattedTime;
+    } else {
+      return inputTime;
+    }
+  }
 }

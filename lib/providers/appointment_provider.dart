@@ -26,6 +26,9 @@ class AppointmentProvider extends ChangeNotifier {
   String _endPoint = '/api/v1/get-appointments';
   String jwtToken = '';
   List<Appointment> appointments = [];
+  List<Appointment> reservadasList = [];
+  List<Appointment> confirmadasList = [];
+  List<Appointment> atendidasYCanceladasList = [];
   late MyAppointments appointmentResponse;
   ServerResponse? serverResponse;
   bool result = false;
@@ -75,6 +78,17 @@ class AppointmentProvider extends ChangeNotifier {
         case 200:
           appointmentResponse = MyAppointments.fromJson(response.body);
           appointments = appointmentResponse.appointments;
+          reservadasList = appointments
+              .where((appointment) => appointment.status.name == 'Reservada')
+              .toList();
+          confirmadasList = appointments
+              .where((appointment) => appointment.status.name == 'Confirmada')
+              .toList();
+          atendidasYCanceladasList = appointments
+              .where((appointment) =>
+                  appointment.status.name == 'Atendida' ||
+                  appointment.status.name == 'Cancelada')
+              .toList();
           print(appointments);
           result = true;
           isLoading = false;

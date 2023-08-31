@@ -19,13 +19,40 @@ class AppointmentList extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: onRefresh,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: appointments.length,
-        itemBuilder: (context, index) {
-          return AppointmentCard(appointment: appointments[index]);
-        },
-      ),
+      child: (appointments.isNotEmpty)
+          ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: appointments.length,
+              itemBuilder: (context, index) {
+                return AppointmentCard(appointment: appointments[index]);
+              },
+            )
+          : Stack(
+              children: [
+                ListView(),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.calendar_month_outlined,
+                        color: ThemeProvider.lightGrey.withOpacity(0.3),
+                        size: 100,
+                      ),
+                      Text(
+                        'Sin Citas',
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: ThemeProvider.lightGrey.withOpacity(0.3),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
     );
   }
 }

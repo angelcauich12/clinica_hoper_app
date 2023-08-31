@@ -6,6 +6,13 @@ import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
+List<String> statusList = [
+  'Confirmada',
+  'Reservada',
+  'Atendida',
+  'Cancelada',
+];
+
 class MyAppointmentsScreen extends StatelessWidget {
   static const String routeName = 'myappointments';
 
@@ -50,7 +57,11 @@ class AppointmentsTabsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
-    final List<Appointment> appointments = appointmentProvider.appointments;
+    final List<Appointment> reservadasList = appointmentProvider.reservadasList;
+    final List<Appointment> confirmadasList =
+        appointmentProvider.confirmadasList;
+    final List<Appointment> atendidasYCanceladasList =
+        appointmentProvider.atendidasYCanceladasList;
 
     return SafeArea(
       child: Column(
@@ -116,9 +127,9 @@ class AppointmentsTabsBody extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
-                AppointmentList(appointments: appointments),
-                AppointmentList(appointments: appointments),
-                AppointmentList(appointments: appointments),
+                AppointmentList(appointments: reservadasList),
+                AppointmentList(appointments: confirmadasList),
+                AppointmentList(appointments: atendidasYCanceladasList),
               ],
             ),
           )

@@ -7,7 +7,8 @@ class ThemeProvider extends ChangeNotifier {
   static Color lightColor = const Color(0xff454545);
   static Color secondColor = const Color(0xff126276);
   static Color thirdColor = const Color.fromARGB(255, 54, 54, 54);
-  static Color lightGrey = const Color.fromARGB(255, 126, 126, 126);
+  static Color fourColor = const Color(0xffffffff);
+  static Color lightGrey = const Color.fromARGB(255, 149, 148, 148);
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color brown = const Color.fromARGB(255, 41, 41, 41);
   static Color blue = const Color.fromARGB(255, 0, 4, 252);

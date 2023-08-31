@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/appointments_response.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class AppointmentCard extends StatelessWidget {
   final Appointment appointment;
@@ -14,23 +14,28 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheduleDate =
-        DateFormat.yMMMEd().format(DateTime.parse(appointment.scheduledDate));
+    initializeDateFormatting();
+    final scheduleDate = DateFormat.yMMMEd('es-MX').format(
+      DateTime.parse(appointment.scheduledDate),
+    );
+    final scheduledTime =
+        Preferences.formatScheduledTime(appointment.scheduledTime);
+    final scheduledTimeEnd =
+        Preferences.formatScheduledTime(appointment.scheduledTimeEnd);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
       width: double.infinity,
-      height: 240,
       decoration: BoxDecoration(
           color: Preferences.isDarkMode
-              ? ThemeProvider.brown
-              : ThemeProvider.white,
+              ? ThemeProvider.secondColor
+              : ThemeProvider.fourColor,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              blurRadius: 2,
+              blurRadius: 3,
               spreadRadius: 2,
               offset: const Offset(-2, 2),
             ),
@@ -38,136 +43,13 @@ class AppointmentCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pushNamed(
-                        context, DoctorScreen.routeName,
-                        arguments: 'Dra. Nayli Hoil Pérez'),
-                    child: const CircleAvatar(
-                      radius: 30,
-                      backgroundImage:
-                          AssetImage('assets/images/medical-team.png'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${appointment.doctor.name} ${appointment.doctor.lastName}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Roboto',
-                          color: Preferences.isDarkMode
-                              ? ThemeProvider.white
-                              : ThemeProvider.lightColor,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        "${appointment.type} - ${appointment.specialty.name}",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Roboto',
-                          color: Preferences.isDarkMode
-                              ? Colors.grey
-                              : Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () => showCancelAppointment(context),
-                child: const FaIcon(
-                  FontAwesomeIcons.trashCan,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 3),
-            height: 70,
-            decoration: BoxDecoration(
-              color: Preferences.isDarkMode
-                  ? Colors.grey.withOpacity(0.15)
-                  : Colors.blue[50],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Icon(
-                  Icons.calendar_month,
-                  color: Preferences.isDarkMode
-                      ? Colors.white
-                      : ThemeProvider.lightColor,
-                ),
-                Text(
-                  scheduleDate,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                    color: Preferences.isDarkMode
-                        ? Colors.white
-                        : ThemeProvider.lightColor,
-                  ),
-                ),
-                Icon(
-                  Icons.timer_outlined,
-                  color: Preferences.isDarkMode
-                      ? Colors.white
-                      : ThemeProvider.lightColor,
-                ),
-                Text(
-                  "${appointment.scheduledTime} - ${appointment.scheduledTimeEnd}",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                    color: Preferences.isDarkMode
-                        ? Colors.white
-                        : ThemeProvider.lightColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ThemeProvider.green,
-                ),
-                child: const Row(
-                  children: [
-                    FaIcon(FontAwesomeIcons.thumbsUp),
-                    // SizedBox(width: 5),
-                    // Text(
-                    //   'Confirmar',
-                    //   style: TextStyle(fontWeight: FontWeight.w700),
-                    // ),
-                  ],
-                ),
-              ),
-            ],
+          AppointmentCardHeader(appointment: appointment),
+          const SizedBox(height: 5),
+          AppointmentCardBody(
+            scheduleDate: scheduleDate,
+            scheduledTime: scheduledTime,
+            scheduledTimeEnd: scheduledTimeEnd,
+            appointment: appointment,
           ),
         ],
       ),
@@ -243,6 +125,168 @@ class AppointmentCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class AppointmentCardHeader extends StatelessWidget {
+  const AppointmentCardHeader({
+    super.key,
+    required this.appointment,
+  });
+
+  final Appointment appointment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pushNamed(context, DoctorScreen.routeName,
+                  arguments: appointment),
+              child: const CircleAvatar(
+                radius: 20,
+                backgroundImage: AssetImage('assets/images/medical-team.png'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${appointment.doctor.name} ${appointment.doctor.lastName}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Roboto',
+                    color: Preferences.isDarkMode
+                        ? ThemeProvider.white
+                        : ThemeProvider.lightColor,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  "${appointment.type} - ${appointment.specialty.name}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Roboto',
+                    color: Preferences.isDarkMode
+                        ? Colors.grey
+                        : Colors.grey.shade500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        TextButton(
+          onPressed: () {},
+          style: TextButton.styleFrom(
+            minimumSize: Size.zero,
+            padding: EdgeInsets.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Icon(Icons.more_vert, color: ThemeProvider.thirdColor),
+        ),
+      ],
+    );
+  }
+}
+
+class AppointmentCardBody extends StatelessWidget {
+  const AppointmentCardBody({
+    super.key,
+    required this.scheduleDate,
+    required this.scheduledTime,
+    required this.scheduledTimeEnd,
+    required this.appointment,
+  });
+
+  final String scheduleDate;
+  final String scheduledTime;
+  final String scheduledTimeEnd;
+  final Appointment appointment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: Preferences.isDarkMode
+            ? Colors.grey.withOpacity(0.15)
+            : ThemeProvider.secondColor.withAlpha(70),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AppointmentDescription(
+                description: scheduleDate,
+                icon: Icons.calendar_month_outlined,
+                color: ThemeProvider.lightColor,
+              ),
+              const SizedBox(height: 2),
+              AppointmentDescription(
+                description: '$scheduledTime - $scheduledTimeEnd',
+                icon: Icons.timer_outlined,
+                color: ThemeProvider.lightColor,
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          AppointmentDescription(
+            description:
+                'Paciente: ${appointment.patient.name} ${appointment.patient.lastName}',
+            icon: Icons.person_pin_outlined,
+            color: ThemeProvider.lightColor,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AppointmentDescription extends StatelessWidget {
+  IconData icon;
+  String description;
+  Color color;
+
+  AppointmentDescription(
+      {required this.description, required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Icon(
+          icon,
+          color: Preferences.isDarkMode ? color : color,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          description,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Roboto',
+            color: Preferences.isDarkMode ? color : color,
+          ),
+        ),
+      ],
     );
   }
 }
