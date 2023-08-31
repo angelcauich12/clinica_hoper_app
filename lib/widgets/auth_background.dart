@@ -47,14 +47,15 @@ class _BackgroundImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return SizedBox(
+    return Container(
+      color: ThemeProvider.thirdColor,
       width: double.infinity,
       height: size.height,
-      child: const Image(
-        image: AssetImage('assets/clinic00.jpg'),
-        fit: BoxFit.cover,
-        opacity: AlwaysStoppedAnimation(.5),
-      ),
+      // child: const Image(
+      //   image: AssetImage('assets/clinic00.jpg'),
+      //   fit: BoxFit.cover,
+      //   opacity: AlwaysStoppedAnimation(.5),
+      // ),
     );
   }
 }

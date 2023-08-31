@@ -26,7 +26,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appointmentForm = Provider.of<AppointmentFormProvider>(context);
+    final appointmentForm = Provider.of<AppointmentProvider>(context);
     final Color myColor = ThemeProvider.secondColor;
 
     return Scaffold(
@@ -197,7 +197,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   color: Colors.grey.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -226,7 +226,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   color: Colors.grey.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Center(
                                   child: Text(

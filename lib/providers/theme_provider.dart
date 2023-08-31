@@ -10,6 +10,7 @@ class ThemeProvider extends ChangeNotifier {
   static Color lightGrey = const Color.fromARGB(255, 126, 126, 126);
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color brown = const Color.fromARGB(255, 41, 41, 41);
+  static Color blue = const Color.fromARGB(255, 0, 4, 252);
   static Color lightRed = const Color(0xffD11149);
   static Color green = Colors.green;
   static Color darkGreen = const Color.fromARGB(255, 59, 121, 60);
@@ -20,14 +21,13 @@ class ThemeProvider extends ChangeNotifier {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
-  static LinearGradient secondaryGradientColor = const LinearGradient(
+  static LinearGradient secondGradientColor = const LinearGradient(
     colors: [
       Color(0xff126276),
-      Color.fromARGB(255, 23, 134, 162),
-      Color(0xffffffff)
+      Color.fromARGB(255, 25, 153, 185),
     ],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
   );
   static Color roundedButtonColor = const Color(0xFF667761);
 
@@ -81,11 +81,11 @@ class ThemeProvider extends ChangeNotifier {
                   ),
                 ),
                 floatingActionButtonTheme: FloatingActionButtonThemeData(
-                  backgroundColor: thirdColor,
+                  backgroundColor: secondColor,
                   foregroundColor: Colors.white,
                 ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                  selectedItemColor: thirdColor,
+                  selectedItemColor: secondColor,
                   unselectedItemColor: Colors.grey,
                 ),
                 switchTheme: SwitchThemeData(
@@ -123,11 +123,11 @@ class ThemeProvider extends ChangeNotifier {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: thirdColor,
+        backgroundColor: secondColor,
         foregroundColor: Colors.white,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedItemColor: thirdColor,
+        selectedItemColor: secondColor,
         unselectedItemColor: Colors.grey,
       ),
       switchTheme: SwitchThemeData(

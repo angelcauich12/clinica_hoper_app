@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/models/appointments_response.dart';
+import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 class AppointmentList extends StatelessWidget {
-  int length;
+  List<Appointment> appointments;
 
-  AppointmentList({required this.length});
+  AppointmentList({required this.appointments});
 
   @override
   Widget build(BuildContext context) {
+    final appointmentProvider = Provider.of<AppointmentProvider>(context);
+
     Future<void> onRefresh() async {
-      print('se ejecuta el refresh');
-      // await orderProvider.getOrdenes();
+      appointmentProvider.getAppointments();
     }
 
     return RefreshIndicator(
       onRefresh: onRefresh,
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: length,
+        itemCount: appointments.length,
         itemBuilder: (context, index) {
-          return AppointmentCard();
+          return AppointmentCard(appointment: appointments[index]);
         },
       ),
     );

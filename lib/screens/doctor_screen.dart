@@ -60,7 +60,7 @@ class DoctorPosterAndName extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(5),
             boxShadow: const [
               BoxShadow(
                 offset: Offset(2.0, 2.0),
@@ -70,7 +70,7 @@ class DoctorPosterAndName extends StatelessWidget {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(5),
             child: const FadeInImage(
               width: 100,
               height: 120,
@@ -160,7 +160,7 @@ class ExperienceCard extends StatelessWidget {
       height: 100,
       decoration: BoxDecoration(
         color: Preferences.isDarkMode ? Colors.black : Colors.grey[200],
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(5),
       ),
       padding: const EdgeInsets.all(8),
       child: Column(

@@ -20,6 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
+    final appointmentProvider =
+        Provider.of<AppointmentProvider>(context, listen: false);
+    appointmentProvider.getAppointments();
     User apiUser = User.fromJson(Preferences.apiUser);
 
     return Scaffold(
@@ -33,11 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 35),
             DangerMessageWithButton(
-              color: const Color.fromRGBO(255, 191, 191, 1),
-              paragraph1:
-                  'Hemos detectado que no tiene completo su expediente clínico.',
-              paragraph2: '',
+              color: ThemeProvider.blue.withOpacity(0.3),
+              paragraph1: 'Su expediente clínico no está completo.',
+              paragraph2: 'Rellenar el formulario',
               title: 'Estimado Paciente',
+              btnTitle: 'Completar mi expediente',
             ),
             const SizedBox(height: 25),
             const _homeButtons(),
@@ -175,7 +178,7 @@ class HomeActionButton extends StatelessWidget {
           margin: const EdgeInsets.only(left: 15, right: 15),
           decoration: BoxDecoration(
               color: backgroundColor,
-              gradient: ThemeProvider.goldenColor,
+              gradient: ThemeProvider.secondGradientColor,
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
                 BoxShadow(
@@ -186,14 +189,14 @@ class HomeActionButton extends StatelessWidget {
               ]),
           child: Stack(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: const Image(
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/images/bgGolden.png'),
-                ),
-              ),
+              // ClipRRect(
+              //   borderRadius: BorderRadius.circular(10),
+              //   child: const Image(
+              //     width: double.infinity,
+              //     fit: BoxFit.cover,
+              //     image: AssetImage('assets/images/bgGolden.png'),
+              //   ),
+              // ),
               Container(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -317,7 +320,7 @@ class SpecialtyImageCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(right: 15, top: 10, bottom: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(5),
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
@@ -331,7 +334,7 @@ class SpecialtyImageCard extends StatelessWidget {
         children: <Widget>[
           Center(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(5),
               child: FadeInImage(
                 width: double.infinity,
                 height: double.infinity,
@@ -346,7 +349,7 @@ class SpecialtyImageCard extends StatelessWidget {
             height: double.infinity,
             decoration: BoxDecoration(
               // color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(5),
             ),
           ),
           Center(

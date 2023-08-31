@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hope_app/models/appointments_response.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:intl/intl.dart';
 
 class AppointmentCard extends StatelessWidget {
-  const AppointmentCard({
-    super.key,
-  });
+  final Appointment appointment;
+
+  const AppointmentCard({super.key, required this.appointment});
 
   @override
   Widget build(BuildContext context) {
+    final scheduleDate =
+        DateFormat.yMMMEd().format(DateTime.parse(appointment.scheduledDate));
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -55,7 +60,7 @@ class AppointmentCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Dra. Nayli Hoil Pérez",
+                        '${appointment.doctor.name} ${appointment.doctor.lastName}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -69,7 +74,7 @@ class AppointmentCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        "Consulta - Ginecología",
+                        "${appointment.type} - ${appointment.specialty.name}",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -113,7 +118,7 @@ class AppointmentCard extends StatelessWidget {
                       : ThemeProvider.lightColor,
                 ),
                 Text(
-                  "Lun, 21 Agosto 2023",
+                  scheduleDate,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -130,7 +135,7 @@ class AppointmentCard extends StatelessWidget {
                       : ThemeProvider.lightColor,
                 ),
                 Text(
-                  "11:00 - 12:00",
+                  "${appointment.scheduledTime} - ${appointment.scheduledTimeEnd}",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,

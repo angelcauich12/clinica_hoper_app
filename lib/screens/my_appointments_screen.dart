@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hope_app/models/appointments_response.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
+import 'package:provider/provider.dart';
 
 class MyAppointmentsScreen extends StatelessWidget {
   static const String routeName = 'myappointments';
@@ -10,22 +13,7 @@ class MyAppointmentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final orderProvider = Provider.of<PedidosProvider>(context);
-    // bool isLoading = orderProvider.isLoading;
-    bool isLoading = false;
-
     return AppointmentsTabs();
-    // child: (!isLoading)
-    //     ? Container(
-    //         child: Center(
-    //           child: Text('My Appointments'),
-    //         ),
-    //       ) //PedidosList(pedidosProv: orderProvider.pedidosXProv)
-    //     : Center(
-    //         child: SpinKitSpinningLines(
-    //           color: ThemeProvider.darkColor,
-    //         ),
-    //       ),
   }
 }
 
@@ -61,6 +49,9 @@ class AppointmentsTabs extends StatelessWidget {
 class AppointmentsTabsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appointmentProvider = Provider.of<AppointmentProvider>(context);
+    final List<Appointment> appointments = appointmentProvider.appointments;
+
     return SafeArea(
       child: Column(
         children: [
@@ -125,9 +116,9 @@ class AppointmentsTabsBody extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
-                AppointmentList(length: 2),
-                AppointmentList(length: 1),
-                AppointmentList(length: 5),
+                AppointmentList(appointments: appointments),
+                AppointmentList(appointments: appointments),
+                AppointmentList(appointments: appointments),
               ],
             ),
           )
