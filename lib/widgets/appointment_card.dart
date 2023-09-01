@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/appointments_response.dart';
+import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -127,7 +128,7 @@ class AppointmentCardHeader extends StatelessWidget {
               context: context,
               builder: (context) {
                 return Container(
-                  padding: EdgeInsets.only(bottom: 30),
+                  padding: const EdgeInsets.only(bottom: 30),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -291,6 +292,8 @@ class AppointmentCardBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User apiUser = User.fromJson(Preferences.apiUser);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       margin: const EdgeInsets.only(bottom: 10),
@@ -318,13 +321,19 @@ class AppointmentCardBody extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 2),
-          AppointmentDescription(
-            description:
-                'Paciente: ${appointment.patient.name} ${appointment.patient.lastName}',
-            icon: Icons.person_pin_outlined,
-            color: ThemeProvider.lightColor,
-          ),
+          (apiUser.id != appointment.patient.id)
+              ? Column(
+                  children: [
+                    const SizedBox(height: 2),
+                    AppointmentDescription(
+                      description:
+                          'Paciente: ${appointment.patient.name} ${appointment.patient.lastName}',
+                      icon: Icons.person_pin_outlined,
+                      color: ThemeProvider.lightColor,
+                    ),
+                  ],
+                )
+              : const SizedBox(),
         ],
       ),
     );

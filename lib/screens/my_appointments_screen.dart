@@ -79,7 +79,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5),
                   color: Preferences.isDarkMode
                       ? ThemeProvider.yellowColor
-                      : ThemeProvider.thirdColor),
+                      : ThemeProvider.secondColor),
               tabs: const [
                 Tab(
                   child: Align(

@@ -30,29 +30,38 @@ class AppointmentList extends StatelessWidget {
           : Stack(
               children: [
                 ListView(),
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.calendar_month_outlined,
-                        color: ThemeProvider.lightGrey.withOpacity(0.3),
-                        size: 100,
-                      ),
-                      Text(
-                        'Sin Citas',
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: ThemeProvider.lightGrey.withOpacity(0.3),
-                        ),
-                      )
-                    ],
-                  ),
-                )
+                const NoAppointmentsIcon(),
               ],
             ),
+    );
+  }
+}
+
+class NoAppointmentsIcon extends StatelessWidget {
+  const NoAppointmentsIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.calendar_month_outlined,
+            color: ThemeProvider.lightGrey.withOpacity(0.3),
+            size: 100,
+          ),
+          Text(
+            'Sin Citas',
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: ThemeProvider.lightGrey.withOpacity(0.3),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
