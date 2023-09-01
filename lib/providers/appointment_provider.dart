@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -115,6 +117,94 @@ class AppointmentProvider extends ChangeNotifier {
               serverResponse?.message ?? 'Error Desconocido.');
           notifyListeners();
           print(serverResponse);
+          break;
+        case 422:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print(serverResponse);
+          break;
+        case 500:
+          isLoading = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<bool> confirmAppointment(String id) async {
+    print('Peticion API');
+    _endPoint = '/api/v1/confirm-appointment';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+    print('Api Token: $jwtToken');
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    final Map<String, dynamic> queryParameters = {
+      'id': id,
+    };
+    print('Cita $queryParameters');
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      isLoading = true;
+      result = false;
+
+      final response = await http
+          .post(url, headers: headers, body: json.encode(queryParameters))
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          getAppointments();
+          result = true;
+          isLoading = false;
+          print('200: Pedido ${response.body}');
+          serverResponse = ServerResponse.fromJson(response.body);
+          print(serverResponse?.message ?? 'Todo bien!!');
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message?.substring(0, 60) ??
+                  'Error Desconocido.');
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
           break;
         case 422:
           isLoading = false;

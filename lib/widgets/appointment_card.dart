@@ -4,8 +4,10 @@ import 'package:hope_app/models/appointments_response.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 
 class AppointmentCard extends StatelessWidget {
   final Appointment appointment;
@@ -55,78 +57,6 @@ class AppointmentCard extends StatelessWidget {
       ),
     );
   }
-
-  Future<String?> showCancelAppointment(BuildContext context) {
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text(
-          'Cancelar Cita',
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        content: Container(
-          height: 100,
-          child: Column(
-            children: [
-              const Text(
-                '¿Está seguro que desea cancelar esta cita?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Form(
-                  child: Column(
-                children: [
-                  TextFormField(),
-                ],
-              ))
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'Cerrar'),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                ThemeProvider.lightRed,
-              ),
-            ),
-            child: Text(
-              'Cerrar',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 16,
-                color: ThemeProvider.white,
-              ),
-            ),
-          ),
-          TextButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                ThemeProvider.secondColor,
-              ),
-            ),
-            onPressed: () => Navigator.pop(context, 'Confirmar'),
-            child: Text(
-              'Confirmar',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 16,
-                color: ThemeProvider.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class AppointmentCardHeader extends StatelessWidget {
@@ -139,6 +69,8 @@ class AppointmentCardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appointmentProvider = Provider.of<AppointmentProvider>(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +122,65 @@ class AppointmentCardHeader extends StatelessWidget {
           ],
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Container(
+                  padding: EdgeInsets.only(bottom: 30),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      (appointment.status.name != 'Confirmada')
+                          ? ButtonSheetOpt(
+                              title: 'Confirmar Cita',
+                              icon: Icons.thumb_up_outlined,
+                              onTap: () async {
+                                print('Cita Confirmada');
+                                Navigator.pop(context);
+
+                                final response = await appointmentProvider
+                                    .confirmAppointment(
+                                        appointment.id.toString());
+
+                                if (response) {
+                                  Notifications.showSnackBar(
+                                      'Gracias! Su cita con doctor(a) ${appointment.doctor.name} ${appointment.doctor.lastName} ha sido confirmada.');
+                                }
+                              },
+                              iconColor: ThemeProvider.green,
+                            )
+                          : Container(),
+                      ButtonSheetOpt(
+                        title: 'Cancelar Cita',
+                        icon: Icons.thumb_down_outlined,
+                        onTap: () {
+                          Navigator.pop(context);
+                          showCancelAppointment(context);
+                        },
+                        iconColor: ThemeProvider.lightRed,
+                      ),
+                      (appointment.status.name != 'Atendida' ||
+                              appointment.status.name != 'Cancelada')
+                          ? ButtonSheetOpt(
+                              title: 'Detalles de la Cita',
+                              icon: Icons.list_alt_rounded,
+                              onTap: () {
+                                print('Cita ${appointment.id}');
+                                Navigator.pop(context);
+                                Navigator.pushNamed(
+                                    context, AppointmentDetailsScreen.routeName,
+                                    arguments: appointment);
+                              },
+                              iconColor: ThemeProvider.secondColor,
+                            )
+                          : Container(),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
           style: TextButton.styleFrom(
             minimumSize: Size.zero,
             padding: EdgeInsets.zero,
@@ -199,6 +189,88 @@ class AppointmentCardHeader extends StatelessWidget {
           child: Icon(Icons.more_vert, color: ThemeProvider.thirdColor),
         ),
       ],
+    );
+  }
+
+  Future<String?> showCancelAppointment(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text(
+          'Cancelar Cita',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '¿Realmente desea cancelar esta cita?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Form(
+                  child: Column(
+                children: [
+                  TextFormField(
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Motivo de Cancelación',
+                      hintStyle: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    style: TextStyle(),
+                  ),
+                ],
+              ))
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cerrar'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                ThemeProvider.lightRed,
+              ),
+            ),
+            child: Text(
+              'Cerrar',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: ThemeProvider.white,
+              ),
+            ),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                ThemeProvider.secondColor,
+              ),
+            ),
+            onPressed: () => Navigator.pop(context, 'Confirmar'),
+            child: Text(
+              'Confirmar',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: ThemeProvider.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -281,12 +353,49 @@ class AppointmentDescription extends StatelessWidget {
           description,
           style: TextStyle(
             fontSize: 12,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w400,
             fontFamily: 'Roboto',
             color: Preferences.isDarkMode ? color : color,
           ),
         ),
       ],
+    );
+  }
+}
+
+class ButtonSheetOpt extends StatelessWidget {
+  String title;
+  IconData icon;
+  Color iconColor;
+  VoidCallback onTap;
+
+  ButtonSheetOpt({
+    required this.title,
+    required this.icon,
+    required this.onTap,
+    required this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: 0.0,
+        horizontal: 15.0,
+      ),
+      leading: Icon(
+        icon,
+        color: iconColor,
+        size: 18,
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontFamily: 'Roboto',
+          fontSize: 14,
+        ),
+      ),
     );
   }
 }

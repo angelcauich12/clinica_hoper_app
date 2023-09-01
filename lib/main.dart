@@ -85,6 +85,8 @@ class MyApp extends StatelessWidget {
         ActivationScreen.routeName: (context) => const ActivationScreen(),
         NotificationScreen.routeName: (context) => NotificationScreen(),
         DoctorScreen.routeName: (context) => DoctorScreen(),
+        AppointmentDetailsScreen.routeName: (context) =>
+            AppointmentDetailsScreen(),
         CreateAppointmentScreen.routeName: (context) =>
             CreateAppointmentScreen(),
         MyAppointmentsScreen.routeName: (context) =>

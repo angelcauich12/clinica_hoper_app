@@ -1,14 +1,14 @@
-export 'package:hope_app/screens/medical_records_screen.dart';
-export 'package:hope_app/screens/create_appointment_screen.dart';
-
-export 'package:hope_app/screens/doctor_screen.dart';
-export 'package:hope_app/screens/home_screen.dart';
-export 'package:hope_app/screens/my_appointments_screen.dart';
 export 'package:hope_app/screens/about_screen.dart';
 export 'package:hope_app/screens/activation_screen.dart';
+export 'package:hope_app/screens/appointment_details_screen.dart';
 export 'package:hope_app/screens/auth_token_screen.dart';
+export 'package:hope_app/screens/create_appointment_screen.dart';
+export 'package:hope_app/screens/doctor_screen.dart';
+export 'package:hope_app/screens/home_screen.dart';
 export 'package:hope_app/screens/home.dart';
 export 'package:hope_app/screens/login_screen.dart';
+export 'package:hope_app/screens/medical_records_screen.dart';
+export 'package:hope_app/screens/my_appointments_screen.dart';
 export 'package:hope_app/screens/notification_screen.dart';
 export 'package:hope_app/screens/profile_screen.dart';
 export 'package:hope_app/screens/register_screen.dart';
