@@ -68,7 +68,7 @@ class AppointmentProvider extends ChangeNotifier {
     };
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
-
+    print('Url: $url');
     try {
       isLoading = true;
       result = false;
@@ -153,7 +153,6 @@ class AppointmentProvider extends ChangeNotifier {
     _endPoint = '/api/v1/confirm-appointment';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
-    print('Api Token: $jwtToken');
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -164,8 +163,6 @@ class AppointmentProvider extends ChangeNotifier {
     final Map<String, dynamic> queryParameters = {
       'id': id,
     };
-    print('Cita $queryParameters');
-
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
     try {

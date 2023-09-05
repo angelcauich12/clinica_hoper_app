@@ -19,7 +19,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context, listen: false);
     final appointmentProvider =
         Provider.of<AppointmentProvider>(context, listen: false);
     appointmentProvider.getAppointments();
