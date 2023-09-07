@@ -75,24 +75,40 @@ class LoginScreen extends StatelessWidget {
                               imagePath: 'assets/images/brand/google.png',
                               onTap: () async {
                                 print('Google SignIn');
-                                final user = await GoogleSignInAPi.login();
+                                try {
+                                  final user = await GoogleSignInAPi.login();
 
-                                if (user == null) {
-                                  print('es nulo');
-                                } else {
-                                  print('displayName: ${user?.displayName}');
-                                  print('email: ${user?.email}');
-                                  print('photoUrl: ${user?.photoUrl}');
+                                  if (user == null) {
+                                    Navigator.pushReplacementNamed(
+                                        context, LoginScreen.routeName);
+                                  } else {
+                                    print('displayName: ${user?.displayName}');
+                                    print('email: ${user?.email}');
+                                    print('photoUrl: ${user?.photoUrl}');
+                                    Notifications.showSnackBarWithButton(
+                                      'Eres: ${user?.displayName}',
+                                      () async =>
+                                          await GoogleSignInAPi.logout(),
+                                      'Desconectar',
+                                    );
+                                  }
+                                } catch (e) {
+                                  print('Sugio un error!!');
                                 }
                               }),
                           const SizedBox(width: 20),
                           SocialMediaButton(
-                              imagePath: 'assets/images/brand/apple.png',
-                              onTap: () async {}),
+                              imagePath: 'assets/images/brand/facebook.png',
+                              onTap: () async {
+                                Notifications.showSnackBar(
+                                    'Login con Facebook!!');
+                              }),
                           const SizedBox(width: 20),
                           SocialMediaButton(
-                              imagePath: 'assets/images/brand/facebook.png',
-                              onTap: () async {}),
+                              imagePath: 'assets/images/brand/apple.png',
+                              onTap: () async {
+                                Notifications.showSnackBar('Login con Apple!!');
+                              }),
                         ],
                       ),
                       const SizedBox(height: 25),
