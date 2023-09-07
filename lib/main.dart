@@ -28,6 +28,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<RegisterFormProvider>(
           create: (context) => RegisterFormProvider(),
         ),
+        ChangeNotifierProvider<LoginFormProvider>(
+          create: (context) => LoginFormProvider(),
+        ),
         ChangeNotifierProvider<ActivationService>(
           create: (context) => ActivationService(),
         ),

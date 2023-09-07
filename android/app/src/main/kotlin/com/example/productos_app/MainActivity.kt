@@ -1,4 +1,4 @@
-package mx.itsoft.hope_movil_app
+package com.clinicahoper.hoper_movil_app
 
 import io.flutter.embedding.android.FlutterActivity
 

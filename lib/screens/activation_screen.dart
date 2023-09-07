@@ -40,7 +40,7 @@ class ActivationScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const Image(
-                      image: AssetImage('assets/hoper-logo.png'),
+                      image: AssetImage('assets/images/brand/hoper-logo.png'),
                       width: 150,
                     ),
                     const SizedBox(
