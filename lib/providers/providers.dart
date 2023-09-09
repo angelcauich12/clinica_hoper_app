@@ -1,3 +1,5 @@
+export 'package:hope_app/providers/social_media_form_provider.dart';
+
 export 'package:hope_app/providers/register_form_provider.dart';
 export 'package:hope_app/providers/appointment_provider.dart';
 export 'package:hope_app/providers/module_screen_provider.dart';

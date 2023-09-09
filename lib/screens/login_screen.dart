@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
-import 'package:hope_app/services/auth_service.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
@@ -19,6 +18,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
+    final googleApiService = Provider.of<GoogleSignInAPiService>(context);
     oneSignalProvider.initOneSignal(context);
 
     return Scaffold(
@@ -72,30 +72,10 @@ class LoginScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SocialMediaButton(
-                              imagePath: 'assets/images/brand/google.png',
-                              onTap: () async {
-                                print('Google SignIn');
-                                try {
-                                  final user = await GoogleSignInAPi.login();
-
-                                  if (user == null) {
-                                    Navigator.pushReplacementNamed(
-                                        context, LoginScreen.routeName);
-                                  } else {
-                                    print('displayName: ${user?.displayName}');
-                                    print('email: ${user?.email}');
-                                    print('photoUrl: ${user?.photoUrl}');
-                                    Notifications.showSnackBarWithButton(
-                                      'Eres: ${user?.displayName}',
-                                      () async =>
-                                          await GoogleSignInAPi.logout(),
-                                      'Desconectar',
-                                    );
-                                  }
-                                } catch (e) {
-                                  print('Sugio un error!!');
-                                }
-                              }),
+                            imagePath: 'assets/images/brand/google.png',
+                            onTap: () =>
+                                onGoogleSignIn(context, googleApiService),
+                          ),
                           const SizedBox(width: 20),
                           SocialMediaButton(
                               imagePath: 'assets/images/brand/facebook.png',
@@ -138,6 +118,37 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+onGoogleSignIn(BuildContext context, googleApiService) async {
+  final user = await GoogleSignInAPiService.loginGoogle();
+
+  print('El usuario vale ${user?.displayName}');
+  if (user == null) {
+    Future.microtask(
+      () {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const LoginScreen(),
+            transitionDuration: const Duration(seconds: 0),
+          ),
+        );
+      },
+    );
+  } else {
+    final result = await googleApiService.loginOrRegisterUser(
+        user.displayName!, user.email, user.photoUrl!, null);
+
+    if (result != false) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacementNamed(
+        context,
+        Home.routeName,
+      );
+    }
   }
 }
 

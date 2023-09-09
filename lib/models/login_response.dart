@@ -48,7 +48,9 @@ class User {
     required this.email,
     required this.role,
     this.phone,
+    this.image,
     required this.status,
+    required this.isGoogle,
     required this.createdAt,
     this.deviceToken,
     required this.miPerfil,
@@ -58,9 +60,11 @@ class User {
   String name;
   String lastname;
   String email;
+  String? image;
   int role;
   String? phone;
   int status;
+  int isGoogle;
   String createdAt;
   String? deviceToken;
   MiPerfil miPerfil;
@@ -74,9 +78,11 @@ class User {
         name: json["name"],
         lastname: json["lastname"] ?? '',
         email: json["email"],
+        image: json["image"],
         role: json["role"],
         phone: json["phone"],
         status: json["status"],
+        isGoogle: json["is_google"],
         createdAt: json["created_at"],
         deviceToken: json["device_token"],
         miPerfil: MiPerfil.fromMap(json["mi_perfil"]),
@@ -87,9 +93,11 @@ class User {
         "name": name,
         "lastname": lastname,
         "email": email,
+        "image": image,
         "role": role,
         "phone": phone,
         "status": status,
+        "is_google": isGoogle,
         "created_at": createdAt,
         "device_token": deviceToken,
         "mi_perfil": miPerfil.toMap(),

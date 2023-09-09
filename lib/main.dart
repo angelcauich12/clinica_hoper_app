@@ -5,7 +5,6 @@ import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
-
 import 'services/services.dart';
 
 void main() async {
@@ -25,8 +24,14 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<AuthService>(
           create: (context) => AuthService(),
         ),
+        ChangeNotifierProvider<GoogleSignInAPiService>(
+          create: (context) => GoogleSignInAPiService(),
+        ),
         ChangeNotifierProvider<RegisterFormProvider>(
           create: (context) => RegisterFormProvider(),
+        ),
+        ChangeNotifierProvider<SocialMediaFormProvider>(
+          create: (context) => SocialMediaFormProvider(),
         ),
         ChangeNotifierProvider<LoginFormProvider>(
           create: (context) => LoginFormProvider(),
@@ -86,6 +91,7 @@ class MyApp extends StatelessWidget {
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
         ActivationScreen.routeName: (context) => const ActivationScreen(),
+        PhoneRequiredScreen.routeName: (context) => PhoneRequiredScreen(),
         NotificationScreen.routeName: (context) => NotificationScreen(),
         DoctorScreen.routeName: (context) => DoctorScreen(),
         AppointmentDetailsScreen.routeName: (context) =>

@@ -50,15 +50,24 @@ class PopupMenuList extends StatelessWidget {
           child: const Text('Logout'),
           onTap: () async {
             await authService.logout();
+            print('Is Google: ${apiUser.isGoogle}');
+            if (apiUser.isGoogle != 0) {
+              GoogleSignInAPiService.logoutGoogle();
+            }
             // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, LoginScreen.routeName);
           },
         ),
       ],
-      icon: const CircleAvatar(
-        radius: 30,
-        backgroundImage: AssetImage('assets/images/user-icon.png'),
-      ),
+      icon: (apiUser.image == null)
+          ? const CircleAvatar(
+              radius: 30,
+              backgroundImage: AssetImage('assets/images/user-icon.png'),
+            )
+          : CircleAvatar(
+              radius: 30,
+              backgroundImage: NetworkImage(apiUser.image!),
+            ),
     );
   }
 }
