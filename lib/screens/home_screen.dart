@@ -21,7 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final appointmentProvider =
         Provider.of<AppointmentProvider>(context, listen: false);
-    appointmentProvider.getAppointments();
+    if (appointmentProvider.appointments.isEmpty) {
+      appointmentProvider.getAppointments();
+    }
     User apiUser = User.fromJson(Preferences.apiUser);
 
     return Scaffold(
@@ -136,8 +138,8 @@ class _homeButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         HomeActionButton(
-          title: "En Clínica 👩‍⚕️",
-          subtitle: "Programa tu cita! 🤒",
+          title: "Ahorra tiempo! 👩‍⚕️",
+          subtitle: "Programa tu cita ahora 🤒",
           backgroundColor: ThemeProvider.lightColor,
           iconColor: ThemeProvider.white,
           icon: Icons.medical_information_outlined,
@@ -182,7 +184,7 @@ class HomeActionButton extends StatelessWidget {
           height: 180,
           margin: const EdgeInsets.only(left: 15, right: 15),
           decoration: BoxDecoration(
-              color: backgroundColor,
+              // color: ThemeProvider.secondColor,
               gradient: ThemeProvider.secondGradientColor,
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
@@ -194,14 +196,16 @@ class HomeActionButton extends StatelessWidget {
               ]),
           child: Stack(
             children: [
-              // ClipRRect(
-              //   borderRadius: BorderRadius.circular(10),
-              //   child: const Image(
-              //     width: double.infinity,
-              //     fit: BoxFit.cover,
-              //     image: AssetImage('assets/images/bgGolden.png'),
-              //   ),
-              // ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: const FadeInImage(
+                  width: double.infinity,
+                  height: double.infinity,
+                  placeholder: AssetImage('assets/loading.gif'),
+                  image: AssetImage('assets/images/bgHospital2.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -228,6 +232,8 @@ class HomeActionButton extends StatelessWidget {
                     const SizedBox(height: 30),
                     Text(
                       title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 22,
@@ -245,6 +251,8 @@ class HomeActionButton extends StatelessWidget {
                     const SizedBox(height: 5),
                     Text(
                       subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: iconColor,
                         fontSize: 20,
