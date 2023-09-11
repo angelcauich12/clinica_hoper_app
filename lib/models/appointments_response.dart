@@ -216,6 +216,14 @@ class Doctor {
         "consulting_rooms":
             List<dynamic>.from(consultingRooms.map((x) => x.toMap())),
       };
+
+  // @override
+  // bool operator ==(other) {
+  //   return other is Doctor && id == other.id;
+  // }
+
+  // @override
+  // int get hashCode => id.hashCode;
 }
 
 class Patient {
@@ -369,6 +377,7 @@ class Specialty {
   dynamic description;
   String createdAt;
   String updatedAt;
+  List<Doctor>? doctors;
 
   Specialty({
     required this.id,
@@ -376,6 +385,7 @@ class Specialty {
     required this.description,
     required this.createdAt,
     required this.updatedAt,
+    this.doctors,
   });
 
   factory Specialty.fromJson(String str) => Specialty.fromMap(json.decode(str));
@@ -388,6 +398,9 @@ class Specialty {
         description: json["description"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
+        doctors: json["doctors"] == null
+            ? []
+            : List<Doctor>.from(json["doctors"]!.map((x) => Doctor.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -396,6 +409,9 @@ class Specialty {
         "description": description,
         "created_at": createdAt,
         "updated_at": updatedAt,
+        "doctors": doctors == null
+            ? []
+            : List<dynamic>.from(doctors!.map((x) => x.toMap())),
       };
 }
 

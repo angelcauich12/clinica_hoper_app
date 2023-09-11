@@ -14,7 +14,6 @@ import '../models/models.dart';
 class AppointmentProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  int specialty = 1;
   String gender = 'F';
   String startDate = '';
   TimeOfDay startTime = const TimeOfDay(hour: 00, minute: 00);
@@ -34,6 +33,11 @@ class AppointmentProvider extends ChangeNotifier {
   List<Appointment> reservadasList = [];
   List<Appointment> confirmadasList = [];
   List<Appointment> atendidasYCanceladasList = [];
+  List<Specialty>? specialties = [];
+  String? specialtySelected;
+  List<Doctor>? doctors = [];
+  String? _doctorSelected;
+
   late MyAppointments appointmentResponse;
   ServerResponse? serverResponse;
   bool result = false;
@@ -45,6 +49,13 @@ class AppointmentProvider extends ChangeNotifier {
 
   set isLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  String? get doctorSelected => _doctorSelected;
+
+  set doctorSelected(String? value) {
+    _doctorSelected = value;
     notifyListeners();
   }
 
@@ -338,6 +349,115 @@ class AppointmentProvider extends ChangeNotifier {
       notifyListeners();
     }
     return result;
+  }
+
+  Future<bool> getData() async {
+    print('Peticion API');
+    _endPoint = '/api/v1/get-data';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      isLoading = true;
+      result = false;
+
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Data ${response.body}');
+          final dataResponse = DataResponse.fromJson(response.body);
+          specialties = dataResponse.specialties;
+          print('specialties $specialties');
+          notifyListeners();
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message?.substring(0, 60) ??
+                  'Error Desconocido.');
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          // print(serverResponse);
+          print('422: ${response.body}');
+          break;
+        case 500:
+          isLoading = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future getSpecialtyDoctors() async {
+    print(doctors);
+    final specialty = specialties!.firstWhere(
+        (specialty) => specialty.id.toString() == specialtySelected);
+    doctors = [];
+    doctorSelected = null;
+    if (doctors!.isEmpty) {
+      doctors = specialty.doctors!.toList();
+    }
+    notifyListeners();
   }
 
   Future logout() async {

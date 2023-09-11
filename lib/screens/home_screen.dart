@@ -21,9 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final appointmentProvider =
         Provider.of<AppointmentProvider>(context, listen: false);
-    if (appointmentProvider.appointments.isEmpty) {
-      appointmentProvider.getAppointments();
-    }
+    getData(appointmentProvider);
     User apiUser = User.fromJson(Preferences.apiUser);
 
     return Scaffold(
@@ -35,7 +33,8 @@ class _HomeScreenState extends State<HomeScreen> {
             _homeGreetings(
               apiUser: apiUser,
             ),
-            (apiUser.medicalHistory == null)
+            (apiUser.medicalHistory == null &&
+                    apiUser.miPerfil.nombre == 'Patient')
                 ? Column(
                     children: [
                       const SizedBox(height: 35),
@@ -60,6 +59,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void getData(AppointmentProvider appointmentProvider) async {
+    await appointmentProvider.getData();
+    if (appointmentProvider.appointments.isEmpty) {
+      await appointmentProvider.getAppointments();
+    }
   }
 }
 
@@ -138,8 +144,8 @@ class _homeButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         HomeActionButton(
-          title: "Ahorra tiempo! 👩‍⚕️",
-          subtitle: "Programa tu cita ahora 🤒",
+          title: "¡Ahorra tiempo! 👩‍⚕️",
+          subtitle: "Programa tu cita ahora",
           backgroundColor: ThemeProvider.lightColor,
           iconColor: ThemeProvider.white,
           icon: Icons.medical_information_outlined,
