@@ -38,8 +38,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: Text(
           'Configuración',
           style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+            fontFamily: 'Roboto',
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
             color: Preferences.isDarkMode
                 ? ThemeProvider.white
                 : ThemeProvider.brown,

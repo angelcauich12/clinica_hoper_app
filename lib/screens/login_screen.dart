@@ -140,7 +140,11 @@ onGoogleSignIn(BuildContext context, googleApiService) async {
     );
   } else {
     final result = await googleApiService.loginOrRegisterUser(
-        user.displayName!, user.email, user.photoUrl!, null);
+      user.displayName!,
+      user.email,
+      user.photoUrl!,
+      null,
+    );
 
     if (result != false) {
       // ignore: use_build_context_synchronously
@@ -259,10 +263,13 @@ class _LoginForm extends StatelessWidget {
 
                   oneSignalProvider.saveUpdateId();
                   loginForm.isLoading = false;
-                  // ignore: use_build_context_synchronously
-                  Navigator.pushReplacementNamed(
-                    context,
-                    Home.routeName,
+                  Future.microtask(
+                    () {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        Home.routeName,
+                      );
+                    },
                   );
                 },
           shape: RoundedRectangleBorder(

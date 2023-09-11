@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hope_app/models/appointments_response.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -105,18 +104,26 @@ class AppointmentCardHeader extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
-                Text(
-                  "${appointment.type} - ${appointment.specialty.name}",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Roboto',
-                    color: Preferences.isDarkMode
-                        ? Colors.grey
-                        : Colors.grey.shade500,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "${appointment.type} - ${appointment.specialty.name}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Roboto',
+                        color: Preferences.isDarkMode
+                            ? Colors.grey
+                            : Colors.grey.shade500,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    (appointment.status.name == 'Cancelada')
+                        ? const CanceledLabel()
+                        : Container(),
+                  ],
                 ),
               ],
             ),
@@ -132,7 +139,8 @@ class AppointmentCardHeader extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      (appointment.status.name != 'Confirmada')
+                      (appointment.status.name != 'Confirmada' &&
+                              appointment.status.name != 'Atendida')
                           ? ButtonSheetOpt(
                               title: 'Confirmar Cita',
                               icon: Icons.thumb_up_outlined,
@@ -152,15 +160,17 @@ class AppointmentCardHeader extends StatelessWidget {
                               iconColor: ThemeProvider.green,
                             )
                           : Container(),
-                      ButtonSheetOpt(
-                        title: 'Cancelar Cita',
-                        icon: Icons.thumb_down_outlined,
-                        onTap: () {
-                          Navigator.pop(context);
-                          showCancelAppointment(context);
-                        },
-                        iconColor: ThemeProvider.lightRed,
-                      ),
+                      (appointment.status.name != 'Atendida')
+                          ? ButtonSheetOpt(
+                              title: 'Cancelar Cita',
+                              icon: Icons.thumb_down_outlined,
+                              onTap: () {
+                                Navigator.pop(context);
+                                showCancelAppointment(context);
+                              },
+                              iconColor: ThemeProvider.lightRed,
+                            )
+                          : Container(),
                       (appointment.status.name != 'Atendida' ||
                               appointment.status.name != 'Cancelada')
                           ? ButtonSheetOpt(
@@ -194,6 +204,9 @@ class AppointmentCardHeader extends StatelessWidget {
   }
 
   Future<String?> showCancelAppointment(BuildContext context) {
+    final cancelForm =
+        Provider.of<CancelAppointmentFormProvider>(context, listen: false);
+
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -220,20 +233,27 @@ class AppointmentCardHeader extends StatelessWidget {
                 ),
               ),
               Form(
+                  key: cancelForm.formKey,
                   child: Column(
-                children: [
-                  TextFormField(
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Motivo de Cancelación',
-                      hintStyle: TextStyle(
-                        fontSize: 12,
+                    children: [
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        autocorrect: false,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecorations.authInputDecoration(
+                          color: Colors.grey[350]!,
+                          hintText: 'Motivo de Cancelación',
+                          labelText: 'Justificación',
+                        ),
+                        onChanged: (value) => cancelForm.justification = value,
+                        validator: (value) {
+                          return (value != null && value.length >= 3)
+                              ? null
+                              : 'Escriba una justificación para cancelar';
+                        },
                       ),
-                    ),
-                    style: TextStyle(),
-                  ),
-                ],
-              ))
+                    ],
+                  ))
             ],
           ),
         ),
@@ -260,7 +280,7 @@ class AppointmentCardHeader extends StatelessWidget {
                 ThemeProvider.secondColor,
               ),
             ),
-            onPressed: () => Navigator.pop(context, 'Confirmar'),
+            onPressed: () => cancelAppointment(context, cancelForm),
             child: Text(
               'Confirmar',
               style: TextStyle(
@@ -273,6 +293,18 @@ class AppointmentCardHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  cancelAppointment(context, cancelProvider) {
+    final appointmentProvider = Provider.of<AppointmentProvider>(
+      context,
+      listen: false,
+    );
+    appointmentProvider.cancelAppointment(
+      '${appointment.id}',
+      cancelProvider.justification,
+    );
+    Navigator.pop(context, 'Confirmar');
   }
 }
 
@@ -403,6 +435,33 @@ class ButtonSheetOpt extends StatelessWidget {
         style: const TextStyle(
           fontFamily: 'Roboto',
           fontSize: 14,
+        ),
+      ),
+    );
+  }
+}
+
+class CanceledLabel extends StatelessWidget {
+  const CanceledLabel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: ThemeProvider.lightRed,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 5,
+        vertical: 2,
+      ),
+      child: Text(
+        'Cancelada',
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Roboto',
+          color: ThemeProvider.white,
         ),
       ),
     );

@@ -31,7 +31,7 @@ class CustomDrawer extends StatelessWidget {
           onTap: () => Navigator.pushNamed(context, ProfileScreen.routeName),
           child: Container(
             decoration: BoxDecoration(
-              color: ThemeProvider.thirdColor,
+              color: ThemeProvider.secondColor,
             ),
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top,
@@ -40,11 +40,27 @@ class CustomDrawer extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const CircleAvatar(
-                  maxRadius: 45,
-                  backgroundImage:
-                      AssetImage('assets/images/user-icon-trans.png'),
-                ),
+                // const CircleAvatar(
+                //   maxRadius: 45,
+                //   backgroundImage:
+                //       AssetImage('assets/images/user-icon-trans.png'),
+                // ),
+                (apiUser.image == null)
+                    ? const CircleAvatar(
+                        radius: 50,
+                        backgroundImage:
+                            AssetImage('assets/images/user-icon.png'),
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: FadeInImage(
+                          fit: BoxFit.cover,
+                          width: 100,
+                          height: 100,
+                          placeholder: const AssetImage('assets/loading.gif'),
+                          image: NetworkImage(apiUser.image!),
+                        ),
+                      ),
                 const SizedBox(height: 5),
                 Text(
                   apiUser.name,

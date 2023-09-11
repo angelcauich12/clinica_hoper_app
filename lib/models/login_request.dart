@@ -7,12 +7,14 @@ class AuthDataRequest {
   String email;
   String image;
   dynamic phone;
+  bool isMerge;
 
   AuthDataRequest({
     required this.name,
     required this.email,
     required this.image,
     required this.phone,
+    required this.isMerge,
   });
 
   factory AuthDataRequest.fromJson(String str) =>
@@ -25,6 +27,7 @@ class AuthDataRequest {
         email: json["email"],
         image: json["image"],
         phone: json["phone"],
+        isMerge: json["is_merge"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -32,5 +35,6 @@ class AuthDataRequest {
         "email": email,
         "image": image,
         "phone": phone,
+        "is_merge": isMerge,
       };
 }

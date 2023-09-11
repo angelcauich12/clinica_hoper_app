@@ -16,13 +16,14 @@ class AuthTokenScreen extends StatelessWidget {
     final authService = Provider.of<AuthService>(context);
 
     return Scaffold(
-      backgroundColor: ThemeProvider.lightColor,
+      backgroundColor: ThemeProvider.secondColor,
       body: Center(
         child: FutureBuilder(
           future: authService.getToken(),
           builder: ((context, snapshot) {
-            if (!snapshot.hasData)
+            if (!snapshot.hasData) {
               return const CircularProgressIndicator.adaptive();
+            }
 
             if (snapshot.data == '') {
               if (Preferences.apiUser == '') {

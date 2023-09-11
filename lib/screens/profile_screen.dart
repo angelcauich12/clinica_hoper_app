@@ -42,10 +42,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const CircleAvatar(
-                  radius: 70,
-                  backgroundImage: AssetImage('assets/user1.png'),
-                ),
+                // const CircleAvatar(
+                //   radius: 70,
+                //   backgroundImage: AssetImage('assets/user1.png'),
+                // ),
+                (apiUser.image == null)
+                    ? const CircleAvatar(
+                        radius: 70,
+                        backgroundImage:
+                            AssetImage('assets/images/user-icon.png'),
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: FadeInImage(
+                          fit: BoxFit.cover,
+                          width: 100,
+                          height: 100,
+                          placeholder: const AssetImage('assets/loading.gif'),
+                          image: NetworkImage(apiUser.image!),
+                        ),
+                      ),
                 const SizedBox(height: 20),
                 Text(
                   getCapitalizedString(

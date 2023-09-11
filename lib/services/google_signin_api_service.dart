@@ -18,6 +18,22 @@ class GoogleSignInAPiService extends ChangeNotifier {
   ServerResponse? serverResponse;
   bool result = false;
   bool _isLoading = false;
+  bool _isMerge = false;
+
+  bool get isMerge => _isMerge;
+
+  set isMerge(bool value) {
+    _isMerge = value;
+    notifyListeners();
+  }
+
+  String _btnLabel = 'Registrarme';
+
+  String get btnLabel => _btnLabel;
+
+  set btnLabel(String value) {
+    _btnLabel = value;
+  }
 
   final NavigationService _navigationService = locator<NavigationService>();
 
@@ -37,11 +53,7 @@ class GoogleSignInAPiService extends ChangeNotifier {
       _googleSignIn.disconnect();
 
   Future<bool?> loginOrRegisterUser(
-    String displayName,
-    String email,
-    String photoUrl,
-    String? phone,
-  ) async {
+      String displayName, String email, String photoUrl, String? phone) async {
     _endPoint = '/api/google-sign-in';
 
     Map<String, String> headers = {
@@ -49,15 +61,13 @@ class GoogleSignInAPiService extends ChangeNotifier {
       'Accept': 'application/json',
     };
 
-    // final Map<String, dynamic> authData = {
-    //   'name': displayName,
-    //   'email': email,
-    //   'image': photoUrl,
-    //   'phone': phone,
-    // };
-
     final AuthDataRequest authData = AuthDataRequest(
-        name: displayName, email: email, image: photoUrl, phone: phone);
+      name: displayName,
+      email: email,
+      image: photoUrl,
+      phone: phone,
+      isMerge: isMerge,
+    );
 
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
@@ -67,6 +77,7 @@ class GoogleSignInAPiService extends ChangeNotifier {
           .post(url, headers: headers, body: authData.toJson())
           .timeout(const Duration(seconds: 30));
 
+      print('Response*************: ${response.body}');
       final Map<String, dynamic> decodedResp = json.decode(response.body);
 
       switch (response.statusCode) {
@@ -87,8 +98,16 @@ class GoogleSignInAPiService extends ChangeNotifier {
           result = false;
           print('400: ${response.body}');
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(serverResponse?.message ?? 'Error 400!');
-          notifyListeners();
+          Notifications.showSnackBarWithButton(
+            serverResponse?.message ?? 'Error 400!',
+            () {
+              btnLabel = 'Reemplazar y Registrar';
+              isMerge = true;
+              notifyListeners();
+            },
+            'Reemplazar',
+          );
+
           break;
         case 401:
           print('401: ${response.body}');
@@ -96,9 +115,10 @@ class GoogleSignInAPiService extends ChangeNotifier {
             print('logout');
             break;
           }
+          serverResponse = ServerResponse.fromJson(response.body);
           isLoading = false;
           result = false;
-          serverResponse = ServerResponse.fromJson(response.body);
+          logout();
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           notifyListeners();
@@ -117,10 +137,11 @@ class GoogleSignInAPiService extends ChangeNotifier {
           isLoading = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Error Desconocido.');
+          // Notifications.showSnackBar(
+          //     serverResponse?.message ?? 'Error Desconocido.');
           print('406: ${response.body}');
           logoutGoogle();
+          btnLabel = 'Registrarme';
           _navigationService.navigateNamedTo(
               PhoneRequiredScreen.routeName, authData);
           notifyListeners();
@@ -128,9 +149,21 @@ class GoogleSignInAPiService extends ChangeNotifier {
         case 422:
           isLoading = false;
           result = false;
-          // serverResponse = ServerResponse.fromJson(response.body);
-          // Notifications.showSnackBar(
-          //     serverResponse?.message ?? 'Error Desconocido.');
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
           notifyListeners();
           // print(serverResponse);
           print('422: ${response.body}');
@@ -161,5 +194,6 @@ class GoogleSignInAPiService extends ChangeNotifier {
   Future logout() async {
     await storage.deleteAll();
     Preferences.apiUser = '';
+    _navigationService.navigateNamedTo(LoginScreen.routeName, null);
   }
 }

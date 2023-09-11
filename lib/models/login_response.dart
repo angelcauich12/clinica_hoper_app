@@ -50,10 +50,11 @@ class User {
     this.phone,
     this.image,
     required this.status,
-    required this.isGoogle,
+    this.isGoogle,
     required this.createdAt,
     this.deviceToken,
     required this.miPerfil,
+    this.medicalHistory,
   });
 
   int id;
@@ -64,10 +65,11 @@ class User {
   int role;
   String? phone;
   int status;
-  int isGoogle;
+  int? isGoogle;
   String createdAt;
   String? deviceToken;
   MiPerfil miPerfil;
+  MedicalHistory? medicalHistory;
 
   factory User.fromJson(String str) => User.fromMap(json.decode(str));
 
@@ -86,6 +88,9 @@ class User {
         createdAt: json["created_at"],
         deviceToken: json["device_token"],
         miPerfil: MiPerfil.fromMap(json["mi_perfil"]),
+        medicalHistory: json["medical_history"] == null
+            ? null
+            : MedicalHistory.fromMap(json["medical_history"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -101,6 +106,7 @@ class User {
         "created_at": createdAt,
         "device_token": deviceToken,
         "mi_perfil": miPerfil.toMap(),
+        "medical_history": medicalHistory?.toMap(),
       };
 }
 
@@ -137,5 +143,185 @@ class MiPerfil {
         "descripcion": descripcion,
         "visible": visible,
         "estatus": estatus,
+      };
+}
+
+class MedicalHistory {
+  int? id;
+  int? patientId;
+  DateTime? fechaNacimiento;
+  int? edad;
+  String? genero;
+  String? ocupacion;
+  String? estadoCivil;
+  String? domicilio;
+  String? ciudad;
+  String? estado;
+  String? codigoPostal;
+  String? telefono;
+  String? celular;
+  String? horarioContacto;
+  String? contactoNombre;
+  String? contactoParentesco;
+  String? contactoTelefono;
+  String? contactoCelular;
+  dynamic motivoConsulta;
+  dynamic alertas;
+  dynamic otrasAlteraciones;
+  dynamic firma;
+  int? tomaMedicamentos;
+  int? alergias;
+  int? cardiopatias;
+  int? coagulopatias;
+  int? alteracionPresionArterial;
+  int? embarazo;
+  int? diabetes;
+  int? hepatitis;
+  int? fiebreReumatica;
+  int? enfermedadesRenales;
+  int? inmunosupresion;
+  int? trastornosRespiratorios;
+  int? trastornosGastricos;
+  int? epilepsia;
+  int? bebeAlcohol;
+  int? fuma;
+  String? createdAt;
+  String? updatedAt;
+
+  MedicalHistory({
+    this.id,
+    this.patientId,
+    this.fechaNacimiento,
+    this.edad,
+    this.genero,
+    this.ocupacion,
+    this.estadoCivil,
+    this.domicilio,
+    this.ciudad,
+    this.estado,
+    this.codigoPostal,
+    this.telefono,
+    this.celular,
+    this.horarioContacto,
+    this.contactoNombre,
+    this.contactoParentesco,
+    this.contactoTelefono,
+    this.contactoCelular,
+    this.motivoConsulta,
+    this.alertas,
+    this.otrasAlteraciones,
+    this.firma,
+    this.tomaMedicamentos,
+    this.alergias,
+    this.cardiopatias,
+    this.coagulopatias,
+    this.alteracionPresionArterial,
+    this.embarazo,
+    this.diabetes,
+    this.hepatitis,
+    this.fiebreReumatica,
+    this.enfermedadesRenales,
+    this.inmunosupresion,
+    this.trastornosRespiratorios,
+    this.trastornosGastricos,
+    this.epilepsia,
+    this.bebeAlcohol,
+    this.fuma,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory MedicalHistory.fromJson(String str) =>
+      MedicalHistory.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory MedicalHistory.fromMap(Map<String, dynamic> json) => MedicalHistory(
+        id: json["id"],
+        patientId: json["patient_id"],
+        fechaNacimiento: json["fecha_nacimiento"] == null
+            ? null
+            : DateTime.parse(json["fecha_nacimiento"]),
+        edad: json["edad"],
+        genero: json["genero"],
+        ocupacion: json["ocupacion"],
+        estadoCivil: json["estado_civil"],
+        domicilio: json["domicilio"],
+        ciudad: json["ciudad"],
+        estado: json["estado"],
+        codigoPostal: json["codigo_postal"],
+        telefono: json["telefono"],
+        celular: json["celular"],
+        horarioContacto: json["horario_contacto"],
+        contactoNombre: json["contacto_nombre"],
+        contactoParentesco: json["contacto_parentesco"],
+        contactoTelefono: json["contacto_telefono"],
+        contactoCelular: json["contacto_celular"],
+        motivoConsulta: json["motivo_consulta"],
+        alertas: json["alertas"],
+        otrasAlteraciones: json["otras_alteraciones"],
+        firma: json["firma"],
+        tomaMedicamentos: json["toma_medicamentos"],
+        alergias: json["alergias"],
+        cardiopatias: json["cardiopatias"],
+        coagulopatias: json["coagulopatias"],
+        alteracionPresionArterial: json["alteracion_presion_arterial"],
+        embarazo: json["embarazo"],
+        diabetes: json["diabetes"],
+        hepatitis: json["hepatitis"],
+        fiebreReumatica: json["fiebre_reumatica"],
+        enfermedadesRenales: json["enfermedades_renales"],
+        inmunosupresion: json["inmunosupresion"],
+        trastornosRespiratorios: json["trastornos_respiratorios"],
+        trastornosGastricos: json["trastornos_gastricos"],
+        epilepsia: json["epilepsia"],
+        bebeAlcohol: json["bebe_alcohol"],
+        fuma: json["fuma"],
+        createdAt: json["created_at"],
+        updatedAt: json["updated_at"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "patient_id": patientId,
+        "fecha_nacimiento":
+            "${fechaNacimiento!.year.toString().padLeft(4, '0')}-${fechaNacimiento!.month.toString().padLeft(2, '0')}-${fechaNacimiento!.day.toString().padLeft(2, '0')}",
+        "edad": edad,
+        "genero": genero,
+        "ocupacion": ocupacion,
+        "estado_civil": estadoCivil,
+        "domicilio": domicilio,
+        "ciudad": ciudad,
+        "estado": estado,
+        "codigo_postal": codigoPostal,
+        "telefono": telefono,
+        "celular": celular,
+        "horario_contacto": horarioContacto,
+        "contacto_nombre": contactoNombre,
+        "contacto_parentesco": contactoParentesco,
+        "contacto_telefono": contactoTelefono,
+        "contacto_celular": contactoCelular,
+        "motivo_consulta": motivoConsulta,
+        "alertas": alertas,
+        "otras_alteraciones": otrasAlteraciones,
+        "firma": firma,
+        "toma_medicamentos": tomaMedicamentos,
+        "alergias": alergias,
+        "cardiopatias": cardiopatias,
+        "coagulopatias": coagulopatias,
+        "alteracion_presion_arterial": alteracionPresionArterial,
+        "embarazo": embarazo,
+        "diabetes": diabetes,
+        "hepatitis": hepatitis,
+        "fiebre_reumatica": fiebreReumatica,
+        "enfermedades_renales": enfermedadesRenales,
+        "inmunosupresion": inmunosupresion,
+        "trastornos_respiratorios": trastornosRespiratorios,
+        "trastornos_gastricos": trastornosGastricos,
+        "epilepsia": epilepsia,
+        "bebe_alcohol": bebeAlcohol,
+        "fuma": fuma,
+        "created_at": createdAt,
+        "updated_at": updatedAt,
       };
 }

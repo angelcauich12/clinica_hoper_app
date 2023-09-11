@@ -33,14 +33,20 @@ class _HomeScreenState extends State<HomeScreen> {
             _homeGreetings(
               apiUser: apiUser,
             ),
-            const SizedBox(height: 35),
-            DangerMessageWithButton(
-              color: ThemeProvider.blue.withOpacity(0.3),
-              paragraph1: 'Su expediente clínico no está completo.',
-              paragraph2: 'Rellenar el formulario',
-              title: 'Estimado Paciente',
-              btnTitle: 'Completar mi expediente',
-            ),
+            (apiUser.medicalHistory == null)
+                ? Column(
+                    children: [
+                      const SizedBox(height: 35),
+                      DangerMessageWithButton(
+                        color: ThemeProvider.blue.withOpacity(0.3),
+                        title: 'Estimado Paciente',
+                        paragraph1: 'Su expediente clínico no está completo.',
+                        paragraph2: 'Rellenar el formulario',
+                        btnTitle: 'Completar mi expediente',
+                      ),
+                    ],
+                  )
+                : Container(),
             const SizedBox(height: 25),
             const _homeButtons(),
             const SizedBox(height: 25),

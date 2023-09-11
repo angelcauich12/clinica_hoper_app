@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
@@ -15,6 +17,12 @@ class PhoneRequiredScreen extends StatelessWidget {
     final registerForm = Provider.of<SocialMediaFormProvider>(context);
     final Color myColor = ThemeProvider.thirdColor;
     final size = MediaQuery.of(context).size;
+    final oneSignalProvider = Provider.of<OneSignalProvider>(context);
+
+    Timer(
+      const Duration(seconds: 10),
+      () => oneSignalProvider.setOneSignalId(),
+    );
 
     final authData =
         ModalRoute.of(context)!.settings.arguments as AuthDataRequest?;
@@ -41,6 +49,7 @@ class PhoneRequiredScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text('${googleApiService.isMerge}'),
             (authData?.image == null)
                 ? const CircleAvatar(
                     radius: 50,
@@ -103,7 +112,7 @@ class PhoneRequiredScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 15),
                     MaterialButton(
-                      onPressed: registerForm.isLoading
+                      onPressed: googleApiService.isLoading
                           ? null
                           : () async {
                               if (!registerForm.isValidForm()) return;
@@ -123,6 +132,7 @@ class PhoneRequiredScreen extends StatelessWidget {
                                 // ignore: use_build_context_synchronously
                                 print(
                                     '*************************** TODO EXCELENTE ***********************');
+                                oneSignalProvider.saveUpdateId();
                                 Future.microtask(
                                   () {
                                     Navigator.pushReplacementNamed(
@@ -144,7 +154,7 @@ class PhoneRequiredScreen extends StatelessWidget {
                         child: Text(
                           googleApiService.isLoading
                               ? 'Registrando'
-                              : 'Regístrarme',
+                              : googleApiService.btnLabel,
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),

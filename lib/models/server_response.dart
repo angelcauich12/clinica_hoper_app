@@ -66,26 +66,63 @@ class ValidatorResponse {
 }
 
 class Errors {
-  Errors({
-    this.pedidos,
-    this.proveedor,
-  });
+  List<String>? id;
+  List<String>? name;
+  List<String>? email;
+  List<String>? image;
+  List<String>? phone;
+  List<String>? isMerge;
+  List<String>? justification;
 
-  List<String>? pedidos;
-  List<String>? proveedor;
+  Errors({
+    this.id,
+    this.name,
+    this.email,
+    this.image,
+    this.phone,
+    this.isMerge,
+    this.justification,
+  });
 
   factory Errors.fromJson(String str) => Errors.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
   factory Errors.fromMap(Map<String, dynamic> json) => Errors(
-        pedidos: List<String>.from(json["pedidos"].map((x) => x)),
-        proveedor: List<String>.from(json["proveedor"].map((x) => x)),
+        id: json["id"] == null
+            ? []
+            : List<String>.from(json["id"]!.map((x) => x)),
+        isMerge: json["is_merge"] == null
+            ? []
+            : List<String>.from(json["is_merge"]!.map((x) => x)),
+        name: json["name"] == null
+            ? []
+            : List<String>.from(json["name"]!.map((x) => x)),
+        email: json["email"] == null
+            ? []
+            : List<String>.from(json["email"]!.map((x) => x)),
+        image: json["image"] == null
+            ? []
+            : List<String>.from(json["image"]!.map((x) => x)),
+        phone: json["phone"] == null
+            ? []
+            : List<String>.from(json["phone"]!.map((x) => x)),
+        justification: json["justification"] == null
+            ? []
+            : List<String>.from(json["justification"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toMap() => {
-        "pedidos": List<dynamic>.from(pedidos!.map((x) => x)),
-        "proveedor": List<dynamic>.from(proveedor!.map((x) => x)),
+        "id": name == null ? [] : List<dynamic>.from(name!.map((x) => x)),
+        "is_merge":
+            isMerge == null ? [] : List<dynamic>.from(isMerge!.map((x) => x)),
+        "name": name == null ? [] : List<dynamic>.from(name!.map((x) => x)),
+        "email": email == null ? [] : List<dynamic>.from(email!.map((x) => x)),
+        "image": image == null ? [] : List<dynamic>.from(image!.map((x) => x)),
+        "phone": phone == null ? [] : List<dynamic>.from(phone!.map((x) => x)),
+        "justification": justification == null
+            ? []
+            : List<dynamic>.from(justification!.map((x) => x)),
       };
 }
 
