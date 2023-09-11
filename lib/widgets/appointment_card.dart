@@ -5,6 +5,7 @@ import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
+import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -140,7 +141,8 @@ class AppointmentCardHeader extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       (appointment.status.name != 'Confirmada' &&
-                              appointment.status.name != 'Atendida')
+                              appointment.status.name != 'Atendida' &&
+                              appointment.status.name != 'Cancelada')
                           ? ButtonSheetOpt(
                               title: 'Confirmar Cita',
                               icon: Icons.thumb_up_outlined,
@@ -160,7 +162,8 @@ class AppointmentCardHeader extends StatelessWidget {
                               iconColor: ThemeProvider.green,
                             )
                           : Container(),
-                      (appointment.status.name != 'Atendida')
+                      (appointment.status.name != 'Atendida' &&
+                              appointment.status.name != 'Cancelada')
                           ? ButtonSheetOpt(
                               title: 'Cancelar Cita',
                               icon: Icons.thumb_down_outlined,
@@ -435,33 +438,6 @@ class ButtonSheetOpt extends StatelessWidget {
         style: const TextStyle(
           fontFamily: 'Roboto',
           fontSize: 14,
-        ),
-      ),
-    );
-  }
-}
-
-class CanceledLabel extends StatelessWidget {
-  const CanceledLabel({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: ThemeProvider.lightRed,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 5,
-        vertical: 2,
-      ),
-      child: Text(
-        'Cancelada',
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'Roboto',
-          color: ThemeProvider.white,
         ),
       ),
     );
