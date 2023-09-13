@@ -18,8 +18,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
         slivers: [
           CustomAppBar(
             title: 'Detalles de la Cita',
-            image:
-                'https://i.tribune.com.pk/media/images/2225461-doctor-1589963876/2225461-doctor-1589963876.jpg',
+            image: 'assets/images/modules/appointmentDetails.jpg',
           ),
           SliverList(
             delegate: SliverChildListDelegate([

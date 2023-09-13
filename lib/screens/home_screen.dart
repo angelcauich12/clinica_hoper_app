@@ -63,9 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void getData(AppointmentProvider appointmentProvider) async {
     await appointmentProvider.getData();
-    if (appointmentProvider.appointments.isEmpty) {
-      await appointmentProvider.getAppointments();
-    }
+    await appointmentProvider.getAppointments();
   }
 }
 
@@ -358,7 +356,7 @@ class SpecialtyImageCard extends StatelessWidget {
                 width: double.infinity,
                 height: double.infinity,
                 placeholder: const AssetImage('assets/loading.gif'),
-                image: NetworkImage(specialty.image!),
+                image: AssetImage(specialty.image!),
                 fit: BoxFit.cover,
               ),
             ),
@@ -507,38 +505,32 @@ List<SpecialtyDTO> specialties = [
   SpecialtyDTO(
     title: "Odontología",
     subtitle: "Servicio integral a nuestros pacientes",
-    image:
-        "https://www.clinicalorenzo.com/wp-content/uploads/2019/02/estomatologia-odontologia-zaragoza-1030x577.jpg",
+    image: "assets/images/specialties/image01.jpg",
   ),
   SpecialtyDTO(
     title: "Ginecología",
     subtitle: "Consultas, control prenatal y atención de parto",
-    image:
-        "https://confiasalud.pe/wp-content/uploads/2022/05/ginecologia-1000x500.jpg",
+    image: "assets/images/specialties/image02.jpg",
   ),
   SpecialtyDTO(
     title: "Pediatría",
     subtitle:
         "Los mejores especialistas médicos cuidando la salud de tus hijos",
-    image:
-        "https://escuelaorigen.com/wp-content/uploads/Disen%CC%83o-sin-ti%CC%81tulo-92.jpg",
+    image: "assets/images/specialties/image03.jpg",
   ),
   SpecialtyDTO(
     title: "Alergología",
     subtitle: "Tratamos todo tipo de Alergias",
-    image:
-        "https://statics-diariomedico.uecdn.es/cms/styles/lista_portadilla/azblob/2021-12/asma2.jpg.webp?itok=x5k36ukv",
+    image: "assets/images/specialties/image04.jpg",
   ),
   SpecialtyDTO(
     title: "Nutrición",
     subtitle: "El Comienzo de la Salud",
-    image:
-        "https://physiosportsmx.com/wp-content/uploads/consulta-nutricional-foto.jpg",
+    image: "assets/images/specialties/image05.jpg",
   ),
   SpecialtyDTO(
     title: "Medicina General",
     subtitle: "Cuidamos la salud de tu familia",
-    image:
-        "https://centromedicopeninsular.com/wp-content/uploads/2020/03/service__details1.jpg",
+    image: "assets/images/specialties/image06.jpg",
   ),
 ];

@@ -13,11 +13,16 @@ import '../models/models.dart';
 
 class AppointmentProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> specialtyDropdownKey = GlobalKey<FormState>();
+  GlobalKey<FormState> intervalsDropdownKey = GlobalKey<FormState>();
+  GlobalKey<FormState> doctorDropdownKey = GlobalKey<FormState>();
 
   String gender = 'F';
-  String startDate = '';
-  TimeOfDay startTime = const TimeOfDay(hour: 00, minute: 00);
+  String? startDate;
+  // TimeOfDay startTime = const TimeOfDay(hour: 00, minute: 00);
+  String? startTime;
   TimeOfDay endTime = const TimeOfDay(hour: 00, minute: 00);
+  String description = '';
   String email = '';
   String password = '';
   String ocupation = '';
@@ -27,8 +32,9 @@ class AppointmentProvider extends ChangeNotifier {
   String phone = '';
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
-  String _endPoint = '/api/v1/get-appointments';
+  String _endPoint = '/api/v1/appointments';
   String jwtToken = '';
+  Appointment? appointment;
   List<Appointment> appointments = [];
   List<Appointment> reservadasList = [];
   List<Appointment> confirmadasList = [];
@@ -37,6 +43,9 @@ class AppointmentProvider extends ChangeNotifier {
   String? specialtySelected;
   List<Doctor>? doctors = [];
   String? _doctorSelected;
+  List<String>? morningIntervals = [];
+  List<String>? afternoonIntervals;
+  ScheduleIntervalsResponse? scheduleIntervalsResponse;
 
   late MyAppointments appointmentResponse;
   ServerResponse? serverResponse;
@@ -72,7 +81,7 @@ class AppointmentProvider extends ChangeNotifier {
 
   Future<bool> getAppointments() async {
     print('Peticion API');
-    _endPoint = '/api/v1/get-appointments';
+    _endPoint = '/api/v1/appointments';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
     print('Api Token: $jwtToken');
@@ -353,7 +362,7 @@ class AppointmentProvider extends ChangeNotifier {
 
   Future<bool> getData() async {
     print('Peticion API');
-    _endPoint = '/api/v1/get-data';
+    _endPoint = '/api/v1/appointments/catalogs';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -439,6 +448,219 @@ class AppointmentProvider extends ChangeNotifier {
     } catch (e) {
       print('Error $e');
       isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<bool> scheduleIntervals() async {
+    print('Peticion API get Hours');
+    _endPoint = '/api/v1/appointments/get-hours';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    final Map<String, dynamic> queryParameters = {
+      'id': doctorSelected,
+      'scheduled_date': startDate,
+    };
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      isLoading = true;
+      result = false;
+
+      final response = await http
+          .post(url, headers: headers, body: json.encode(queryParameters))
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Pedido ${response.body}');
+          scheduleIntervalsResponse =
+              ScheduleIntervalsResponse.fromJson(response.body);
+          morningIntervals =
+              scheduleIntervalsResponse?.doctorSchedule?.morningIntervals;
+          Notifications.showSnackBar(
+              'Horario del medico $doctorSelected obtenido correctamente.');
+          notifyListeners();
+          break;
+        case 401:
+          isLoading = false;
+          result = false;
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          // print(serverResponse);
+          print('422: ${response.body}');
+          break;
+        case 500:
+          isLoading = false;
+          result = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      Notifications.showSnackBar('$e');
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<bool> createAppointment() async {
+    print('Peticion API get Hours');
+    _endPoint = '/api/v1/appointments';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    final Map<String, dynamic> queryParameters = {
+      'id': doctorSelected,
+      'scheduled_date': startDate,
+      'scheduled_time': startTime,
+      'specialty_id': specialtySelected,
+      'doctor_id': doctorSelected,
+      'description': description,
+    };
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      isLoading = true;
+      result = false;
+
+      final response = await http
+          .post(url, headers: headers, body: json.encode(queryParameters))
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Pedido ${response.body}');
+          final appointmentCreatedResponse =
+              AppointmentCreatedResponse.fromJson(response.body);
+          reservadasList.add(appointmentCreatedResponse.appointment!);
+
+          Notifications.showSnackBar(appointmentCreatedResponse.message ??
+              'Su Cita ha sido creada correctamente.');
+          notifyListeners();
+          break;
+        case 401:
+          isLoading = false;
+          result = false;
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(serverResponse?.message ?? 'Error 404.');
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          // print(serverResponse);
+          print('422: ${response.body}');
+          break;
+        case 500:
+          isLoading = false;
+          result = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      Notifications.showSnackBar('$e');
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');

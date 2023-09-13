@@ -442,3 +442,43 @@ class Status {
         "descripcion": descripcion,
       };
 }
+
+class AppointmentCreatedResponse {
+  int? code;
+  String? status;
+  Appointment? appointment;
+  String? message;
+  String? conexion;
+
+  AppointmentCreatedResponse({
+    this.code,
+    this.status,
+    this.appointment,
+    this.message,
+    this.conexion,
+  });
+
+  factory AppointmentCreatedResponse.fromJson(String str) =>
+      AppointmentCreatedResponse.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory AppointmentCreatedResponse.fromMap(Map<String, dynamic> json) =>
+      AppointmentCreatedResponse(
+        code: json["code"],
+        status: json["status"],
+        appointment: json["appointment"] == null
+            ? null
+            : Appointment.fromMap(json["appointment"]),
+        message: json["message"],
+        conexion: json["conexion"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "code": code,
+        "status": status,
+        "appointment": appointment?.toMap(),
+        "message": message,
+        "conexion": conexion,
+      };
+}

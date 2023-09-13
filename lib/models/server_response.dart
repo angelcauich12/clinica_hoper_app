@@ -73,6 +73,7 @@ class Errors {
   List<String>? phone;
   List<String>? isMerge;
   List<String>? justification;
+  List<String>? description;
 
   Errors({
     this.id,
@@ -82,6 +83,7 @@ class Errors {
     this.phone,
     this.isMerge,
     this.justification,
+    this.description,
   });
 
   factory Errors.fromJson(String str) => Errors.fromMap(json.decode(str));
@@ -110,6 +112,9 @@ class Errors {
         justification: json["justification"] == null
             ? []
             : List<String>.from(json["justification"]!.map((x) => x)),
+        description: json["description"] == null
+            ? []
+            : List<String>.from(json["description"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toMap() => {
@@ -123,6 +128,9 @@ class Errors {
         "justification": justification == null
             ? []
             : List<dynamic>.from(justification!.map((x) => x)),
+        "description": description == null
+            ? []
+            : List<dynamic>.from(description!.map((x) => x)),
       };
 }
 

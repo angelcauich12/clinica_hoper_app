@@ -5,6 +5,7 @@ import 'package:hope_app/models/appointments_response.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
+import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -18,11 +19,10 @@ class CreateAppointmentScreen extends StatefulWidget {
 }
 
 class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
-  TextEditingController _dateController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
 
   @override
   void initState() {
-    // TODO: implement initState
     _dateController.text = '';
     super.initState();
   }
@@ -33,8 +33,10 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
       context,
       listen: false,
     );
+    final appointmentProv = Provider.of<AppointmentProvider>(context);
     final Color myColor = ThemeProvider.secondColor;
-    GlobalKey<FormState> dropdownKey = GlobalKey<FormState>();
+
+    final appointmentForm = Provider.of<AppointmentProvider>(context);
 
     return Scaffold(
       body: CustomScrollView(
@@ -48,7 +50,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Form(
-                  key: appointmentProvider.formKey,
+                  key: appointmentForm.formKey,
                   child: Column(
                     children: [
                       const SizedBox(height: 25),
@@ -67,8 +69,8 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                           const SizedBox(width: 15),
                           Expanded(
                             child: DropdownButtonFormField(
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
+                              key: appointmentForm.specialtyDropdownKey,
+                              // autovalidateMode: AutovalidateMode.onUserInteraction,
                               decoration: const InputDecoration(
                                 focusedBorder: InputBorder.none,
                                 border: InputBorder.none,
@@ -83,9 +85,9 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                 textAlign: TextAlign.center,
                               ),
                               isExpanded: false,
-                              value: appointmentProvider.specialtySelected,
-                              items: appointmentProvider.specialties
-                                  ?.map((specialty) {
+                              value: appointmentProv.specialtySelected,
+                              items:
+                                  appointmentProv.specialties?.map((specialty) {
                                 return DropdownMenuItem(
                                   alignment: Alignment.center,
                                   value: specialty.id.toString(),
@@ -96,21 +98,21 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                               }).toList(),
                               onChanged: (value) {
                                 print('Specialty Selected: $value');
+                                appointmentProv.specialtySelected = value;
                                 setState(() {
-                                  appointmentProvider.specialtySelected = value;
-                                  final Specialty specialty =
-                                      appointmentProvider.specialties!
-                                          .firstWhere((specialty) =>
-                                              specialty.id.toString() ==
-                                              appointmentProvider
-                                                  .specialtySelected);
-                                  appointmentProvider.doctors = [];
-                                  appointmentProvider.doctorSelected = null;
-                                  dropdownKey.currentState?.reset();
-                                  appointmentProvider.doctors =
+                                  final Specialty specialty = appointmentProv
+                                      .specialties!
+                                      .firstWhere((specialty) =>
+                                          specialty.id.toString() ==
+                                          appointmentProv.specialtySelected);
+                                  appointmentProv.doctors = [];
+                                  appointmentProv.doctorSelected = null;
+                                  appointmentForm.doctorDropdownKey.currentState
+                                      ?.reset();
+                                  appointmentProv.doctors =
                                       specialty.doctors!.toList();
                                 });
-                                print(appointmentProvider.doctors);
+                                print(appointmentProv.doctors);
                               },
                             ),
                           ),
@@ -132,7 +134,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                           Expanded(
                             flex: 2,
                             child: DropdownButtonFormField(
-                              key: dropdownKey,
+                              key: appointmentForm.doctorDropdownKey,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               decoration: const InputDecoration(
@@ -160,36 +162,16 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                   ),
                                 );
                               }).toList(),
-                              onChanged: (value) {
-                                print('Doctor Selected: $value');
-                                appointmentProvider.doctorSelected = value;
-                              },
+                              onChanged: (value) =>
+                                  appointmentProvider.doctorSelected = value,
                             ),
                           ),
                         ],
                       ),
                       TextFormField(
-                        autocorrect: false,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 3,
-                        maxLines: 4,
-                        decoration: InputDecorations.authInputDecoration(
-                            color: myColor,
-                            hintText:
-                                'Describa brevemente la razon de su visita',
-                            labelText: 'Descripción',
-                            suffixIcon: Icons.description_outlined),
-                        onChanged: (value) =>
-                            appointmentProvider.maritalStatus = value,
-                        validator: (value) {
-                          return (value != null && value.length >= 3)
-                              ? null
-                              : 'Estado civil debe contener más de 3 caracteres.';
-                        },
-                      ),
-                      const SizedBox(height: 15),
-                      TextFormField(
+                        autovalidateMode: (appointmentProv.isLoading)
+                            ? AutovalidateMode.always
+                            : AutovalidateMode.disabled,
                         controller: _dateController,
                         readOnly: true,
                         decoration: InputDecorations.authInputDecoration(
@@ -212,96 +194,156 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                             var formattedDate =
                                 DateFormat('yyyy-MM-dd').format(selectedDate);
                             print('si Se pudo ${formattedDate.toString()}');
-                            appointmentProvider.startDate = formattedDate;
+                            appointmentProv.startDate = formattedDate;
                             _dateController.text = formattedDate;
                           });
+                          final result =
+                              await appointmentProv.scheduleIntervals();
+                          print(
+                              'Result *********************************** $result');
+                          appointmentProv.startTime = null;
+                          appointmentForm.intervalsDropdownKey.currentState
+                              ?.reset();
+                          if (result == false) {
+                            appointmentProv.morningIntervals = [];
+                            Notifications.showSnackBar(appointmentProv
+                                    .serverResponse?.message
+                                    ?.substring(0, 50) ??
+                                'Error Desconocido.');
+                          }
+                        },
+                        validator: (value) {
+                          return (value != null && value.length >= 10)
+                              ? null
+                              : 'Debe escoger una fecha y un horario.';
                         },
                       ),
                       const SizedBox(height: 15),
                       Row(
                         children: [
-                          ExpandedTitle(title: 'Hora Inicial'),
-                          const SizedBox(width: 10),
-                          ExpandedTitle(title: 'Hora Final'),
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              'Horario',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: myColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            flex: 2,
+                            child: DropdownButtonFormField(
+                              key: appointmentForm.intervalsDropdownKey,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              decoration: const InputDecoration(
+                                focusedBorder: InputBorder.none,
+                                border: InputBorder.none,
+                              ),
+                              hint: const Text(
+                                'Selecciona...',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              isExpanded: true,
+                              value: appointmentProv.startTime,
+                              items: appointmentProv.morningIntervals!
+                                  .map((interval) {
+                                return DropdownMenuItem(
+                                  alignment: Alignment.center,
+                                  value: interval,
+                                  child: Text(
+                                    interval,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) =>
+                                  appointmentProv.startTime = value,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () async {
-                                TimeOfDay? newStartTime = await showTimePicker(
-                                    context: context,
-                                    initialTime: appointmentProvider.startTime);
-
-                                if (newStartTime == null) return; //if Cancel
-
-                                setState(() {
-                                  appointmentProvider.startTime = newStartTime;
-                                  appointmentProvider.endTime = newStartTime;
-                                });
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "${appointmentProvider.startTime.hour}:${appointmentProvider.startTime.minute}",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () async {
-                                TimeOfDay? newEndTime = await showTimePicker(
-                                    context: context,
-                                    initialTime: appointmentProvider.startTime);
-
-                                if (newEndTime == null) return; //if Cancel
-
-                                setState(() =>
-                                    appointmentProvider.endTime = newEndTime);
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "${appointmentProvider.endTime.hour}:${appointmentProvider.endTime.minute}",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      TextFormField(
+                        autocorrect: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 3,
+                        maxLines: 4,
+                        decoration: InputDecorations.authInputDecoration(
+                            color: myColor,
+                            hintText:
+                                'Describa brevemente la razón de su visita',
+                            labelText: 'Descripción',
+                            suffixIcon: Icons.description_outlined),
+                        onChanged: (value) =>
+                            appointmentProv.description = value,
+                        validator: (value) {
+                          return (value != null && value.length >= 3)
+                              ? null
+                              : 'La descripción debe contener más de 3 caracteres.';
+                        },
                       ),
                       const SizedBox(height: 35),
                       MaterialButton(
-                        onPressed: appointmentProvider.isLoading
+                        onPressed: (appointmentProv.isLoading)
                             ? null
                             : () async {
-                                if (!appointmentProvider.isValidForm()) return;
-                                appointmentProvider.isLoading = true;
+                                if (!appointmentProv.isValidForm()) return;
+                                appointmentProv.isLoading = true;
                                 FocusScope.of(context).unfocus();
 
                                 //hacer la peticion al backend
-                                print('Peticion al backend!!');
+                                final result =
+                                    await appointmentProv.createAppointment();
 
-                                appointmentProvider.isLoading = false;
+                                print('Result $result');
+                                if (!result) {
+                                  setState(() {
+                                    appointmentProv.startDate = null;
+                                    appointmentProv.morningIntervals = [];
+                                    appointmentForm
+                                        .intervalsDropdownKey.currentState
+                                        ?.reset();
+                                    appointmentForm.formKey.currentState
+                                        ?.reset();
+                                  });
+                                  _dateController.clear();
+                                } else {
+                                  setState(() {
+                                    appointmentProv.morningIntervals = [];
+                                    appointmentForm
+                                        .intervalsDropdownKey.currentState
+                                        ?.reset();
+
+                                    appointmentProv.startDate = null;
+                                    appointmentProv.doctors = [];
+                                    appointmentProv.doctorSelected = null;
+                                    appointmentForm
+                                        .doctorDropdownKey.currentState
+                                        ?.reset();
+
+                                    appointmentProv.specialtySelected = null;
+                                    appointmentForm
+                                        .specialtyDropdownKey.currentState
+                                        ?.reset();
+                                    appointmentForm.formKey.currentState
+                                        ?.reset();
+                                  });
+                                  _dateController.clear();
+
+                                  Notifications.showSnackBar(
+                                      'Cita creada correctamente.');
+                                }
+
+                                appointmentProv.isLoading = false;
                               },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),

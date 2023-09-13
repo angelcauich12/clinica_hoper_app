@@ -33,8 +33,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
         slivers: [
           CustomAppBar(
             title: 'Historial Clínico',
-            image:
-                'https://www.totalvoicetech.com/wp-content/uploads/medical-records.jpg',
+            image: 'assets/images/modules/medicalRecords.jpg',
           ),
           SliverList(
             delegate: SliverChildListDelegate([
