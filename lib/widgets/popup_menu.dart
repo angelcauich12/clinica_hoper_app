@@ -55,7 +55,12 @@ class PopupMenuList extends StatelessWidget {
               GoogleSignInAPiService.logoutGoogle();
             }
             // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            // Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            Future.microtask(
+              () {
+                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+              },
+            );
           },
         ),
       ],

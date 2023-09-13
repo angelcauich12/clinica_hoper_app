@@ -17,19 +17,10 @@ class AppointmentProvider extends ChangeNotifier {
   GlobalKey<FormState> intervalsDropdownKey = GlobalKey<FormState>();
   GlobalKey<FormState> doctorDropdownKey = GlobalKey<FormState>();
 
-  String gender = 'F';
   String? startDate;
-  // TimeOfDay startTime = const TimeOfDay(hour: 00, minute: 00);
   String? startTime;
-  TimeOfDay endTime = const TimeOfDay(hour: 00, minute: 00);
+  String? endTime;
   String description = '';
-  String email = '';
-  String password = '';
-  String ocupation = '';
-  String maritalStatus = '';
-  String contactName = '';
-  String contactPhone = '';
-  String phone = '';
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
   String _endPoint = '/api/v1/appointments';
@@ -46,11 +37,19 @@ class AppointmentProvider extends ChangeNotifier {
   List<String>? morningIntervals = [];
   List<String>? afternoonIntervals;
   ScheduleIntervalsResponse? scheduleIntervalsResponse;
-
   late MyAppointments appointmentResponse;
   ServerResponse? serverResponse;
   bool result = false;
   bool _isLoading = false;
+
+  String gender = 'F';
+  String email = '';
+  String password = '';
+  String ocupation = '';
+  String maritalStatus = '';
+  String contactName = '';
+  String contactPhone = '';
+  String phone = '';
 
   final NavigationService _navigationService = locator<NavigationService>();
 

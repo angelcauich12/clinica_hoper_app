@@ -16,52 +16,10 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: AuthBackground(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              CardContainer(
-                child: Column(
-                  children: [
-                    ChangeNotifierProvider(
-                      create: (context) => LoginFormProvider(),
-                      child: const _RegisterForm(),
-                    ),
-                    const SizedBox(height: 10),
-                    const _signInButton()
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _signInButton extends StatelessWidget {
-  const _signInButton({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      style: ButtonStyle(
-        shape: MaterialStateProperty.all(const StadiumBorder()),
-      ),
-      onPressed: () => Navigator.pushReplacementNamed(
-        context,
-        LoginScreen.routeName,
-      ),
-      child: Text(
-        '¿Ya tienes una cuenta?',
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-          color: Colors.grey[700],
+          child: _RegisterForm(),
         ),
       ),
     );
@@ -74,7 +32,6 @@ class _RegisterForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final width80 = (size.width * 0.15);
     final registerForm = Provider.of<RegisterFormProvider>(context);
     final Color myColor = ThemeProvider.secondColor;
 
@@ -85,175 +42,204 @@ class _RegisterForm extends StatelessWidget {
       () => oneSignalProvider.setOneSignalId(),
     );
 
-    return Container(
-      child: Form(
-        key: registerForm.registerFormKey,
-        child: Column(
-          children: [
-            Row(
+    return Column(
+      children: [
+        Container(
+          padding:
+              const EdgeInsets.only(left: 20, right: 20, bottom: 15, top: 15),
+          margin: const EdgeInsets.only(left: 30, right: 30),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                  color: const Color(0xff126276).withOpacity(0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10)),
+            ],
+          ),
+          child: Form(
+            key: registerForm.registerFormKey,
+            child: Column(
               children: [
-                Expanded(
-                  child: TextFormField(
-                    autocorrect: false,
-                    autofocus: true,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.name,
-                    decoration: InputDecorations.authInputDecoration(
-                      color: myColor,
-                      hintText: 'John',
+                TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  autocorrect: true,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecorations.authInputDecoration(
+                      color: Colors.grey[350]!,
+                      hintText: 'Mínimo 3 caracteres',
                       labelText: 'Nombre',
-                      // prefixIcon: Icons.person_pin_outlined,
-                    ),
-                    onChanged: (value) => registerForm.name = value,
-                    validator: (value) {
-                      return (value != null && value.length >= 3)
-                          ? null
-                          : 'Nombre debe contener más de 3 caracteres.';
-                    },
-                  ),
+                      prefixIcon: Icons.person_2_outlined),
+                  onChanged: (value) => registerForm.name = value,
+                  validator: (value) {
+                    return (value != null && value.length >= 3)
+                        ? null
+                        : 'Debe contener mínimo 3 caracteres';
+                  },
                 ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: TextFormField(
-                    autocorrect: false,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.name,
-                    decoration: InputDecorations.authInputDecoration(
-                      color: myColor,
-                      hintText: 'Doe',
+                const SizedBox(height: 10),
+                TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  autocorrect: true,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecorations.authInputDecoration(
+                      color: Colors.grey[350]!,
+                      hintText: 'Mínimo 3 caracteres',
                       labelText: 'Apellidos',
-                      // prefixIcon: Icons.person_pin_circle_outlined,
-                    ),
-                    onChanged: (value) => registerForm.lastName = value,
-                    validator: (value) {
-                      return (value != null && value.length >= 3)
-                          ? null
-                          : 'Nombre debe contener más de 3 caracteres.';
-                    },
-                  ),
+                      prefixIcon: Icons.person_4_outlined),
+                  onChanged: (value) => registerForm.lastName = value,
+                  validator: (value) {
+                    return (value != null && value.length >= 3)
+                        ? null
+                        : 'Debe contener mínimo 3 caracteres';
+                  },
                 ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  textCapitalization: TextCapitalization.none,
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecorations.authInputDecoration(
+                    color: Colors.grey[350]!,
+                    hintText: '999X-XXXXXX',
+                    labelText: 'Celular',
+                    prefixIcon: Icons.phone_android_outlined,
+                  ),
+                  onChanged: (value) => registerForm.phone = value,
+                  validator: (value) {
+                    String pattern =
+                        r'^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$';
+                    RegExp regExp = RegExp(pattern);
+                    return regExp.hasMatch(value ?? '')
+                        ? null
+                        : 'Número Inválido';
+                  },
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  autocorrect: false,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
+                  decoration: InputDecorations.authInputDecoration(
+                      color: Colors.grey[350]!,
+                      hintText: 'Mínimo 9 caracteres',
+                      labelText: 'Contraseña',
+                      prefixIcon: Icons.lock_outlined),
+                  onChanged: (value) => registerForm.password = value,
+                  validator: (value) {
+                    return (value != null && value.length >= 9)
+                        ? null
+                        : 'Debe contener 9 caracteres';
+                  },
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  autocorrect: false,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
+                  decoration: InputDecorations.authInputDecoration(
+                      color: Colors.grey[350]!,
+                      hintText: 'Mínimo 9 caracteres',
+                      labelText: 'Confirmar Contraseña',
+                      prefixIcon: Icons.lock_outlined),
+                  onChanged: (value) => registerForm.confirmPassword = value,
+                  validator: (value) {
+                    return (value != null &&
+                            value.length >= 9 &&
+                            value == registerForm.password)
+                        ? null
+                        : 'Las contraseñas no coinciden';
+                  },
+                ),
+                const SizedBox(height: 10),
               ],
             ),
-            // const SizedBox(height: 15),
-            const SizedBox(height: 15),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    autocorrect: false,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecorations.authInputDecoration(
-                      color: myColor,
-                      hintText: 'XXXX-XXXXXX',
-                      labelText: 'Teléfono',
-                      // prefixIcon: Icons.phone,
-                    ),
-                    onChanged: (value) => registerForm.phone = value,
-                    validator: (value) {
-                      return (value != null && value.length >= 3)
-                          ? null
-                          : 'Nombre debe contener más de 3 caracteres.';
-                    },
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: TextFormField(
-                    autocorrect: false,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecorations.authInputDecoration(
-                      color: myColor,
-                      hintText: 'john.doe@mail.com',
-                      labelText: 'Email',
-                      // prefixIcon: Icons.alternate_email_outlined,
-                    ),
-                    onChanged: (value) => registerForm.email = value,
-                    validator: (value) {
-                      String pattern =
-                          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                      RegExp regExp = RegExp(pattern);
-                      return regExp.hasMatch(value ?? '')
-                          ? null
-                          : 'Correo inválido.';
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            TextFormField(
-              autocorrect: false,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              keyboardType: TextInputType.visiblePassword,
-              obscureText: true,
-              decoration: InputDecorations.authInputDecoration(
-                  color: myColor,
-                  hintText: 'Mínimo 8 caracteres',
-                  labelText: 'Contraseña',
-                  prefixIcon: Icons.lock_outlined),
-              onChanged: (value) => registerForm.password = value,
-              validator: (value) {
-                return (value != null && value.length >= 8)
-                    ? null
-                    : 'Contraseña inválida.';
-              },
-            ),
-            const SizedBox(height: 15),
-            MaterialButton(
-              onPressed: registerForm.isLoading
-                  ? null
-                  : () async {
-                      if (!registerForm.isValidForm()) return;
-                      registerForm.isLoading = true;
-                      FocusScope.of(context).unfocus();
+          ),
+        ),
+        const SizedBox(
+          height: 25,
+        ),
+        MaterialButton(
+          onPressed: registerForm.isLoading
+              ? null
+              : () async {
+                  if (!registerForm.isValidForm()) return;
+                  registerForm.isLoading = true;
+                  FocusScope.of(context).unfocus();
 
-                      //hacer la peticion al backend para validar usuario
-                      final authService =
-                          Provider.of<AuthService>(context, listen: false);
-                      final String? registerMessage =
-                          await authService.registerUser(
-                              registerForm.name,
-                              registerForm.lastName,
-                              registerForm.email,
-                              registerForm.phone,
-                              registerForm.password);
+                  //hacer la peticion al backend para validar usuario
+                  final authService =
+                      Provider.of<AuthService>(context, listen: false);
+                  final bool? result = await authService.registerUser(
+                    registerForm.name,
+                    registerForm.lastName,
+                    registerForm.email,
+                    registerForm.phone,
+                    registerForm.password,
+                  );
 
-                      if (registerMessage != 'true') {
-                        print(
-                            'No se registro: ${registerForm.name}, ${registerForm.lastName}, ${registerForm.email}, ${registerForm.phone}, ${registerForm.password}');
+                  if (result != null && !result) {
+                    print(
+                        'No se registro: ${registerForm.name}, ${registerForm.lastName}, ${registerForm.email}, ${registerForm.password}, ${registerForm.phone},');
 
-                        Notifications.showSnackBar(registerMessage.toString());
-                        registerForm.isLoading = false;
-                        return;
-                      }
+                    // Notifications.showSnackBar(result.toString());
+                    registerForm.isLoading = false;
+                    return;
+                  }
 
-                      oneSignalProvider.saveUpdateId();
-                      registerForm.isLoading = false;
-                      // ignore: use_build_context_synchronously
+                  oneSignalProvider.saveUpdateId();
+                  registerForm.isLoading = false;
+                  Future.microtask(
+                    () {
                       Navigator.pushReplacementNamed(
                         context,
                         Home.routeName,
                       );
                     },
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              disabledColor: Colors.grey,
-              elevation: 0,
-              color: myColor,
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: width80, vertical: 15),
-                child: Text(
-                  registerForm.isLoading ? 'Espere' : 'Regístrame',
-                  style: const TextStyle(color: Colors.white),
-                ),
+                  );
+                },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          disabledColor: Colors.grey,
+          elevation: 0,
+          minWidth: size.width * 0.8,
+          color: myColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            child: Text(
+              registerForm.isLoading ? 'Espere' : 'Registrarme',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
-            )
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('¿Ya tienes cuenta?'),
+            TextButton(
+                onPressed: () => Navigator.pushReplacementNamed(
+                      context,
+                      LoginScreen.routeName,
+                    ),
+                child: const Text(
+                  'inicia sesión',
+                  style: TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold),
+                )),
           ],
         ),
-      ),
+        const SizedBox(height: 100),
+      ],
     );
   }
 }

@@ -32,8 +32,8 @@ class LoginScreen extends StatelessWidget {
               begin: Alignment.topCenter,
               colors: [
                 const Color(0xff126276).withAlpha(255),
-                const Color(0xff126276).withAlpha(230),
-                const Color(0xff126276).withAlpha(200),
+                const Color(0xff126276).withAlpha(240),
+                const Color(0xff126276).withAlpha(220),
               ],
             ),
           ),
@@ -95,7 +95,7 @@ class LoginScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('¿No estas registrado?'),
+                          const Text('¿No estás registrado?'),
                           TextButton(
                               onPressed: () => Navigator.pushReplacementNamed(
                                     context,
@@ -193,7 +193,7 @@ class _LoginForm extends StatelessWidget {
                 TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   textCapitalization: TextCapitalization.none,
-                  autocorrect: false,
+                  autocorrect: true,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecorations.authInputDecoration(
                     color: Colors.grey[350]!,
@@ -203,13 +203,13 @@ class _LoginForm extends StatelessWidget {
                   ),
                   onChanged: (value) => loginForm.email = value,
                   validator: (value) {
-                    // return (value != null) ? null : 'no válido.';
                     String pattern =
-                        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                        // r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                        r'^([0-9]{10})|([A-Za-z0-9._%\+\-]+@[a-z0-9.\-]+\.[a-z]{2,3})$';
                     RegExp regExp = RegExp(pattern);
                     return regExp.hasMatch(value ?? '')
                         ? null
-                        : 'Correo inválido';
+                        : 'Escriba un email ó 10 digitos para teléfono.';
                   },
                 ),
                 const SizedBox(height: 10),

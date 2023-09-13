@@ -3,7 +3,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
-import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
