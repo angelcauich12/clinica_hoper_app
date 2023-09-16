@@ -238,7 +238,7 @@ class _RegisterForm extends StatelessWidget {
                 )),
           ],
         ),
-        const SizedBox(height: 100),
+        const SizedBox(height: 50),
       ],
     );
   }

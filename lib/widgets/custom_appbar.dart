@@ -9,8 +9,10 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return SliverAppBar(
-      expandedHeight: 200,
+      expandedHeight: size.height * 0.15,
       backgroundColor: ThemeProvider.lightColor,
       floating: false,
       // pinned: true,
