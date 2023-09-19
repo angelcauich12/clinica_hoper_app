@@ -59,6 +59,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<ModuleScreenProvider>(
           create: (context) => ModuleScreenProvider(),
         ),
+        ChangeNotifierProvider<MedicalRecordsProvider>(
+          create: (context) => MedicalRecordsProvider(),
+        ),
         ChangeNotifierProvider<MedRecordsForm1Provider>(
           create: (context) => MedRecordsForm1Provider(),
         ),

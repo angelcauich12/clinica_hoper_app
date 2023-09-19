@@ -149,7 +149,7 @@ class MiPerfil {
 class MedicalHistory {
   int? id;
   int? patientId;
-  DateTime? fechaNacimiento;
+  String? fechaNacimiento;
   int? edad;
   String? genero;
   String? ocupacion;
@@ -165,6 +165,8 @@ class MedicalHistory {
   String? contactoParentesco;
   String? contactoTelefono;
   String? contactoCelular;
+  String? medicamentosTextarea;
+  String? alergiasTextarea;
   dynamic motivoConsulta;
   dynamic alertas;
   dynamic otrasAlteraciones;
@@ -207,6 +209,8 @@ class MedicalHistory {
     this.contactoParentesco,
     this.contactoTelefono,
     this.contactoCelular,
+    this.medicamentosTextarea,
+    this.alergiasTextarea,
     this.motivoConsulta,
     this.alertas,
     this.otrasAlteraciones,
@@ -239,9 +243,7 @@ class MedicalHistory {
   factory MedicalHistory.fromMap(Map<String, dynamic> json) => MedicalHistory(
         id: json["id"],
         patientId: json["patient_id"],
-        fechaNacimiento: json["fecha_nacimiento"] == null
-            ? null
-            : DateTime.parse(json["fecha_nacimiento"]),
+        fechaNacimiento: json["fecha_nacimiento"],
         edad: json["edad"],
         genero: json["genero"],
         ocupacion: json["ocupacion"],
@@ -257,6 +259,8 @@ class MedicalHistory {
         contactoParentesco: json["contacto_parentesco"],
         contactoTelefono: json["contacto_telefono"],
         contactoCelular: json["contacto_celular"],
+        medicamentosTextarea: json["medicamentos_textarea"],
+        alergiasTextarea: json["alergias_textarea"],
         motivoConsulta: json["motivo_consulta"],
         alertas: json["alertas"],
         otrasAlteraciones: json["otras_alteraciones"],
@@ -284,8 +288,7 @@ class MedicalHistory {
   Map<String, dynamic> toMap() => {
         "id": id,
         "patient_id": patientId,
-        "fecha_nacimiento":
-            "${fechaNacimiento!.year.toString().padLeft(4, '0')}-${fechaNacimiento!.month.toString().padLeft(2, '0')}-${fechaNacimiento!.day.toString().padLeft(2, '0')}",
+        "fecha_nacimiento": fechaNacimiento,
         "edad": edad,
         "genero": genero,
         "ocupacion": ocupacion,
@@ -301,6 +304,8 @@ class MedicalHistory {
         "contacto_parentesco": contactoParentesco,
         "contacto_telefono": contactoTelefono,
         "contacto_celular": contactoCelular,
+        "medicamentos_textarea": medicamentosTextarea,
+        "alergias_textarea": alergiasTextarea,
         "motivo_consulta": motivoConsulta,
         "alertas": alertas,
         "otras_alteraciones": otrasAlteraciones,

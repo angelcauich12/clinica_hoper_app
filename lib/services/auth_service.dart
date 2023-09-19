@@ -89,7 +89,7 @@ class AuthService extends ChangeNotifier {
   ) async {
     final Map<String, dynamic> registerData = {
       'name': name,
-      'last_name': name,
+      'last_name': lastName,
       'email': email,
       'phone': phone,
       'password': password

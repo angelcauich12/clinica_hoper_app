@@ -1,4 +1,133 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hope_app/screens/screens.dart';
+import 'package:hope_app/services/services.dart';
+
+import '../locator.dart';
+import '../models/models.dart';
+import '../shared/preferences.dart';
+
+import 'package:hope_app/ui/notifications.dart';
+import 'package:http/http.dart' as http;
+
+class MedicalRecordsProvider extends ChangeNotifier {
+  bool _isLoading = false;
+  bool result = false;
+  final String _apiUrl = Preferences.apiServer;
+  final String _proyectName = Preferences.projectName;
+  String _endPoint = '/api/v1/medical-records';
+  String jwtToken = '';
+
+  ServerResponse? serverResponse;
+  MedicalRecordsResponse? medicalRecordsResponse;
+
+  final NavigationService _navigationService = locator<NavigationService>();
+  final storage = const FlutterSecureStorage();
+
+  get isLoading => _isLoading;
+  set isLoading(value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  Future<bool> saveMedicalRecords(MedicalRecordsRequest medicalRecords) async {
+    print('Peticion API');
+    _endPoint = '/api/v1/medical-records';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      isLoading = true;
+      result = false;
+
+      final response = await http
+          .post(url, headers: headers, body: medicalRecords.toJson())
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Medical Records: ${response.body}');
+          medicalRecordsResponse =
+              MedicalRecordsResponse.fromJson(response.body);
+
+          User apiUser = User.fromJson(Preferences.apiUser);
+          apiUser.medicalHistory = medicalRecordsResponse?.medicalHistory;
+
+          final Map<String, dynamic> decodedResp = json.decode(response.body);
+          Preferences.apiUser = apiUser.toJson();
+
+          Notifications.showSnackBar(
+              medicalRecordsResponse?.message ?? 'Todo bien!!');
+          notifyListeners();
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print(serverResponse);
+          break;
+        case 500:
+          isLoading = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future logout() async {
+    await storage.deleteAll();
+    Preferences.apiUser = '';
+    _navigationService.navigateNamedTo(LoginScreen.routeName, null);
+  }
+}
 
 class MedRecordsForm1Provider extends ChangeNotifier {
   GlobalKey<FormState> form1Key = GlobalKey<FormState>();
@@ -55,10 +184,12 @@ class MedRecordsForm3Provider extends ChangeNotifier {
 
   bool _isLoading = false;
 
+  String? medicamentosTextarea;
+  String? alergiasTextarea;
   bool _tomaMedicamentos = false;
   bool _alergias = false;
   bool _cardiopatias = false;
-  bool _cuagulopatias = false;
+  bool _coagulopatias = false;
   bool _alteracionPresionArterial = false;
   bool _embarazo = false;
   bool _diabetes = false;
@@ -86,10 +217,10 @@ class MedRecordsForm3Provider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool get cuagulopatias => _cuagulopatias;
+  bool get coagulopatias => _coagulopatias;
 
-  set cuagulopatias(bool value) {
-    _cuagulopatias = value;
+  set coagulopatias(bool value) {
+    _coagulopatias = value;
     notifyListeners();
   }
 
