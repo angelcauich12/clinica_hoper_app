@@ -1,4 +1,6 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
@@ -48,7 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 : Container(),
             const SizedBox(height: 25),
-            const _homeButtons(),
+            _homeButtons(
+                profile: apiUser.miPerfil
+                    .nombre), //se envia el nombre del perfil doctor, patient, admin
+            const SizedBox(height: 25),
+            const AppointmentSwiper(),
             const SizedBox(height: 25),
             SpecialtySlider(specialties: specialties),
             const SizedBox(height: 25),
@@ -63,6 +69,57 @@ class _HomeScreenState extends State<HomeScreen> {
   void getData(AppointmentProvider appointmentProvider) async {
     await appointmentProvider.getData();
     await appointmentProvider.getAppointments();
+  }
+}
+
+class AppointmentSwiper extends StatelessWidget {
+  const AppointmentSwiper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final appointmentProvider =
+        Provider.of<AppointmentProvider>(context, listen: true);
+    final appointments =
+        appointmentProvider.reservadasList; //Debe ser confirmadas
+
+    return Container(
+      width: double.infinity,
+      height: 270,
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+            child: Text(
+              'Citas Confirmadas',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Roboto',
+                color: Preferences.isDarkMode
+                    ? ThemeProvider.white
+                    : ThemeProvider.brown,
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
+          Swiper(
+            itemWidth: size.width * 0.9,
+            itemHeight: 190,
+            layout: SwiperLayout.STACK,
+            itemBuilder: (BuildContext context, int index) {
+              return AppointmentCard(
+                  appointment: appointments[index], withMargin: false);
+            },
+            itemCount: appointments.length,
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -131,29 +188,34 @@ class _homeGreetings extends StatelessWidget {
 }
 
 class _homeButtons extends StatelessWidget {
-  const _homeButtons({
-    super.key,
-  });
+  String profile;
+
+  _homeButtons({required this.profile});
 
   @override
   Widget build(BuildContext context) {
+    print(profile);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        HomeActionButton(
-          title: "¡Ahorra tiempo! 👩‍⚕️",
-          subtitle: "Programa tu cita ahora",
-          backgroundColor: ThemeProvider.lightColor,
-          iconColor: ThemeProvider.white,
-          icon: Icons.medical_information_outlined,
-        ),
-        // HomeActionButton(
-        //   title: "A Domicilio",
-        //   subtitle: "El doctor te visita.",
-        //   iconColor: ThemeProvider.lightColor,
-        //   backgroundColor: ThemeProvider.white,
-        //   icon: Icons.home_outlined,
-        // ),
+        (profile != 'Patient')
+            ? HomeActionButton(
+                title: "Bienvenid@!",
+                subtitle: "Programa tu paciente para cita",
+                backgroundColor: ThemeProvider.lightColor,
+                backgroundImg: 'bgHospital3.png',
+                iconColor: ThemeProvider.white,
+                icon: FontAwesomeIcons.userDoctor,
+              )
+            : HomeActionButton(
+                title: "¡Ahorra tiempo! 👩‍⚕️",
+                subtitle: "Programa tu cita ahora",
+                backgroundColor: ThemeProvider.lightColor,
+                backgroundImg: 'bgHospital2.png',
+                iconColor: ThemeProvider.white,
+                icon: FontAwesomeIcons.handHoldingMedical,
+              )
       ],
     );
   }
@@ -161,6 +223,7 @@ class _homeButtons extends StatelessWidget {
 
 class HomeActionButton extends StatelessWidget {
   Color backgroundColor;
+  String backgroundImg;
   Color iconColor;
   String subtitle;
   String title;
@@ -169,6 +232,7 @@ class HomeActionButton extends StatelessWidget {
   HomeActionButton({
     super.key,
     required this.backgroundColor,
+    required this.backgroundImg,
     required this.subtitle,
     required this.title,
     required this.iconColor,
@@ -201,11 +265,11 @@ class HomeActionButton extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: const FadeInImage(
+                child: FadeInImage(
                   width: double.infinity,
                   height: double.infinity,
-                  placeholder: AssetImage('assets/loading.gif'),
-                  image: AssetImage('assets/images/bgHospital2.png'),
+                  placeholder: const AssetImage('assets/loading.gif'),
+                  image: AssetImage('assets/images/$backgroundImg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -215,7 +279,7 @@ class HomeActionButton extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           color: iconColor,
                           shape: BoxShape.circle,
@@ -229,32 +293,34 @@ class HomeActionButton extends StatelessWidget {
                       child: Icon(
                         icon,
                         color: backgroundColor,
-                        size: 35,
+                        size: 28,
                       ),
                     ),
                     const SizedBox(height: 30),
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 22,
-                        color: iconColor,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            offset: const Offset(-2.0, 2.0),
-                            blurRadius: 5,
-                            color: ThemeProvider.brown,
-                          ),
-                        ],
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 22,
+                          color: iconColor,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              offset: const Offset(-2.0, 2.0),
+                              blurRadius: 5,
+                              color: ThemeProvider.brown,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 5),
                     Text(
                       subtitle,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: iconColor,

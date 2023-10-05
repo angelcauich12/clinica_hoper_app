@@ -12,8 +12,10 @@ import 'package:provider/provider.dart';
 
 class AppointmentCard extends StatelessWidget {
   final Appointment appointment;
+  final bool withMargin;
 
-  const AppointmentCard({super.key, required this.appointment});
+  AppointmentCard(
+      {super.key, required this.appointment, this.withMargin = true});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,9 @@ class AppointmentCard extends StatelessWidget {
         Preferences.formatScheduledTime(appointment.scheduledTimeEnd);
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      margin: (withMargin)
+          ? const EdgeInsets.symmetric(vertical: 10, horizontal: 15)
+          : null,
       padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
       width: double.infinity,
       decoration: BoxDecoration(

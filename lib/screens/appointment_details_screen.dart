@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/appointment_cancelled_label.dart';
 import 'package:hope_app/widgets/custom_appbar.dart';
 
@@ -12,6 +13,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
     final Appointment appointment =
         ModalRoute.of(context)!.settings.arguments as Appointment;
     final double fontSize;
+    User apiUser = User.fromJson(Preferences.apiUser);
 
     return Scaffold(
       body: CustomScrollView(
@@ -45,11 +47,26 @@ class AppointmentDetailsScreen extends StatelessWidget {
                       value: appointment.description,
                     ),
                     const SizedBox(height: 10),
-                    AppointmentDetailRow(
-                      title: 'Doctor: ',
-                      value:
-                          '${appointment.doctor.name} ${appointment.doctor.lastName}',
-                    ),
+                    (apiUser.miPerfil.nombre != 'Doctor')
+                        ? Column(
+                            children: [
+                              AppointmentDetailRow(
+                                title: 'Doctor: ',
+                                value:
+                                    '${appointment.doctor.name} ${appointment.doctor.lastName}',
+                              ),
+                              AppointmentDetailRow(
+                                title: 'Paciente: ',
+                                value:
+                                    '${appointment.patient.name} ${appointment.patient.lastName}',
+                              )
+                            ],
+                          )
+                        : AppointmentDetailRow(
+                            title: 'Paciente: ',
+                            value:
+                                '${appointment.patient.name} ${appointment.patient.lastName}',
+                          ),
                     const SizedBox(height: 10),
                     AppointmentDetailRow(
                       title: 'Tipo: ',

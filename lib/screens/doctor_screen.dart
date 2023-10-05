@@ -19,8 +19,7 @@ class DoctorScreen extends StatelessWidget {
         slivers: [
           CustomAppBar(
             title: '${doctor.name} ${doctor.lastName}',
-            image:
-                'https://previews.123rf.com/images/fongfong/fongfong1909/fongfong190900087/130110064-doctor-in-hospital-background-with-copy-space.jpg',
+            image: 'assets/images/modules/doctorDetails.jpg',
           ),
           SliverList(
             delegate: SliverChildListDelegate([
@@ -87,8 +86,7 @@ class DoctorPosterAndName extends StatelessWidget {
               width: 100,
               height: 120,
               placeholder: AssetImage('assets/loading.gif'),
-              image: NetworkImage(
-                  'https://ochsner-craft.s3.amazonaws.com/imager/wwwdoctors/6162509/Samant-Hrishikesh-1982087755-3053e96218.jpg'),
+              image: AssetImage('assets/images/doctor.jpg'),
               fit: BoxFit.cover,
             ),
           ),
