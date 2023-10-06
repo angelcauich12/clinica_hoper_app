@@ -1,5 +1,3 @@
-export 'package:hope_app/screens/phone_required_screen.dart';
-
 export 'package:hope_app/screens/about_screen.dart';
 export 'package:hope_app/screens/activation_screen.dart';
 export 'package:hope_app/screens/appointment_details_screen.dart';
@@ -12,7 +10,9 @@ export 'package:hope_app/screens/login_screen.dart';
 export 'package:hope_app/screens/medical_records_screen.dart';
 export 'package:hope_app/screens/my_appointments_screen.dart';
 export 'package:hope_app/screens/notification_screen.dart';
+export 'package:hope_app/screens/phone_required_screen.dart';
 export 'package:hope_app/screens/profile_screen.dart';
 export 'package:hope_app/screens/register_screen.dart';
 export 'package:hope_app/screens/settings_screen.dart';
+export 'package:hope_app/screens/specialty_details_screen.dart';
 export 'package:hope_app/screens/under_construction_screen.dart';

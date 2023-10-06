@@ -259,33 +259,3 @@ class _AboutDoctorDescription extends StatelessWidget {
     );
   }
 }
-
-class BookAppointmentBtn extends StatelessWidget {
-  const BookAppointmentBtn({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 35),
-      child: ElevatedButton(
-        onPressed: () =>
-            Navigator.pushNamed(context, CreateAppointmentScreen.routeName),
-        style: ElevatedButton.styleFrom(
-            backgroundColor: ThemeProvider.lightColor,
-            shape: const StadiumBorder()),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: Text(
-            'Agendar Cita',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Roboto',
-              color: ThemeProvider.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

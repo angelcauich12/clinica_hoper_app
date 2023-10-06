@@ -400,87 +400,94 @@ class SpecialtyImageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 15, top: 10, bottom: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            spreadRadius: 4,
-          ),
-        ],
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(
+        context,
+        SpecialtyDetailsScreen.routeName,
+        arguments: specialty,
       ),
-      width: 300,
-      child: Stack(
-        children: <Widget>[
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: FadeInImage(
-                width: double.infinity,
-                height: double.infinity,
-                placeholder: const AssetImage('assets/loading.gif'),
-                image: AssetImage(specialty.image!),
-                fit: BoxFit.cover,
+      child: Container(
+        margin: const EdgeInsets.only(right: 15, top: 10, bottom: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              spreadRadius: 4,
+            ),
+          ],
+        ),
+        width: 300,
+        child: Stack(
+          children: <Widget>[
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: FadeInImage(
+                  width: double.infinity,
+                  height: double.infinity,
+                  placeholder: const AssetImage('assets/loading.gif'),
+                  image: AssetImage(specialty.image!),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              // color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-          Center(
-            child: Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 10,
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                // color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(5),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    specialty.title!,
-                    style: TextStyle(
-                      fontSize: 32.0,
-                      color: ThemeProvider.darkColor,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Roboto',
-                      shadows: [
-                        Shadow(
-                          offset: const Offset(3.0, 3.0),
-                          blurRadius: 7.5,
-                          color: ThemeProvider.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    specialty.subtitle!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 18.0,
+            ),
+            Center(
+              child: Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      specialty.title!,
+                      style: TextStyle(
+                        fontSize: 32.0,
                         color: ThemeProvider.darkColor,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'LibreBaskerville',
+                        fontFamily: 'Roboto',
                         shadows: [
                           Shadow(
-                            offset: const Offset(2.0, 2.0),
-                            blurRadius: 10.0,
+                            offset: const Offset(3.0, 3.0),
+                            blurRadius: 7.5,
                             color: ThemeProvider.white,
                           ),
-                        ]),
-                  ),
-                ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      specialty.subtitle!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          color: ThemeProvider.darkColor,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'LibreBaskerville',
+                          shadows: [
+                            Shadow(
+                              offset: const Offset(2.0, 2.0),
+                              blurRadius: 10.0,
+                              color: ThemeProvider.white,
+                            ),
+                          ]),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -559,44 +566,44 @@ class _findUsState extends State<_findUs> {
   }
 }
 
-class SpecialtyDTO {
-  String? title;
-  String? subtitle;
-  String? image;
-
-  SpecialtyDTO({this.title, this.subtitle, this.image});
-}
-
 List<SpecialtyDTO> specialties = [
   SpecialtyDTO(
     title: "Odontología",
     subtitle: "Servicio integral a nuestros pacientes",
     image: "assets/images/specialties/image01.jpg",
+    description:
+        "Nuestra especialidad en Odontología en la Clínica Hoper se dedica a mantener tus dientes y encías en óptimas condiciones de salud. Ofrecemos una amplia gama de servicios, desde limpiezas dentales preventivas hasta tratamientos avanzados de ortodoncia.\n\nNuestro equipo de dentistas altamente capacitados está comprometido en proporcionarte una atención personalizada y cuidadosa para que puedas mantener tu sonrisa radiante. No dejes pasar más tiempo sin cuidar tu salud bucal, ¡solicita una cita hoy mismo y descubre por qué somos la elección preferida en odontología en la zona!\n\n¿Listo para mostrar tu mejor sonrisa? Solicita una cita de odontología ahora mismo y permite que nuestros expertos cuiden de tu salud bucal.",
   ),
   SpecialtyDTO(
-    title: "Ginecología",
-    subtitle: "Consultas, control prenatal y atención de parto",
-    image: "assets/images/specialties/image02.jpg",
-  ),
+      title: "Ginecología",
+      subtitle: "Consultas, control prenatal y atención de parto",
+      image: "assets/images/specialties/image02.jpg",
+      description:
+          "En la Clínica Hoper, comprendemos la importancia de la salud de la mujer en todas las etapas de la vida.\n\nNuestros ginecólogos están aquí para brindarte atención integral y compasiva, desde exámenes de rutina hasta cuidados especializados. Ya sea que necesites una consulta prenatal, atención para problemas ginecológicos o asesoramiento en planificación familiar, nuestro equipo está preparado para ayudarte.\n\nTu bienestar es nuestra prioridad. Programa una cita de ginecología hoy y toma el control de tu salud femenina.\n\nTu salud ginecológica es importante. Solicita una cita de ginecología ahora para recibir atención experta y personalizada."),
   SpecialtyDTO(
-    title: "Pediatría",
-    subtitle:
-        "Los mejores especialistas médicos cuidando la salud de tus hijos",
-    image: "assets/images/specialties/image03.jpg",
-  ),
+      title: "Pediatría",
+      subtitle:
+          "Los mejores especialistas médicos cuidando la salud de tus hijos",
+      image: "assets/images/specialties/image03.jpg",
+      description:
+          "En la Clínica Hoper, comprendemos lo especial que es la salud de tus hijos. Nuestros pediatras están dedicados a brindar la mejor atención médica pediátrica disponible. Desde chequeos de desarrollo hasta tratamientos para enfermedades infantiles, estamos aquí para cuidar a tus pequeños con cariño y profesionalismo.Tu hijo merece lo mejor.\n\nSolicita una cita de pediatría hoy y garantiza un futuro saludable para ellos.\n\nLa salud de tu hijo es nuestra prioridad. Solicita una cita de pediatría ahora para brindarles la atención que necesitan."),
   SpecialtyDTO(
-    title: "Alergología",
-    subtitle: "Tratamos todo tipo de Alergias",
-    image: "assets/images/specialties/image04.jpg",
-  ),
+      title: "Alergología",
+      subtitle: "Tratamos todo tipo de Alergias",
+      image: "assets/images/specialties/image04.jpg",
+      description:
+          "Las alergias pueden ser desafiantes, pero en la Clínica Hoper, nuestros alergólogos están listos para ayudarte a identificar y controlar tus alergias. Ya sea que necesites pruebas de alergia, tratamiento para alergias estacionales o consejos para vivir con alergias alimentarias, nuestro equipo tiene la experiencia necesaria.\n\nNo dejes que las alergias controlen tu vida. Solicita una cita de alergología hoy y recupera tu comodidad. La comodidad es clave para una vida plena.\n\nSolicita una cita de alergología ahora y descubre cómo vivir sin preocupaciones por las alergias."),
   SpecialtyDTO(
-    title: "Nutrición",
-    subtitle: "El Comienzo de la Salud",
-    image: "assets/images/specialties/image05.jpg",
-  ),
+      title: "Nutrición",
+      subtitle: "El Comienzo de la Salud",
+      image: "assets/images/specialties/image05.jpg",
+      description:
+          "En la Clínica Hoper, creemos que la nutrición es fundamental para una vida saludable. Nuestros especialistas en nutrición te ayudarán a diseñar un plan alimenticio personalizado que se adapte a tus necesidades y metas.\n\nYa sea que busques perder peso, mejorar tu salud general o manejar condiciones específicas, estamos aquí para guiarte. Tu viaje hacia una alimentación más saludable comienza aquí. Solicita una consulta de nutrición hoy y da el primer paso hacia un estilo de vida más saludable. La nutrición es la base de una buena salud.\n\nSolicita una cita de nutrición ahora y comienza a transformar tu vida a través de la alimentación."),
   SpecialtyDTO(
     title: "Medicina General",
     subtitle: "Cuidamos la salud de tu familia",
     image: "assets/images/specialties/image06.jpg",
+    description:
+        "En la Clínica Hoper, creemos en el poder de la atención médica familiar y la medicina general como piedra angular de la salud de todos.\n\nNuestros médicos generales son el primer punto de contacto para ti y tu familia cuando se trata de cuidado de la salud. Están dedicados a brindar atención integral y continua, desde chequeos médicos de rutina hasta el manejo de enfermedades crónicas.\n\nValoramos la relación médico-paciente y nos comprometemos a cuidar de ti en todas las etapas de la vida. La salud de tu familia es nuestra prioridad número uno. En Clínica Hoper, te ofrecemos un hogar para tu atención médica familiar.\n\nSolicita una cita de medicina general hoy y experimenta el cuidado y la dedicación que mereces.",
   ),
 ];

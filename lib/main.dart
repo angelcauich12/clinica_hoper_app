@@ -106,6 +106,7 @@ class MyApp extends StatelessWidget {
         PhoneRequiredScreen.routeName: (context) => PhoneRequiredScreen(),
         NotificationScreen.routeName: (context) => NotificationScreen(),
         DoctorScreen.routeName: (context) => DoctorScreen(),
+        SpecialtyDetailsScreen.routeName: (context) => SpecialtyDetailsScreen(),
         AppointmentDetailsScreen.routeName: (context) =>
             AppointmentDetailsScreen(),
         CreateAppointmentScreen.routeName: (context) =>
