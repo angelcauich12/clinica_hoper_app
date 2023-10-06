@@ -117,6 +117,8 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                                             .toString() ==
                                                         appointmentProv
                                                             .specialtySelected);
+                                            print(
+                                                'Doctores ${specialty.doctors}');
                                             appointmentProv.doctors = [];
                                             appointmentProv.doctorSelected =
                                                 null;

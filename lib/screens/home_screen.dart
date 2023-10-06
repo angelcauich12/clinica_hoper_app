@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     User apiUser = User.fromJson(Preferences.apiUser);
 
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 20),
         child: Column(
@@ -86,9 +87,6 @@ class AppointmentSwiper extends StatelessWidget {
         ? Container(
             width: double.infinity,
             height: 270,
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -202,8 +200,8 @@ class _homeButtons extends StatelessWidget {
       children: [
         (profile != 'Patient')
             ? HomeActionButton(
-                title: "Bienvenid@!",
-                subtitle: "Programa tu paciente para cita",
+                title: "Bienvenid@ $profile!",
+                subtitle: "Programa un paciente para cita",
                 backgroundColor: ThemeProvider.lightColor,
                 backgroundImg: 'bgHospital3.png',
                 iconColor: ThemeProvider.white,
