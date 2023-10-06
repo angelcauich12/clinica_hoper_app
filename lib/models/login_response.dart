@@ -3,6 +3,8 @@
 
 import 'dart:convert';
 
+import 'package:hope_app/models/models.dart';
+
 class LoginResponse {
   LoginResponse({
     required this.code,
@@ -44,7 +46,7 @@ class User {
   User({
     required this.id,
     required this.name,
-    required this.lastname,
+    required this.lastName,
     required this.email,
     required this.role,
     this.phone,
@@ -55,11 +57,12 @@ class User {
     this.deviceToken,
     required this.miPerfil,
     this.medicalHistory,
+    this.specialties,
   });
 
   int id;
   String name;
-  String lastname;
+  String lastName;
   String email;
   String? image;
   int role;
@@ -70,6 +73,7 @@ class User {
   String? deviceToken;
   MiPerfil miPerfil;
   MedicalHistory? medicalHistory;
+  List<Specialty>? specialties;
 
   factory User.fromJson(String str) => User.fromMap(json.decode(str));
 
@@ -78,7 +82,7 @@ class User {
   factory User.fromMap(Map<String, dynamic> json) => User(
         id: json["id"],
         name: json["name"],
-        lastname: json["lastname"] ?? '',
+        lastName: json["last_name"] ?? '',
         email: json["email"],
         image: json["image"],
         role: json["role"],
@@ -91,12 +95,16 @@ class User {
         medicalHistory: json["medical_history"] == null
             ? null
             : MedicalHistory.fromMap(json["medical_history"]),
+        specialties: json["specialties"] == null
+            ? []
+            : List<Specialty>.from(
+                json["specialties"]!.map((x) => Specialty.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "name": name,
-        "lastname": lastname,
+        "last_name": lastName,
         "email": email,
         "image": image,
         "role": role,
@@ -107,6 +115,9 @@ class User {
         "device_token": deviceToken,
         "mi_perfil": miPerfil.toMap(),
         "medical_history": medicalHistory?.toMap(),
+        "specialties": specialties == null
+            ? []
+            : List<dynamic>.from(specialties!.map((x) => x.toMap())),
       };
 }
 

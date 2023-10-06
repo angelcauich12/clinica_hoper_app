@@ -78,48 +78,49 @@ class AppointmentSwiper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final appointmentProvider =
-        Provider.of<AppointmentProvider>(context, listen: true);
+    final appointmentProvider = Provider.of<AppointmentProvider>(context);
     final appointments =
-        appointmentProvider.reservadasList; //Debe ser confirmadas
+        appointmentProvider.confirmadasList; //Debe ser confirmadas
 
-    return Container(
-      width: double.infinity,
-      height: 270,
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-            child: Text(
-              'Citas Confirmadas',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Roboto',
-                color: Preferences.isDarkMode
-                    ? ThemeProvider.white
-                    : ThemeProvider.brown,
-              ),
+    return (appointments.isNotEmpty)
+        ? Container(
+            width: double.infinity,
+            height: 270,
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
             ),
-          ),
-          const SizedBox(height: 15),
-          Swiper(
-            itemWidth: size.width * 0.9,
-            itemHeight: 190,
-            layout: SwiperLayout.STACK,
-            itemBuilder: (BuildContext context, int index) {
-              return AppointmentCard(
-                  appointment: appointments[index], withMargin: false);
-            },
-            itemCount: appointments.length,
-          ),
-        ],
-      ),
-    );
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+                  child: Text(
+                    'Citas Confirmadas',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Roboto',
+                      color: Preferences.isDarkMode
+                          ? ThemeProvider.white
+                          : ThemeProvider.brown,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Swiper(
+                  itemWidth: size.width * 0.9,
+                  itemHeight: 190,
+                  layout: SwiperLayout.STACK,
+                  itemBuilder: (BuildContext context, int index) {
+                    return AppointmentCard(
+                        appointment: appointments[index], withMargin: false);
+                  },
+                  itemCount: appointments.length,
+                ),
+              ],
+            ),
+          )
+        : Container();
   }
 }
 

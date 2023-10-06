@@ -21,14 +21,14 @@ class InputDecorations {
           ? Icon(
               prefixIcon,
               color: color,
-              size: 20,
+              size: 21,
             )
           : null,
       suffixIcon: suffixIcon != null
           ? Icon(
               suffixIcon,
               color: color,
-              size: 20,
+              size: 21,
             )
           : null,
     );

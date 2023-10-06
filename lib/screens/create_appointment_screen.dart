@@ -1,14 +1,14 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:hope_app/models/appointments_response.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/search/patient_search_delegate.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../models/models.dart';
 
 class CreateAppointmentScreen extends StatefulWidget {
   static const String routeName = 'create-appointment';
@@ -20,10 +20,12 @@ class CreateAppointmentScreen extends StatefulWidget {
 
 class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     _dateController.text = '';
+    _searchController.text = '';
     super.initState();
   }
 
@@ -37,6 +39,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
     final Color myColor = ThemeProvider.secondColor;
 
     final appointmentForm = Provider.of<AppointmentProvider>(context);
+    User apiUser = User.fromJson(Preferences.apiUser);
 
     return Scaffold(
       body: CustomScrollView(
@@ -54,120 +57,223 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                   child: Column(
                     children: [
                       const SizedBox(height: 25),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Especialidad',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: myColor,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: DropdownButtonFormField(
-                              key: appointmentForm.specialtyDropdownKey,
-                              // autovalidateMode: AutovalidateMode.onUserInteraction,
-                              decoration: const InputDecoration(
-                                focusedBorder: InputBorder.none,
-                                border: InputBorder.none,
-                              ),
-                              alignment: Alignment.center,
-                              hint: const Text(
-                                'Selecciona...',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15,
+                      (apiUser.miPerfil.nombre != 'Doctor')
+                          ? Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        'Especialidad',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: myColor,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                      child: DropdownButtonFormField(
+                                        key: appointmentForm
+                                            .specialtyDropdownKey,
+                                        // autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        decoration: const InputDecoration(
+                                          focusedBorder: InputBorder.none,
+                                          border: InputBorder.none,
+                                        ),
+                                        alignment: Alignment.center,
+                                        hint: const Text(
+                                          'Selecciona...',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        isExpanded: false,
+                                        value:
+                                            appointmentProv.specialtySelected,
+                                        items: appointmentProv.specialties
+                                            ?.map((specialty) {
+                                          return DropdownMenuItem(
+                                            alignment: Alignment.center,
+                                            value: specialty.id.toString(),
+                                            child: Text(
+                                              specialty.name.toString(),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          print('Specialty Selected: $value');
+                                          appointmentProv.specialtySelected =
+                                              value;
+                                          setState(() {
+                                            final Specialty specialty =
+                                                appointmentProv.specialties!
+                                                    .firstWhere((specialty) =>
+                                                        specialty.id
+                                                            .toString() ==
+                                                        appointmentProv
+                                                            .specialtySelected);
+                                            appointmentProv.doctors = [];
+                                            appointmentProv.doctorSelected =
+                                                null;
+                                            appointmentForm
+                                                .doctorDropdownKey.currentState
+                                                ?.reset();
+                                            appointmentProv.doctors =
+                                                specialty.doctors!.toList();
+                                          });
+                                          print(appointmentProv.doctors);
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                              isExpanded: false,
-                              value: appointmentProv.specialtySelected,
-                              items:
-                                  appointmentProv.specialties?.map((specialty) {
-                                return DropdownMenuItem(
-                                  alignment: Alignment.center,
-                                  value: specialty.id.toString(),
-                                  child: Text(
-                                    specialty.name.toString(),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                print('Specialty Selected: $value');
-                                appointmentProv.specialtySelected = value;
-                                setState(() {
-                                  final Specialty specialty = appointmentProv
-                                      .specialties!
-                                      .firstWhere((specialty) =>
-                                          specialty.id.toString() ==
-                                          appointmentProv.specialtySelected);
-                                  appointmentProv.doctors = [];
-                                  appointmentProv.doctorSelected = null;
-                                  appointmentForm.doctorDropdownKey.currentState
-                                      ?.reset();
-                                  appointmentProv.doctors =
-                                      specialty.doctors!.toList();
-                                });
-                                print(appointmentProv.doctors);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              'Doctor',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: myColor,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            flex: 2,
-                            child: DropdownButtonFormField(
-                              key: appointmentForm.doctorDropdownKey,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              decoration: const InputDecoration(
-                                focusedBorder: InputBorder.none,
-                                border: InputBorder.none,
-                              ),
-                              hint: const Text(
-                                'Selecciona...',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Doctor',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: myColor,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                      flex: 2,
+                                      child: DropdownButtonFormField(
+                                        key: appointmentForm.doctorDropdownKey,
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        decoration: const InputDecoration(
+                                          focusedBorder: InputBorder.none,
+                                          border: InputBorder.none,
+                                        ),
+                                        hint: const Text(
+                                          'Selecciona...',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        alignment: Alignment.center,
+                                        isExpanded: true,
+                                        value:
+                                            appointmentProvider.doctorSelected,
+                                        items: appointmentProvider.doctors!
+                                            .map((doctor) {
+                                          return DropdownMenuItem(
+                                            alignment: Alignment.center,
+                                            value: doctor.id.toString(),
+                                            child: Text(
+                                              '${doctor.name} ${doctor.lastName}',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) =>
+                                            appointmentProvider.doctorSelected =
+                                                value,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              alignment: Alignment.center,
-                              isExpanded: true,
-                              value: appointmentProvider.doctorSelected,
-                              items: appointmentProvider.doctors!.map((doctor) {
-                                return DropdownMenuItem(
-                                  alignment: Alignment.center,
-                                  value: doctor.id.toString(),
-                                  child: Text(
-                                    '${doctor.name} ${doctor.lastName}',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) =>
-                                  appointmentProvider.doctorSelected = value,
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                TextFormField(
+                                  readOnly: true,
+                                  controller: _searchController,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  decoration:
+                                      InputDecorations.authInputDecoration(
+                                          color: myColor,
+                                          hintText: 'John Doe',
+                                          labelText: 'Paciente',
+                                          suffixIcon: Icons.search_outlined),
+                                  onTap: () async {
+                                    await showSearch(
+                                      context: context,
+                                      delegate: PatientSearchDelegate(),
+                                    );
+                                    if (appointmentProv.patientFullName != '') {
+                                      _searchController.text =
+                                          appointmentProv.patientFullName;
+                                    }
+                                  },
+                                  validator: (value) {
+                                    return (value != null && value.length >= 3)
+                                        ? null
+                                        : 'Paciente debe contener más de 3 caracteres.';
+                                  },
+                                ),
+                                const SizedBox(height: 15),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        'Especialidad',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: myColor,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                      child: DropdownButtonFormField(
+                                        key: appointmentForm
+                                            .specialtyDropdownKey,
+                                        // autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        decoration: const InputDecoration(
+                                          focusedBorder: InputBorder.none,
+                                          border: InputBorder.none,
+                                        ),
+                                        alignment: Alignment.center,
+                                        hint: const Text(
+                                          'Selecciona...',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        isExpanded: false,
+                                        value:
+                                            appointmentProv.specialtySelected,
+                                        items: apiUser.specialties
+                                            ?.map((specialty) {
+                                          return DropdownMenuItem(
+                                            alignment: Alignment.center,
+                                            value: specialty.id.toString(),
+                                            child: Text(
+                                              specialty.name.toString(),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          appointmentProv.specialtySelected =
+                                              value;
+                                          appointmentProv.doctorSelected =
+                                              apiUser.id.toString();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                       TextFormField(
                         autovalidateMode: (appointmentProv.isLoading)
                             ? AutovalidateMode.always
@@ -326,10 +432,11 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                     appointmentProv.startDate = null;
                                     appointmentProv.doctors = [];
                                     appointmentProv.doctorSelected = null;
+                                    appointmentProv.patientSelected = null;
+                                    appointmentProv.patientFullName = '';
                                     appointmentForm
                                         .doctorDropdownKey.currentState
                                         ?.reset();
-
                                     appointmentProv.specialtySelected = null;
                                     appointmentForm
                                         .specialtyDropdownKey.currentState
@@ -338,6 +445,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                         ?.reset();
                                   });
                                   _dateController.clear();
+                                  _searchController.clear();
 
                                   Notifications.showSnackBar(
                                       'Cita creada correctamente.');

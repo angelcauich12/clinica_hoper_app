@@ -33,12 +33,16 @@ class AppointmentProvider extends ChangeNotifier {
   List<Specialty>? specialties = [];
   String? specialtySelected;
   List<Doctor>? doctors = [];
+  List<User> users = [];
   String? _doctorSelected;
+  String? _patientSelected;
+  String _patientFullName = '';
   List<String>? morningIntervals = [];
   List<String>? afternoonIntervals;
   ScheduleIntervalsResponse? scheduleIntervalsResponse;
   late MyAppointments appointmentResponse;
   ServerResponse? serverResponse;
+  SearchUserResponse? searchResponse;
   bool result = false;
   bool _isLoading = false;
 
@@ -64,6 +68,23 @@ class AppointmentProvider extends ChangeNotifier {
 
   set doctorSelected(String? value) {
     _doctorSelected = value;
+    print('Doctor selected: $doctorSelected');
+    notifyListeners();
+  }
+
+  String? get patientSelected => _patientSelected;
+
+  set patientSelected(String? value) {
+    _patientSelected = value;
+    print('Patient Selected: $value');
+    notifyListeners();
+  }
+
+  String get patientFullName => _patientFullName;
+
+  set patientFullName(String value) {
+    _patientFullName = value;
+    print('Patient FullName: $value');
     notifyListeners();
   }
 
@@ -118,7 +139,7 @@ class AppointmentProvider extends ChangeNotifier {
           print(appointments);
           result = true;
           isLoading = false;
-          print('200: Pedido ${response.body}');
+          print('200: Appointments ${response.body}');
           notifyListeners();
           break;
         case 401:
@@ -202,7 +223,7 @@ class AppointmentProvider extends ChangeNotifier {
           getAppointments();
           result = true;
           isLoading = false;
-          print('200: Pedido ${response.body}');
+          print('200: Confirm ${response.body}');
           serverResponse = ServerResponse.fromJson(response.body);
           print(serverResponse?.message ?? 'Todo bien!!');
           break;
@@ -287,7 +308,7 @@ class AppointmentProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Pedido ${response.body}');
+          print('200: Cancel ${response.body}');
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Cita $id cancelada correctamente.');
@@ -472,6 +493,7 @@ class AppointmentProvider extends ChangeNotifier {
       'id': doctorSelected,
       'scheduled_date': startDate,
     };
+    print(queryParameters);
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
 
     try {
@@ -486,7 +508,7 @@ class AppointmentProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Pedido ${response.body}');
+          print('200: Get Intervals ${response.body}');
           scheduleIntervalsResponse =
               ScheduleIntervalsResponse.fromJson(response.body);
           morningIntervals =
@@ -578,6 +600,7 @@ class AppointmentProvider extends ChangeNotifier {
       'scheduled_time': startTime,
       'specialty_id': specialtySelected,
       'doctor_id': doctorSelected,
+      'patient_id': patientSelected,
       'description': description,
     };
     final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
@@ -594,7 +617,7 @@ class AppointmentProvider extends ChangeNotifier {
         case 200:
           result = true;
           isLoading = false;
-          print('200: Pedido ${response.body}');
+          print('200: Create ${response.body}');
           final appointmentCreatedResponse =
               AppointmentCreatedResponse.fromJson(response.body);
           reservadasList.add(appointmentCreatedResponse.appointment!);
@@ -679,6 +702,93 @@ class AppointmentProvider extends ChangeNotifier {
       doctors = specialty.doctors!.toList();
     }
     notifyListeners();
+  }
+
+  Future<List<User>> searchUsers(String query) async {
+    print('Peticion API Search');
+    _endPoint = '/api/v1/search/users';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    final Map<String, dynamic> queryParameters = {
+      'query': query,
+      'type': 'patient',
+    };
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', queryParameters);
+
+    try {
+      isLoading = true;
+      users = [];
+
+      final response = await http
+          .get(url, headers: headers)
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          isLoading = false;
+          print('200: ${response.body}');
+          searchResponse = SearchUserResponse.fromJson(response.body);
+          users = searchResponse!.results;
+          // Notifications.showSnackBar(
+          //   'Se obtuvieron ${users.length} resultados.',
+          // );
+          break;
+        case 401:
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          isLoading = false;
+          users = [];
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message?.substring(0, 60) ??
+                  'Error Desconocido.');
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error Desconocido.');
+          notifyListeners();
+          print(serverResponse);
+          break;
+        case 500:
+          isLoading = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          users = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return users;
   }
 
   Future logout() async {

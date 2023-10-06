@@ -1,3 +1,5 @@
+export 'package:hope_app/models/search_user_response.dart';
+
 export 'package:hope_app/models/activation_response.dart';
 export 'package:hope_app/models/appointments_response.dart';
 export 'package:hope_app/models/get_appointment_data_response.dart';
