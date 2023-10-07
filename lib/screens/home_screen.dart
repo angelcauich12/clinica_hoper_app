@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 profile: apiUser.miPerfil
                     .nombre), //se envia el nombre del perfil doctor, patient, admin
             const SizedBox(height: 25),
-            const AppointmentSwiper(),
+            AppointmentSwiper(apiUser: apiUser),
             const SizedBox(height: 25),
             SpecialtySlider(specialties: specialties),
             const SizedBox(height: 25),
@@ -74,7 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class AppointmentSwiper extends StatelessWidget {
-  const AppointmentSwiper({super.key});
+  final User apiUser;
+  const AppointmentSwiper({super.key, required this.apiUser});
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +87,7 @@ class AppointmentSwiper extends StatelessWidget {
     return (appointments.isNotEmpty)
         ? Container(
             width: double.infinity,
-            height: 270,
+            height: (apiUser.miPerfil.nombre != 'Doctor') ? 270 : 230,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -107,10 +108,10 @@ class AppointmentSwiper extends StatelessWidget {
                 const SizedBox(height: 15),
                 Swiper(
                   itemWidth: size.width * 0.9,
-                  itemHeight: 190,
+                  itemHeight: (apiUser.miPerfil.nombre != 'Doctor') ? 190 : 150,
                   layout: SwiperLayout.STACK,
                   itemBuilder: (BuildContext context, int index) {
-                    return AppointmentCard(
+                    return AppointmentCardDoctor(
                         appointment: appointments[index], withMargin: false);
                   },
                   itemCount: appointments.length,

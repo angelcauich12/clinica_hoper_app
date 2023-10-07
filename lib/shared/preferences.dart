@@ -205,4 +205,16 @@ class Preferences {
       return inputTime;
     }
   }
+
+  static String getInitials({required String string, required int limitTo}) {
+    var buffer = StringBuffer();
+    var split = string.split(' ');
+    for (var i = 0; i < (limitTo); i++) {
+      if (split[i].isNotEmpty) {
+        buffer.write(split[i][0]);
+      }
+    }
+
+    return buffer.toString();
+  }
 }

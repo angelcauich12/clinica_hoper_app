@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
 
@@ -85,9 +86,12 @@ class UserSearchList extends StatelessWidget {
     return ListView.builder(
       itemCount: users.length,
       itemBuilder: (BuildContext context, int index) {
+        final size = MediaQuery.of(context).size;
         final User user = users[index];
-        final String initials =
-            getInitials(string: '${user.name} ${user.lastName}', limitTo: 2);
+        final String initials = Preferences.getInitials(
+          string: '${user.name} ${user.lastName}',
+          limitTo: 2,
+        );
 
         return ListTile(
           contentPadding: const EdgeInsets.symmetric(
@@ -95,48 +99,56 @@ class UserSearchList extends StatelessWidget {
             vertical: 10,
           ),
           leading: CircleAvatar(
+            radius: 25,
             backgroundColor: ThemeProvider.secondColor,
             child: Text(initials),
           ),
+          horizontalTitleGap: 10,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '${user.name} ${user.lastName}',
-                style: const TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 5),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Tel: ',
-                    style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  (user.phone != null)
-                      ? Text(
-                          '${user.phone}',
-                          style: const TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: size.width * 0.55,
+                        child: Text(
+                          '${user.name} ${user.lastName}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                        )
-                      : const Text('Sin Teléfono'),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Roboto',
+                            color: Preferences.isDarkMode
+                                ? ThemeProvider.white
+                                : ThemeProvider.lightColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Text(
+                            "${user.phone}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Roboto',
+                              color: Preferences.isDarkMode
+                                  ? Colors.grey
+                                  : Colors.grey.shade500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 5),
@@ -180,6 +192,7 @@ class UserSearchList extends StatelessWidget {
             ],
           ),
           trailing: IconButton(
+            padding: EdgeInsets.zero,
             icon: FaIcon(
               FontAwesomeIcons.personCirclePlus,
               color: ThemeProvider.secondColor,
@@ -196,15 +209,15 @@ class UserSearchList extends StatelessWidget {
     );
   }
 
-  String getInitials({required String string, required int limitTo}) {
-    var buffer = StringBuffer();
-    var split = string.split(' ');
-    for (var i = 0; i < (limitTo); i++) {
-      if (split[i].isNotEmpty) {
-        buffer.write(split[i][0]);
-      }
-    }
+  // String getInitials({required String string, required int limitTo}) {
+  //   var buffer = StringBuffer();
+  //   var split = string.split(' ');
+  //   for (var i = 0; i < (limitTo); i++) {
+  //     if (split[i].isNotEmpty) {
+  //       buffer.write(split[i][0]);
+  //     }
+  //   }
 
-    return buffer.toString();
-  }
+  //   return buffer.toString();
+  // }
 }
