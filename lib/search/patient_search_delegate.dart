@@ -45,8 +45,12 @@ class PatientSearchDelegate extends SearchDelegate {
       return const emptyContainer();
     }
 
-    return FutureBuilder(
-      future: appointmentProv.searchUsers(query),
+    appointmentProv.getUsersByQuery(query);
+
+    // return FutureBuilder(
+    return StreamBuilder(
+      // future: appointmentProv.searchUsers(query),
+      stream: appointmentProv.userStream,
       builder: (context, AsyncSnapshot<List<User>> snapshot) {
         if (!snapshot.hasData) {
           return const emptyContainer();
@@ -54,21 +58,71 @@ class PatientSearchDelegate extends SearchDelegate {
 
         final List<User> users = snapshot.data!;
 
-        return UserSearchList(users: users);
+        return (users.isEmpty)
+            ? emptyContainer(resultCount: users)
+            : UserSearchList(users: users);
       },
     );
   }
 }
 
 class emptyContainer extends StatelessWidget {
-  const emptyContainer({super.key});
+  final resultCount;
+  const emptyContainer({super.key, this.resultCount});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Image(
-        image: AssetImage('assets/images/searchPatient.png'),
-        width: 130,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Image(
+            image: AssetImage('assets/images/searchPatient.png'),
+            width: 130,
+          ),
+          const SizedBox(height: 15),
+          (resultCount != null)
+              ? Text(
+                  'Sin resultados de búsqueda.',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey[400],
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+              : const SizedBox(),
+          const SizedBox(height: 15),
+          TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  Colors.green[400],
+                ),
+                foregroundColor: MaterialStateProperty.all(
+                  ThemeProvider.white,
+                ),
+              ),
+              onPressed: () {
+                Notifications.showSnackBar(
+                    'Aquí se mostrará un modal para dar de alta un usuario y agregarlo a la creación de la cita.');
+              },
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Agregar Paciente',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  FaIcon(
+                    FontAwesomeIcons.userPlus,
+                    size: 16,
+                  ),
+                ],
+              ))
+        ],
       ),
     );
   }
@@ -208,16 +262,4 @@ class UserSearchList extends StatelessWidget {
       },
     );
   }
-
-  // String getInitials({required String string, required int limitTo}) {
-  //   var buffer = StringBuffer();
-  //   var split = string.split(' ');
-  //   for (var i = 0; i < (limitTo); i++) {
-  //     if (split[i].isNotEmpty) {
-  //       buffer.write(split[i][0]);
-  //     }
-  //   }
-
-  //   return buffer.toString();
-  // }
 }
