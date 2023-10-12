@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:provider/provider.dart';
 
@@ -72,6 +74,10 @@ class emptyContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final createUserForm = Provider.of<CreateUserFormProvider>(context);
+    final appointmentForm = Provider.of<AppointmentProvider>(context);
+    final size = MediaQuery.of(context).size;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -103,8 +109,144 @@ class emptyContainer extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                Notifications.showSnackBar(
-                    'Aquí se mostrará un modal para dar de alta un usuario y agregarlo a la creación de la cita.');
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Form(
+                        key: createUserForm.createUserFormKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              autocorrect: true,
+                              keyboardType: TextInputType.name,
+                              decoration: InputDecorations.authInputDecoration(
+                                  color: Colors.grey[350]!,
+                                  hintText: 'Mínimo 3 caracteres',
+                                  labelText: 'Nombre',
+                                  prefixIcon: Icons.person_2_outlined),
+                              onChanged: (value) => createUserForm.name = value,
+                              validator: (value) {
+                                return (value != null && value.length >= 3)
+                                    ? null
+                                    : 'Debe contener mínimo 3 caracteres';
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              autocorrect: true,
+                              keyboardType: TextInputType.name,
+                              decoration: InputDecorations.authInputDecoration(
+                                  color: Colors.grey[350]!,
+                                  hintText: 'Mínimo 3 caracteres',
+                                  labelText: 'Apellidos',
+                                  prefixIcon: Icons.person_4_outlined),
+                              onChanged: (value) =>
+                                  createUserForm.lastName = value,
+                              validator: (value) {
+                                return (value != null && value.length >= 3)
+                                    ? null
+                                    : 'Debe contener mínimo 3 caracteres';
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              textCapitalization: TextCapitalization.none,
+                              autocorrect: false,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecorations.authInputDecoration(
+                                color: Colors.grey[350]!,
+                                hintText: '999X-XXXXXX',
+                                labelText: 'Celular',
+                                prefixIcon: Icons.phone_android_outlined,
+                              ),
+                              onChanged: (value) =>
+                                  createUserForm.phone = value,
+                              validator: (value) {
+                                String pattern =
+                                    r'^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$';
+                                RegExp regExp = RegExp(pattern);
+                                return regExp.hasMatch(value ?? '')
+                                    ? null
+                                    : 'Número Inválido';
+                              },
+                            ),
+                            const SizedBox(height: 25),
+                            MaterialButton(
+                              onPressed: createUserForm.isLoading
+                                  ? null
+                                  : () async {
+                                      if (!createUserForm.isValidForm()) return;
+                                      createUserForm.isLoading = true;
+                                      // FocusScope.of(context).unfocus();
+
+                                      //hacer la peticion al backend para validar usuario
+
+                                      final bool result =
+                                          await createUserForm.registerUser();
+
+                                      print('Resultado: $result');
+                                      if (!result) {
+                                        print(
+                                            'No se registro: ${createUserForm.name}, ${createUserForm.lastName}, ${createUserForm.email}, ${createUserForm.password}, ${createUserForm.phone},');
+
+                                        createUserForm.isLoading = false;
+                                        return;
+                                      }
+
+                                      appointmentForm.patientFullName =
+                                          '${createUserForm.user.name} ${createUserForm.user.lastName}';
+                                      appointmentForm.patientSelected =
+                                          createUserForm.user.id.toString();
+
+                                      Notifications.showSnackBar(
+                                          'Usuario creado correctamente.');
+                                      Future.microtask(
+                                        () {
+                                          Navigator.pop(context);
+                                        },
+                                      );
+                                      Future.microtask(
+                                        () {
+                                          Navigator.pop(context);
+                                        },
+                                      );
+                                    },
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              disabledColor: Colors.grey,
+                              elevation: 0,
+                              minWidth: size.width * 0.8,
+                              color: ThemeProvider.secondColor,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 15),
+                                child: Text(
+                                  createUserForm.isLoading
+                                      ? 'Espere'
+                                      : 'Registrar',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
