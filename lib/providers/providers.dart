@@ -1,3 +1,5 @@
+export 'package:hope_app/providers/create_user_form_provider.dart';
+
 export 'package:hope_app/providers/appointment_provider.dart';
 export 'package:hope_app/providers/cancel_appointment_form_provider.dart';
 export 'package:hope_app/providers/login_form_provider.dart';

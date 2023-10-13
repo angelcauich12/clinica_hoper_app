@@ -30,6 +30,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider<RegisterFormProvider>(
           create: (context) => RegisterFormProvider(),
         ),
+        ChangeNotifierProvider<CreateUserFormProvider>(
+          create: (context) => CreateUserFormProvider(),
+        ),
         ChangeNotifierProvider<SocialMediaFormProvider>(
           create: (context) => SocialMediaFormProvider(),
         ),

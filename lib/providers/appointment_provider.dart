@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hope_app/helpers/debouncer.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
@@ -98,6 +100,13 @@ class AppointmentProvider extends ChangeNotifier {
     //print('$email - $password');
     return formKey.currentState?.validate() ?? false;
   }
+
+  final debouncer = Debouncer(duration: const Duration(milliseconds: 500));
+
+  final StreamController<List<User>> _userStreamController =
+      new StreamController.broadcast();
+
+  Stream<List<User>> get userStream => this._userStreamController.stream;
 
   Future<bool> getAppointments() async {
     print('Peticion API');
@@ -789,6 +798,23 @@ class AppointmentProvider extends ChangeNotifier {
       notifyListeners();
     }
     return users;
+  }
+
+  void getUsersByQuery(String query) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      // print('hay valor a buscar $value');
+      final results = await searchUsers(value);
+      _userStreamController.add(results);
+    };
+
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      debouncer.value = query;
+    });
+
+    Future.delayed(const Duration(milliseconds: 301)).then(
+      (value) => timer.cancel(),
+    );
   }
 
   Future logout() async {
