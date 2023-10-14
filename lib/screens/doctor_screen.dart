@@ -12,7 +12,7 @@ class DoctorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Appointment appointment =
         ModalRoute.of(context)!.settings.arguments as Appointment;
-    final Doctor doctor = appointment.doctor;
+    final Doctor doctor = appointment.doctor!;
 
     return Scaffold(
       body: CustomScrollView(
@@ -23,7 +23,7 @@ class DoctorScreen extends StatelessWidget {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              _DoctorImage(doctor: doctor, specialty: appointment.specialty),
+              _DoctorImage(doctor: doctor, specialty: appointment.specialty!),
               const Experience(),
               _AboutDoctor(),
               const BookAppointmentBtn(),
@@ -110,7 +110,7 @@ class DoctorPosterAndName extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Text(
-              specialty.name,
+              specialty.name!,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

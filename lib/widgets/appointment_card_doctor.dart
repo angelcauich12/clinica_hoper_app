@@ -21,12 +21,12 @@ class AppointmentCardDoctor extends StatelessWidget {
   Widget build(BuildContext context) {
     initializeDateFormatting();
     final scheduleDate = DateFormat.yMMMEd('es-MX').format(
-      DateTime.parse(appointment.scheduledDate),
+      DateTime.parse(appointment.scheduledDate!),
     );
     final scheduledTime =
-        Preferences.formatScheduledTime(appointment.scheduledTime);
+        Preferences.formatScheduledTime(appointment.scheduledTime!);
     final scheduledTimeEnd =
-        Preferences.formatScheduledTime(appointment.scheduledTimeEnd);
+        Preferences.formatScheduledTime(appointment.scheduledTimeEnd!);
 
     return Container(
       margin: (withMargin)
@@ -78,7 +78,7 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
     User apiUser = User.fromJson(Preferences.apiUser);
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
     final String initials = Preferences.getInitials(
-        string: '${appointment.patient.name} ${appointment.patient.lastName}',
+        string: '${appointment.patient!.name} ${appointment.patient!.lastName}',
         limitTo: 2);
 
     return Row(
@@ -109,8 +109,8 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
                   width: size.width * 0.6,
                   child: Text(
                     (apiUser.miPerfil.nombre == 'Doctor')
-                        ? '${appointment.patient.name} ${appointment.patient.lastName}'
-                        : '${appointment.doctor.name} ${appointment.doctor.lastName}',
+                        ? '${appointment.patient!.name} ${appointment.patient!.lastName}'
+                        : '${appointment.doctor!.name} ${appointment.doctor!.lastName}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -127,7 +127,7 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "${appointment.type} - ${appointment.specialty.name}",
+                      "${appointment.type} - ${appointment.specialty!.name}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -140,7 +140,7 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    (appointment.status.name == 'Cancelada')
+                    (appointment.status!.name == 'Cancelada')
                         ? const CanceledLabel()
                         : Container(),
                   ],
@@ -159,9 +159,9 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      (appointment.status.name != 'Confirmada' &&
-                              appointment.status.name != 'Atendida' &&
-                              appointment.status.name != 'Cancelada')
+                      (appointment.status!.name != 'Confirmada' &&
+                              appointment.status!.name != 'Atendida' &&
+                              appointment.status!.name != 'Cancelada')
                           ? ButtonSheetOpt(
                               title: 'Confirmar Cita',
                               icon: Icons.thumb_up_outlined,
@@ -175,14 +175,14 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
 
                                 if (response) {
                                   Notifications.showSnackBar(
-                                      'Gracias! Su cita con doctor(a) ${appointment.doctor.name} ${appointment.doctor.lastName} ha sido confirmada.');
+                                      'Gracias! Su cita con doctor(a) ${appointment.doctor!.name} ${appointment.doctor!.lastName} ha sido confirmada.');
                                 }
                               },
                               iconColor: ThemeProvider.green,
                             )
                           : Container(),
-                      (appointment.status.name != 'Atendida' &&
-                              appointment.status.name != 'Cancelada')
+                      (appointment.status!.name != 'Atendida' &&
+                              appointment.status!.name != 'Cancelada')
                           ? ButtonSheetOpt(
                               title: 'Cancelar Cita',
                               icon: Icons.thumb_down_outlined,
@@ -193,8 +193,8 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
                               iconColor: ThemeProvider.lightRed,
                             )
                           : Container(),
-                      (appointment.status.name != 'Atendida' ||
-                              appointment.status.name != 'Cancelada')
+                      (appointment.status!.name != 'Atendida' ||
+                              appointment.status!.name != 'Cancelada')
                           ? ButtonSheetOpt(
                               title: 'Detalles de la Cita',
                               icon: Icons.list_alt_rounded,
@@ -376,13 +376,13 @@ class AppointmentCardDoctorBody extends StatelessWidget {
             ],
           ),
           ((apiUser.miPerfil.nombre != 'Doctor') &&
-                  apiUser.id != appointment.patient.id)
+                  apiUser.id != appointment.patient!.id)
               ? Column(
                   children: [
                     const SizedBox(height: 2),
                     AppointmentDescription(
                       description:
-                          'Paciente: ${appointment.patient.name} ${appointment.patient.lastName}',
+                          'Paciente: ${appointment.patient!.name} ${appointment.patient!.lastName}',
                       icon: Icons.person_pin_outlined,
                       color: ThemeProvider.lightColor,
                     ),
