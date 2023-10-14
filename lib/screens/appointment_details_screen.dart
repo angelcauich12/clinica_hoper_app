@@ -34,17 +34,17 @@ class AppointmentDetailsScreen extends StatelessWidget {
                   children: [
                     AppointmentDetailRow(
                       title: 'Fecha: ',
-                      value: appointment.scheduledDate,
+                      value: appointment.scheduledDate!,
                     ),
                     const SizedBox(height: 10),
                     AppointmentDetailRow(
                       title: 'Hora: ',
-                      value: appointment.scheduledTime,
+                      value: appointment.scheduledTime!,
                     ),
                     const SizedBox(height: 10),
                     AppointmentDetailRow(
                       title: 'Motivo de la consulta: ',
-                      value: appointment.description,
+                      value: appointment.description!,
                     ),
                     const SizedBox(height: 10),
                     (apiUser.miPerfil.nombre != 'Doctor')
@@ -53,29 +53,29 @@ class AppointmentDetailsScreen extends StatelessWidget {
                               AppointmentDetailRow(
                                 title: 'Doctor: ',
                                 value:
-                                    '${appointment.doctor.name} ${appointment.doctor.lastName}',
+                                    '${appointment.doctor!.name} ${appointment.doctor!.lastName}',
                               ),
                               AppointmentDetailRow(
                                 title: 'Paciente: ',
                                 value:
-                                    '${appointment.patient.name} ${appointment.patient.lastName}',
+                                    '${appointment.patient!.name} ${appointment.patient!.lastName}',
                               )
                             ],
                           )
                         : AppointmentDetailRow(
                             title: 'Paciente: ',
                             value:
-                                '${appointment.patient.name} ${appointment.patient.lastName}',
+                                '${appointment.patient!.name} ${appointment.patient!.lastName}',
                           ),
                     const SizedBox(height: 10),
                     AppointmentDetailRow(
                       title: 'Tipo: ',
-                      value: appointment.type,
+                      value: appointment.type!,
                     ),
                     const SizedBox(height: 10),
                     AppointmentDetailRow(
                       title: 'Estatus: ',
-                      value: appointment.status.name,
+                      value: appointment.status!.name!,
                     ),
                   ],
                 ),

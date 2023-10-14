@@ -135,15 +135,15 @@ class AppointmentProvider extends ChangeNotifier {
           appointmentResponse = MyAppointments.fromJson(response.body);
           appointments = appointmentResponse.appointments;
           reservadasList = appointments
-              .where((appointment) => appointment.status.name == 'Reservada')
+              .where((appointment) => appointment.status!.name == 'Reservada')
               .toList();
           confirmadasList = appointments
-              .where((appointment) => appointment.status.name == 'Confirmada')
+              .where((appointment) => appointment.status!.name == 'Confirmada')
               .toList();
           atendidasYCanceladasList = appointments
               .where((appointment) =>
-                  appointment.status.name == 'Atendida' ||
-                  appointment.status.name == 'Cancelada')
+                  appointment.status!.name == 'Atendida' ||
+                  appointment.status!.name == 'Cancelada')
               .toList();
           print(appointments);
           result = true;
