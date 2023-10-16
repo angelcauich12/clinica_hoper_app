@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/models/models.dart';
+import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
@@ -65,9 +66,13 @@ class PopupMenuList extends StatelessWidget {
         ),
       ],
       icon: (apiUser.image == null)
-          ? const CircleAvatar(
+          ? CircleAvatar(
               radius: 30,
-              backgroundImage: AssetImage('assets/images/user-icon.png'),
+              backgroundImage:
+                  const AssetImage('assets/images/user-icon-trans.png'),
+              backgroundColor: Preferences.isDarkMode
+                  ? ThemeProvider.brown
+                  : ThemeProvider.fourColor,
             )
           : CircleAvatar(
               radius: 30,

@@ -36,7 +36,7 @@ class AppointmentCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
           color: Preferences.isDarkMode
-              ? ThemeProvider.secondColor
+              ? ThemeProvider.fourColor
               : ThemeProvider.fourColor,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
@@ -104,7 +104,7 @@ class AppointmentCardHeader extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Roboto',
                     color: Preferences.isDarkMode
-                        ? ThemeProvider.white
+                        ? ThemeProvider.darkColor
                         : ThemeProvider.lightColor,
                   ),
                 ),

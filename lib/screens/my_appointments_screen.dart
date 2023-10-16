@@ -30,7 +30,7 @@ class AppointmentsTabs extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
+        // backgroundColor: Preferences.isDarkMode ? ThemeProvider.brown : Colors.grey[100],
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,

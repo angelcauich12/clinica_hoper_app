@@ -6,67 +6,72 @@
 import 'dart:convert';
 
 class ScheduleIntervalsResponse {
-    int? code;
-    String? status;
-    DoctorSchedule? doctorSchedule;
+  int? code;
+  String? status;
+  DoctorSchedule? doctorSchedule;
 
-    ScheduleIntervalsResponse({
-        this.code,
-        this.status,
-        this.doctorSchedule,
-    });
+  ScheduleIntervalsResponse({
+    this.code,
+    this.status,
+    this.doctorSchedule,
+  });
 
-    factory ScheduleIntervalsResponse.fromJson(String str) => ScheduleIntervalsResponse.fromMap(json.decode(str));
+  factory ScheduleIntervalsResponse.fromJson(String str) =>
+      ScheduleIntervalsResponse.fromMap(json.decode(str));
 
-    String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toMap());
 
-    factory ScheduleIntervalsResponse.fromMap(Map<String, dynamic> json) => ScheduleIntervalsResponse(
+  factory ScheduleIntervalsResponse.fromMap(Map<String, dynamic> json) =>
+      ScheduleIntervalsResponse(
         code: json["code"],
         status: json["status"],
-        doctorSchedule: json["doctor_schedule"] == null ? null : DoctorSchedule.fromMap(json["doctor_schedule"]),
-    );
+        doctorSchedule: json["doctor_schedule"] == null
+            ? null
+            : DoctorSchedule.fromMap(json["doctor_schedule"]),
+      );
 
-    Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap() => {
         "code": code,
         "status": status,
         "doctor_schedule": doctorSchedule?.toMap(),
-    };
+      };
 }
 
 class DoctorSchedule {
-    int? id;
-    int? day;
-    int? active;
-    String? morningStart;
-    String? morningEnd;
-    String? afternoonStart;
-    String? afternoonEnd;
-    int? userId;
-    String? createdAt;
-    String? updatedAt;
-    List<String>? morningIntervals;
-    List<String>? afternoonIntervals;
+  int? id;
+  int? day;
+  int? active;
+  String? morningStart;
+  String? morningEnd;
+  String? afternoonStart;
+  String? afternoonEnd;
+  int? userId;
+  String? createdAt;
+  String? updatedAt;
+  List<String>? morningIntervals;
+  List<String>? afternoonIntervals;
 
-    DoctorSchedule({
-        this.id,
-        this.day,
-        this.active,
-        this.morningStart,
-        this.morningEnd,
-        this.afternoonStart,
-        this.afternoonEnd,
-        this.userId,
-        this.createdAt,
-        this.updatedAt,
-        this.morningIntervals,
-        this.afternoonIntervals,
-    });
+  DoctorSchedule({
+    this.id,
+    this.day,
+    this.active,
+    this.morningStart,
+    this.morningEnd,
+    this.afternoonStart,
+    this.afternoonEnd,
+    this.userId,
+    this.createdAt,
+    this.updatedAt,
+    this.morningIntervals,
+    this.afternoonIntervals,
+  });
 
-    factory DoctorSchedule.fromJson(String str) => DoctorSchedule.fromMap(json.decode(str));
+  factory DoctorSchedule.fromJson(String str) =>
+      DoctorSchedule.fromMap(json.decode(str));
 
-    String toJson() => json.encode(toMap());
+  String toJson() => json.encode(toMap());
 
-    factory DoctorSchedule.fromMap(Map<String, dynamic> json) => DoctorSchedule(
+  factory DoctorSchedule.fromMap(Map<String, dynamic> json) => DoctorSchedule(
         id: json["id"],
         day: json["day"],
         active: json["active"],
@@ -77,11 +82,15 @@ class DoctorSchedule {
         userId: json["user_id"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
-        morningIntervals: json["morning_intervals"] == null ? [] : List<String>.from(json["morning_intervals"]!.map((x) => x)),
-        afternoonIntervals: json["afternoon_intervals"] == null ? [] : List<String>.from(json["afternoon_intervals"]!.map((x) => x)),
-    );
+        morningIntervals: json["morning_intervals"] == null
+            ? []
+            : List<String>.from(json["morning_intervals"]!.map((x) => x)),
+        afternoonIntervals: json["afternoon_intervals"] == null
+            ? []
+            : List<String>.from(json["afternoon_intervals"]!.map((x) => x)),
+      );
 
-    Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap() => {
         "id": id,
         "day": day,
         "active": active,
@@ -92,7 +101,11 @@ class DoctorSchedule {
         "user_id": userId,
         "created_at": createdAt,
         "updated_at": updatedAt,
-        "morning_intervals": morningIntervals == null ? [] : List<dynamic>.from(morningIntervals!.map((x) => x)),
-        "afternoon_intervals": afternoonIntervals == null ? [] : List<dynamic>.from(afternoonIntervals!.map((x) => x)),
-    };
+        "morning_intervals": morningIntervals == null
+            ? []
+            : List<dynamic>.from(morningIntervals!.map((x) => x)),
+        "afternoon_intervals": afternoonIntervals == null
+            ? []
+            : List<dynamic>.from(afternoonIntervals!.map((x) => x)),
+      };
 }

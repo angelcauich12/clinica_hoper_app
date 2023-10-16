@@ -118,7 +118,7 @@ class Errors {
       );
 
   Map<String, dynamic> toMap() => {
-        "id": name == null ? [] : List<dynamic>.from(name!.map((x) => x)),
+        "id": id == null ? [] : List<dynamic>.from(id!.map((x) => x)),
         "is_merge":
             isMerge == null ? [] : List<dynamic>.from(isMerge!.map((x) => x)),
         "name": name == null ? [] : List<dynamic>.from(name!.map((x) => x)),

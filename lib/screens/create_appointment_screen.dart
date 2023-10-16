@@ -187,6 +187,39 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                     ),
                                   ],
                                 ),
+                                (apiUser.miPerfil.nombre == 'Admin')
+                                    ? TextFormField(
+                                        readOnly: true,
+                                        controller: _searchController,
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        decoration: InputDecorations
+                                            .authInputDecoration(
+                                                color: myColor,
+                                                hintText: 'John Doe',
+                                                labelText: 'Paciente',
+                                                suffixIcon:
+                                                    Icons.search_outlined),
+                                        onTap: () async {
+                                          await showSearch(
+                                            context: context,
+                                            delegate: PatientSearchDelegate(),
+                                          );
+                                          if (appointmentProv.patientFullName !=
+                                              '') {
+                                            _searchController.text =
+                                                appointmentProv.patientFullName;
+                                          }
+                                        },
+                                        validator: (value) {
+                                          return (value != null &&
+                                                  value.length >= 3)
+                                              ? null
+                                              : 'Paciente debe contener más de 3 caracteres.';
+                                        },
+                                      )
+                                    : Container(),
+                                const SizedBox(height: 15),
                               ],
                             )
                           : Column(
@@ -288,38 +321,42 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                             labelText: 'Fecha Cita',
                             suffixIcon: Icons.calendar_month_outlined),
                         textAlign: TextAlign.center,
-                        onTap: () async {
-                          DateTime? selectedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime(2025),
-                          );
+                        onTap: (appointmentProv.doctorSelected != null)
+                            ? () async {
+                                DateTime? selectedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1950),
+                                  lastDate: DateTime(2025),
+                                );
 
-                          if (selectedDate == null) return; //if Cancel
+                                if (selectedDate == null) return; //if Cancel
 
-                          setState(() {
-                            var formattedDate =
-                                DateFormat('yyyy-MM-dd').format(selectedDate);
-                            print('si Se pudo ${formattedDate.toString()}');
-                            appointmentProv.startDate = formattedDate;
-                            _dateController.text = formattedDate;
-                          });
-                          final result =
-                              await appointmentProv.scheduleIntervals();
-                          print(
-                              'Result *********************************** $result');
-                          appointmentProv.startTime = null;
-                          appointmentForm.intervalsDropdownKey.currentState
-                              ?.reset();
-                          if (result == false) {
-                            appointmentProv.morningIntervals = [];
-                            Notifications.showSnackBar(appointmentProv
-                                    .serverResponse?.message
-                                    ?.substring(0, 50) ??
-                                'Error Desconocido.');
-                          }
-                        },
+                                setState(() {
+                                  var formattedDate = DateFormat('yyyy-MM-dd')
+                                      .format(selectedDate);
+                                  print(
+                                      'si Se pudo ${formattedDate.toString()}');
+                                  appointmentProv.startDate = formattedDate;
+                                  _dateController.text = formattedDate;
+                                });
+                                appointmentProv.allIntervals = [];
+                                final result =
+                                    await appointmentProv.scheduleIntervals();
+                                print('Result ******* $result');
+                                appointmentProv.startTime = null;
+                                appointmentForm
+                                    .intervalsDropdownKey.currentState
+                                    ?.reset();
+                                if (result == false) {
+                                  appointmentProv.allIntervals = [];
+                                  // Notifications.showSnackBar(appointmentProv
+                                  //         .serverResponse?.message
+                                  //         ?.substring(0, 50) ??
+                                  //     'Error Desconocido.');
+                                }
+                              }
+                            : null,
                         validator: (value) {
                           return (value != null && value.length >= 10)
                               ? null
@@ -360,8 +397,8 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                               alignment: Alignment.center,
                               isExpanded: true,
                               value: appointmentProv.startTime,
-                              items: appointmentProv.morningIntervals!
-                                  .map((interval) {
+                              items:
+                                  appointmentProv.allIntervals!.map((interval) {
                                 return DropdownMenuItem(
                                   alignment: Alignment.center,
                                   value: interval,

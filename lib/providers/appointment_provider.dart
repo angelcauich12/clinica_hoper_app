@@ -40,7 +40,8 @@ class AppointmentProvider extends ChangeNotifier {
   String? _patientSelected;
   String _patientFullName = '';
   List<String>? morningIntervals = [];
-  List<String>? afternoonIntervals;
+  List<String>? afternoonIntervals = [];
+  List<String>? allIntervals = [];
   ScheduleIntervalsResponse? scheduleIntervalsResponse;
   late MyAppointments appointmentResponse;
   ServerResponse? serverResponse;
@@ -521,9 +522,15 @@ class AppointmentProvider extends ChangeNotifier {
           scheduleIntervalsResponse =
               ScheduleIntervalsResponse.fromJson(response.body);
           morningIntervals =
-              scheduleIntervalsResponse?.doctorSchedule?.morningIntervals;
+              scheduleIntervalsResponse?.doctorSchedule?.morningIntervals ?? [];
+          afternoonIntervals =
+              scheduleIntervalsResponse?.doctorSchedule?.afternoonIntervals ??
+                  [];
+          allIntervals?.addAll(morningIntervals!);
+          allIntervals?.addAll(afternoonIntervals!);
+
           Notifications.showSnackBar(
-              'Horario del medico $doctorSelected obtenido correctamente.');
+              'Horario del médico obtenido correctamente.');
           notifyListeners();
           break;
         case 401:

@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     User apiUser = User.fromJson(Preferences.apiUser);
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      // backgroundColor: Preferences.isDarkMode ? ThemeProvider.darkColor : ThemeProvider.lightGrey2,
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 20),
         child: Column(

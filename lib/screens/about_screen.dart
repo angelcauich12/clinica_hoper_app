@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/shared/preferences.dart';
 
 class AboutScreen extends StatelessWidget {
   static const String routeName = 'acerca-de';
@@ -7,9 +9,9 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: const Center(
+    return const Scaffold(
+      // backgroundColor: Preferences.isDarkMode ? ThemeProvider.darkColor : Colors.grey[100],
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
