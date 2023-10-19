@@ -1,3 +1,5 @@
+export 'package:hope_app/screens/appointment_update_screen.dart';
+
 export 'package:hope_app/screens/about_screen.dart';
 export 'package:hope_app/screens/activation_screen.dart';
 export 'package:hope_app/screens/appointment_details_screen.dart';

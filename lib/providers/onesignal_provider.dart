@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hope_app/screens/appointment_update_screen.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -33,11 +33,10 @@ class OneSignalProvider extends ChangeNotifier {
     /// Calls when foreground notification arrives.
     OneSignal.shared.setNotificationWillShowInForegroundHandler(
         (OSNotificationReceivedEvent event) {
-      print(
-        '&&&&&&&&& Notificacion Recibida en Foreground: ${event.notification}',
-      );
+      print(' Notificacion en Foreground: ${event.notification}');
       Notifications.showSnackBar(
-          event.notification.body ?? 'Se recibio una notificacion');
+        event.notification.body ?? 'Se recibio una notificacion',
+      );
 
       /// Display Notification, send null to not display
       event.complete(null);
@@ -46,7 +45,18 @@ class OneSignalProvider extends ChangeNotifier {
     /// Calls when the notification opens the app.
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
-      print('&&&&&&&&& Notificacion Abierta: $result');
+      final OSNotification notification = result.notification;
+      final String id = notification.additionalData!['id'].toString();
+
+      Future.microtask(
+        () {
+          Navigator.pushNamed(
+            context,
+            AppointmentUpdateScreen.routeName,
+            arguments: id,
+          );
+        },
+      );
     });
   }
 
@@ -87,7 +97,7 @@ class OneSignalProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         result = true;
-        print('Exito: $decodedResp');
+        print('Exito : $decodedResp');
       } else {
         result = false;
         print('Error: $decodedResp');

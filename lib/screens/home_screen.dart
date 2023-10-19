@@ -20,9 +20,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final appointmentProvider =
-        Provider.of<AppointmentProvider>(context, listen: false);
-    getData(appointmentProvider);
+    final oneSignalProvider = Provider.of<OneSignalProvider>(context);
+    oneSignalProvider.initOneSignal(context);
+    getData();
     User apiUser = User.fromJson(Preferences.apiUser);
 
     return Scaffold(
@@ -67,7 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void getData(AppointmentProvider appointmentProvider) async {
+  void getData() async {
+    final appointmentProvider =
+        Provider.of<AppointmentProvider>(context, listen: false);
     await appointmentProvider.getData();
     await appointmentProvider.getAppointments();
   }

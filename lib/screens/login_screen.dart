@@ -73,8 +73,8 @@ class LoginScreen extends StatelessWidget {
                         children: [
                           SocialMediaButton(
                             imagePath: 'assets/images/brand/google.png',
-                            onTap: () =>
-                                onGoogleSignIn(context, googleApiService),
+                            onTap: () => onGoogleSignIn(
+                                context, googleApiService, oneSignalProvider),
                           ),
                           const SizedBox(width: 20),
                           SocialMediaButton(
@@ -121,7 +121,8 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-onGoogleSignIn(BuildContext context, googleApiService) async {
+onGoogleSignIn(
+    BuildContext context, googleApiService, oneSignalProvider) async {
   final user = await GoogleSignInAPiService.loginGoogle();
 
   print('El usuario vale ${user?.displayName}');
@@ -147,6 +148,8 @@ onGoogleSignIn(BuildContext context, googleApiService) async {
     );
 
     if (result != false) {
+      oneSignalProvider.saveUpdateId();
+
       // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(
         context,

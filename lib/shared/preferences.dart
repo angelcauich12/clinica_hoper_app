@@ -15,7 +15,7 @@ class Preferences {
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
   // static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';
-  static String _oneSignalAppId = '2f3616b8-42eb-441c-992b-19fad44ac012';
+  static String _oneSignalAppId = '6bd80d52-1cb2-4080-9183-242b3052937f';
   static String _onesignalUserId = '';
   static String _clientImage = '';
   static String _gender = 'F';
