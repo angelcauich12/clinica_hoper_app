@@ -57,6 +57,7 @@ class AppointmentsTabs extends StatelessWidget {
 class AppointmentsTabsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
     final List<Appointment> reservadasList = appointmentProvider.reservadasList;
     final List<Appointment> confirmadasList =
@@ -65,77 +66,87 @@ class AppointmentsTabsBody extends StatelessWidget {
         appointmentProvider.atendidasYCanceladasList;
 
     return SafeArea(
-      child: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 15),
-            decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: TabBar(
-              unselectedLabelColor: Colors.grey,
-              labelColor: ThemeProvider.white,
-              indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Preferences.isDarkMode
-                      ? ThemeProvider.yellowColor
-                      : ThemeProvider.secondColor),
-              tabs: const [
-                Tab(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Próximas",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+      child: (appointmentProvider.isLoading)
+          ? SizedBox(
+              width: size.width,
+              height: size.height * 0.6,
+              child: Center(
+                child: SpinKitCubeGrid(
+                  color: ThemeProvider.secondColor,
                 ),
-                Tab(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Confirmadas",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Atendidas",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 25),
-          Expanded(
-            child: TabBarView(
+              ),
+            )
+          : Column(
               children: [
-                AppointmentList(appointments: reservadasList),
-                AppointmentList(appointments: confirmadasList),
-                AppointmentList(appointments: atendidasYCanceladasList),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: TabBar(
+                    unselectedLabelColor: Colors.grey,
+                    labelColor: ThemeProvider.white,
+                    indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Preferences.isDarkMode
+                            ? ThemeProvider.yellowColor
+                            : ThemeProvider.secondColor),
+                    tabs: const [
+                      Tab(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Próximas",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Confirmadas",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Tab(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Atendidas",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      AppointmentList(appointments: reservadasList),
+                      AppointmentList(appointments: confirmadasList),
+                      AppointmentList(appointments: atendidasYCanceladasList),
+                    ],
+                  ),
+                )
               ],
             ),
-          )
-        ],
-      ),
     );
   }
 }

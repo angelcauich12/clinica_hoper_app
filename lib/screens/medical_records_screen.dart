@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
@@ -38,6 +39,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final size = mediaQuery.size;
+    final medRecordsProvider = Provider.of<MedicalRecordsProvider>(context);
     print('Orientation ${mediaQuery.orientation}');
     return Scaffold(
       body: CustomScrollView(
@@ -49,7 +51,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                Container(
+                SizedBox(
                   height: (mediaQuery.orientation == Orientation.landscape)
                       ? size.height - 100
                       : size.height - 200,
@@ -64,7 +66,17 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                         },
                         itemCount: _pages.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return _pages[index % _pages.length];
+                          return (medRecordsProvider.isLoading)
+                              ? SizedBox(
+                                  width: size.width,
+                                  height: size.height * 0.6,
+                                  child: Center(
+                                    child: SpinKitCubeGrid(
+                                      color: ThemeProvider.secondColor,
+                                    ),
+                                  ),
+                                )
+                              : _pages[index % _pages.length];
                         },
                       ),
                       Positioned(
@@ -117,126 +129,134 @@ class PageControlButtons extends StatelessWidget {
     final medRecordsForm3 = Provider.of<MedRecordsForm3Provider>(context);
     final medRecordsProvider = Provider.of<MedicalRecordsProvider>(context);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        TextButton(
-          style: TextButton.styleFrom(
-            fixedSize: Size((size.width / 3), 50),
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.teal,
-            disabledForegroundColor: Colors.transparent,
-            disabledBackgroundColor: Colors.transparent,
-          ),
-          onPressed: (_activePage == 0)
-              ? null
-              : () {
-                  print('activePage $_activePage');
-
-                  _pageController.previousPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeIn,
-                  );
-                },
-          child: const Text('Anterior'),
-        ),
-        const SizedBox(width: 15),
-        (_activePage == _pages.length - 1)
-            ? TextButton(
+    return (!medRecordsProvider.isLoading)
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
                 style: TextButton.styleFrom(
                   fixedSize: Size((size.width / 3), 50),
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.teal,
+                  disabledForegroundColor: Colors.transparent,
+                  disabledBackgroundColor: Colors.transparent,
                 ),
-                onPressed: () async {
-                  if (_activePage == 2 && !medRecordsForm3.isValidForm())
-                    return;
+                onPressed: (_activePage == 0)
+                    ? null
+                    : () {
+                        print('activePage $_activePage');
 
-                  final MedicalRecordsRequest medicalRecords =
-                      MedicalRecordsRequest(
-                    fechaNacimiento: medRecordsForm1.birthday,
-                    // edad : medRecordsForm1.edad,
-                    genero: medRecordsForm1.gender,
-                    ocupacion: medRecordsForm1.ocupation,
-                    estadoCivil: medRecordsForm1.maritalStatus,
-                    domicilio: medRecordsForm1.address,
-                    ciudad: medRecordsForm2.city,
-                    estado: medRecordsForm2.state,
-                    codigoPostal: (medRecordsForm2.postalCode != '')
-                        ? medRecordsForm2.postalCode
-                        : "97000",
-                    telefono: medRecordsForm1.phone,
-                    celular: medRecordsForm1.phone,
-                    horarioContacto: medRecordsForm2.contactSchedule,
-                    contactoNombre: medRecordsForm2.contactName,
-                    contactoParentesco: medRecordsForm2.relationship,
-                    contactoTelefono: medRecordsForm2.contactPhone,
-                    contactoCelular: medRecordsForm2.contactPhone,
-                    alergiasTextarea: medRecordsForm3.alergiasTextarea,
-                    medicamentosTextarea: medRecordsForm3.medicamentosTextarea,
-                    tomaMedicamentos:
-                        (medRecordsForm3.tomaMedicamentos) ? 1 : 0,
-                    alergias: (medRecordsForm3.alergias) ? 1 : 0,
-                    cardiopatias: (medRecordsForm3.cardiopatias) ? 1 : 0,
-                    coagulopatias: (medRecordsForm3.coagulopatias) ? 1 : 0,
-                    alteracionPresionArterial:
-                        (medRecordsForm3.alteracionPresionArterial) ? 1 : 0,
-                    embarazo: (medRecordsForm3.embarazo) ? 1 : 0,
-                    diabetes: (medRecordsForm3.diabetes) ? 1 : 0,
-                    hepatitis: (medRecordsForm3.hepatitis) ? 1 : 0,
-                    fiebreReumatica: (medRecordsForm3.fiebreReumatica) ? 1 : 0,
-                    enfermedadesRenales:
-                        (medRecordsForm3.enfermedadesRenales) ? 1 : 0,
-                    inmunosupresion: (medRecordsForm3.inmunosupresion) ? 1 : 0,
-                    trastornosRespiratorios:
-                        (medRecordsForm3.trastornosRespiratorios) ? 1 : 0,
-                    trastornosGastricos:
-                        (medRecordsForm3.trastornosGastricos) ? 1 : 0,
-                    epilepsia: (medRecordsForm3.epilepsia) ? 1 : 0,
-                    bebeAlcohol: (medRecordsForm3.bebeAlcohol) ? 1 : 0,
-                    fuma: (medRecordsForm3.fuma) ? 1 : 0,
-                  );
-
-                  final result = await medRecordsProvider
-                      .saveMedicalRecords(medicalRecords);
-
-                  if (result) {
-                    Future.microtask(
-                      () {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          Home.routeName,
+                        _pageController.previousPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeIn,
                         );
                       },
-                    );
-                  }
-                },
-                child: const Text(' Guardar '),
-              )
-            : TextButton(
-                style: TextButton.styleFrom(
-                  fixedSize: Size((size.width / 3), 50),
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal,
-                  elevation: 5,
-                  shadowColor: Colors.black87,
-                ),
-                onPressed: () {
-                  print('activePage $_activePage');
-                  if (_activePage == 0 && !medRecordsForm1.isValidForm())
-                    return;
-                  if (_activePage == 1 && !medRecordsForm2.isValidForm())
-                    return;
-
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeIn,
-                  );
-                },
-                child: const Text('Siguiente'),
+                child: const Text('Anterior'),
               ),
-      ],
-    );
+              const SizedBox(width: 15),
+              (_activePage == _pages.length - 1)
+                  ? TextButton(
+                      style: TextButton.styleFrom(
+                        fixedSize: Size((size.width / 3), 50),
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.teal,
+                      ),
+                      onPressed: () async {
+                        if (_activePage == 2 && !medRecordsForm3.isValidForm())
+                          return;
+
+                        final MedicalRecordsRequest medicalRecords =
+                            MedicalRecordsRequest(
+                          fechaNacimiento: medRecordsForm1.birthday,
+                          // edad : medRecordsForm1.edad,
+                          genero: medRecordsForm1.gender,
+                          ocupacion: medRecordsForm1.ocupation,
+                          estadoCivil: medRecordsForm1.maritalStatus,
+                          domicilio: medRecordsForm1.address,
+                          ciudad: medRecordsForm2.city,
+                          estado: medRecordsForm2.state,
+                          codigoPostal: (medRecordsForm2.postalCode != '')
+                              ? medRecordsForm2.postalCode
+                              : "97000",
+                          telefono: medRecordsForm1.phone,
+                          celular: medRecordsForm1.phone,
+                          horarioContacto: medRecordsForm2.contactSchedule,
+                          contactoNombre: medRecordsForm2.contactName,
+                          contactoParentesco: medRecordsForm2.relationship,
+                          contactoTelefono: medRecordsForm2.contactPhone,
+                          contactoCelular: medRecordsForm2.contactPhone,
+                          alergiasTextarea: medRecordsForm3.alergiasTextarea,
+                          medicamentosTextarea:
+                              medRecordsForm3.medicamentosTextarea,
+                          tomaMedicamentos:
+                              (medRecordsForm3.tomaMedicamentos) ? 1 : 0,
+                          alergias: (medRecordsForm3.alergias) ? 1 : 0,
+                          cardiopatias: (medRecordsForm3.cardiopatias) ? 1 : 0,
+                          coagulopatias:
+                              (medRecordsForm3.coagulopatias) ? 1 : 0,
+                          alteracionPresionArterial:
+                              (medRecordsForm3.alteracionPresionArterial)
+                                  ? 1
+                                  : 0,
+                          embarazo: (medRecordsForm3.embarazo) ? 1 : 0,
+                          diabetes: (medRecordsForm3.diabetes) ? 1 : 0,
+                          hepatitis: (medRecordsForm3.hepatitis) ? 1 : 0,
+                          fiebreReumatica:
+                              (medRecordsForm3.fiebreReumatica) ? 1 : 0,
+                          enfermedadesRenales:
+                              (medRecordsForm3.enfermedadesRenales) ? 1 : 0,
+                          inmunosupresion:
+                              (medRecordsForm3.inmunosupresion) ? 1 : 0,
+                          trastornosRespiratorios:
+                              (medRecordsForm3.trastornosRespiratorios) ? 1 : 0,
+                          trastornosGastricos:
+                              (medRecordsForm3.trastornosGastricos) ? 1 : 0,
+                          epilepsia: (medRecordsForm3.epilepsia) ? 1 : 0,
+                          bebeAlcohol: (medRecordsForm3.bebeAlcohol) ? 1 : 0,
+                          fuma: (medRecordsForm3.fuma) ? 1 : 0,
+                        );
+
+                        final result = await medRecordsProvider
+                            .saveMedicalRecords(medicalRecords);
+
+                        if (result) {
+                          Future.microtask(
+                            () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                Home.routeName,
+                              );
+                            },
+                          );
+                        }
+                      },
+                      child: const Text(' Guardar '),
+                    )
+                  : TextButton(
+                      style: TextButton.styleFrom(
+                        fixedSize: Size((size.width / 3), 50),
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.teal,
+                        elevation: 5,
+                        shadowColor: Colors.black87,
+                      ),
+                      onPressed: () {
+                        print('activePage $_activePage');
+                        if (_activePage == 0 && !medRecordsForm1.isValidForm())
+                          return;
+                        if (_activePage == 1 && !medRecordsForm2.isValidForm())
+                          return;
+
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeIn,
+                        );
+                      },
+                      child: const Text('Siguiente'),
+                    ),
+            ],
+          )
+        : Container();
   }
 }
 
