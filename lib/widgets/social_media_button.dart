@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope_app/shared/preferences.dart';
 
 class SocialMediaButton extends StatelessWidget {
   String imagePath;
@@ -13,9 +14,9 @@ class SocialMediaButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
+          border: Border.all(color: (Preferences.isDarkMode) ? Colors.black54 : Colors.grey[300]!),
           borderRadius: BorderRadius.circular(10),
-          color: Colors.grey[100],
+          color: (Preferences.isDarkMode) ? Colors.grey.withAlpha(30) : Colors.grey[100],
         ),
         child: Image.asset(
           imagePath,

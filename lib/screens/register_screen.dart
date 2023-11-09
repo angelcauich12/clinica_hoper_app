@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
@@ -49,13 +50,15 @@ class _RegisterForm extends StatelessWidget {
               const EdgeInsets.only(left: 20, right: 20, bottom: 15, top: 15),
           margin: const EdgeInsets.only(left: 30, right: 30),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Preferences.isDarkMode
+                ? ThemeProvider.darkColor
+                : ThemeProvider.white,
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                  color: const Color(0xff126276).withOpacity(0.2),
+                  color: const Color(0xff126276).withOpacity(0.3),
                   blurRadius: 20,
-                  offset: const Offset(0, 10)),
+                  offset: const Offset(0, 8)),
             ],
           ),
           child: Form(
@@ -225,7 +228,14 @@ class _RegisterForm extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('¿Ya tienes cuenta?'),
+            Text(
+              '¿Ya tienes cuenta?',
+              style: TextStyle(
+                color: Preferences.isDarkMode
+                    ? ThemeProvider.white
+                    : ThemeProvider.darkColor,
+              ),
+            ),
             TextButton(
                 onPressed: () => Navigator.pushReplacementNamed(
                       context,

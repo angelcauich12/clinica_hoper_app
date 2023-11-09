@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
 
 class AuthBackground extends StatelessWidget {
@@ -18,11 +19,13 @@ class AuthBackground extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
-              colors: [
-                const Color(0xff126276).withAlpha(255),
-                const Color(0xff126276).withAlpha(230),
-                const Color(0xff126276).withAlpha(200),
-              ],
+              colors: (Preferences.isDarkMode)
+                  ? [ThemeProvider.darkColor]
+                  : [
+                      const Color(0xff126276).withAlpha(255),
+                      const Color(0xff126276).withAlpha(230),
+                      const Color(0xff126276).withAlpha(200),
+                    ],
             ),
           ),
         ),
@@ -44,7 +47,9 @@ class AuthBackground extends StatelessWidget {
             width: size.width,
             height: size.height * 0.7,
             decoration: BoxDecoration(
-              color: ThemeProvider.fourColor,
+              color: Preferences.isDarkMode
+                  ? ThemeProvider.darkColor
+                  : ThemeProvider.white,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(45),
                 topRight: Radius.circular(45),

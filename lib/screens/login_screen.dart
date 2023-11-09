@@ -17,6 +17,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
     final googleApiService = Provider.of<GoogleSignInAPiService>(context);
     oneSignalProvider.initOneSignal(context);
@@ -24,97 +25,115 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.only(top: 40),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              colors: [
-                const Color(0xff126276).withAlpha(255),
-                const Color(0xff126276).withAlpha(240),
-                const Color(0xff126276).withAlpha(220),
-              ],
+        child: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 40),
+              width: double.infinity,
+              height: size.height,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  colors: (Preferences.isDarkMode)
+                      ? [ThemeProvider.darkColor]
+                      : [
+                          const Color(0xff126276).withAlpha(255),
+                          const Color(0xff126276).withAlpha(240),
+                          const Color(0xff126276).withAlpha(220),
+                        ],
+                ),
+              ),
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 75),
-              Column(
+            SizedBox(
+              height: size.height,
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const Expanded(
+                    flex: 2,
+                    child: SizedBox(),
+                  ),
                   Image.asset(
                     'assets/images/brand/hoper-logo.png',
                     height: 65,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Preferences.isDarkMode
+                          ? ThemeProvider.darkColor
+                          : ThemeProvider.white,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 30),
+                          _LoginForm(),
+                          const SizedBox(height: 20),
+                          OrDivider(title: 'O ingresa con'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SocialMediaButton(
+                                imagePath: 'assets/images/brand/google.png',
+                                onTap: () => onGoogleSignIn(context,
+                                    googleApiService, oneSignalProvider),
+                              ),
+                              const SizedBox(width: 20),
+                              SocialMediaButton(
+                                  imagePath: 'assets/images/brand/facebook.png',
+                                  onTap: () async {
+                                    Notifications.showSnackBar(
+                                        'Login con Facebook!!');
+                                  }),
+                              const SizedBox(width: 20),
+                              SocialMediaButton(
+                                  imagePath: 'assets/images/brand/apple.png',
+                                  onTap: () async {
+                                    Notifications.showSnackBar(
+                                        'Login con Apple!!');
+                                  }),
+                            ],
+                          ),
+                          const SizedBox(height: 25),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '¿No estás registrado?',
+                                style: TextStyle(
+                                  color: Preferences.isDarkMode
+                                      ? ThemeProvider.white
+                                      : ThemeProvider.darkColor,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pushReplacementNamed(
+                                  context,
+                                  RegisterScreen.routeName,
+                                ),
+                                child: const Text(
+                                  'Crear cuenta',
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 10),
-              Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 30),
-                      _LoginForm(),
-                      const SizedBox(height: 20),
-                      OrDivider(title: 'O ingresa con'),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SocialMediaButton(
-                            imagePath: 'assets/images/brand/google.png',
-                            onTap: () => onGoogleSignIn(
-                                context, googleApiService, oneSignalProvider),
-                          ),
-                          const SizedBox(width: 20),
-                          SocialMediaButton(
-                              imagePath: 'assets/images/brand/facebook.png',
-                              onTap: () async {
-                                Notifications.showSnackBar(
-                                    'Login con Facebook!!');
-                              }),
-                          const SizedBox(width: 20),
-                          SocialMediaButton(
-                              imagePath: 'assets/images/brand/apple.png',
-                              onTap: () async {
-                                Notifications.showSnackBar('Login con Apple!!');
-                              }),
-                        ],
-                      ),
-                      const SizedBox(height: 25),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('¿No estás registrado?'),
-                          TextButton(
-                              onPressed: () => Navigator.pushReplacementNamed(
-                                    context,
-                                    RegisterScreen.routeName,
-                                  ),
-                              child: const Text(
-                                'Crear cuenta',
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -165,9 +184,7 @@ class _LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loginForm = Provider.of<LoginFormProvider>(context);
-    final Color myColor = Preferences.isDarkMode
-        ? ThemeProvider.darkColor
-        : ThemeProvider.secondColor;
+    final Color myColor = ThemeProvider.secondColor;
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
 
     Timer(
@@ -180,13 +197,15 @@ class _LoginForm extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Preferences.isDarkMode
+                ? ThemeProvider.darkColor
+                : ThemeProvider.white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                  color: const Color(0xff126276).withOpacity(0.2),
+                  color: const Color(0xff126276).withOpacity(0.3),
                   blurRadius: 20,
-                  offset: const Offset(0, 10)),
+                  offset: const Offset(0, 8)),
             ],
           ),
           child: Form(
