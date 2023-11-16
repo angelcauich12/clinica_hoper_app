@@ -30,6 +30,7 @@ class OneSignalProvider extends ChangeNotifier {
     });
 
     OneSignal.Notifications.clearAll();
+    OneSignal.Notifications.requestPermission(true);
 
     OneSignal.User.pushSubscription.addObserver((state) {
       print(OneSignal.User.pushSubscription.optedIn);
@@ -68,6 +69,7 @@ class OneSignalProvider extends ChangeNotifier {
 
   setOneSignalId() async {
     Preferences.onesignalUserId = OneSignal.User.pushSubscription.id ?? '';
+    print('userID: ${Preferences.onesignalUserId}');
   }
 
   Future<bool> saveUpdateId() async {
