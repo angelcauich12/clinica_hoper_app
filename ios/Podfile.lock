@@ -27,19 +27,50 @@ PODS:
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
   - GTMSessionFetcher/Core (2.3.0)
-  - onesignal_flutter (3.5.1):
+  - onesignal_flutter (5.0.4):
     - Flutter
-    - OneSignalXCFramework (= 3.12.4)
-  - OneSignalXCFramework (3.12.4):
-    - OneSignalXCFramework/OneSignalCore (= 3.12.4)
-    - OneSignalXCFramework/OneSignalExtension (= 3.12.4)
-    - OneSignalXCFramework/OneSignalOutcomes (= 3.12.4)
-  - OneSignalXCFramework/OneSignalCore (3.12.4)
-  - OneSignalXCFramework/OneSignalExtension (3.12.4):
+    - OneSignalXCFramework (= 5.0.4)
+  - OneSignalXCFramework (5.0.4):
+    - OneSignalXCFramework/OneSignalComplete (= 5.0.4)
+  - OneSignalXCFramework/OneSignal (5.0.4):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalExtension
+    - OneSignalXCFramework/OneSignalNotifications
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalOutcomes
+    - OneSignalXCFramework/OneSignalUser
+  - OneSignalXCFramework/OneSignalComplete (5.0.4):
+    - OneSignalXCFramework/OneSignal
+    - OneSignalXCFramework/OneSignalInAppMessages
+    - OneSignalXCFramework/OneSignalLocation
+  - OneSignalXCFramework/OneSignalCore (5.0.4)
+  - OneSignalXCFramework/OneSignalExtension (5.0.4):
     - OneSignalXCFramework/OneSignalCore
     - OneSignalXCFramework/OneSignalOutcomes
-  - OneSignalXCFramework/OneSignalOutcomes (3.12.4):
+  - OneSignalXCFramework/OneSignalInAppMessages (5.0.4):
     - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalNotifications
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalOutcomes
+    - OneSignalXCFramework/OneSignalUser
+  - OneSignalXCFramework/OneSignalLocation (5.0.4):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalNotifications
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalUser
+  - OneSignalXCFramework/OneSignalNotifications (5.0.4):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalExtension
+    - OneSignalXCFramework/OneSignalOutcomes
+  - OneSignalXCFramework/OneSignalOSCore (5.0.4):
+    - OneSignalXCFramework/OneSignalCore
+  - OneSignalXCFramework/OneSignalOutcomes (5.0.4):
+    - OneSignalXCFramework/OneSignalCore
+  - OneSignalXCFramework/OneSignalUser (5.0.4):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalNotifications
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalOutcomes
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -50,6 +81,7 @@ DEPENDENCIES:
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
   - onesignal_flutter (from `.symlinks/plugins/onesignal_flutter/ios`)
+  - OneSignalXCFramework (< 6.0, >= 5.0.0)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
@@ -85,10 +117,10 @@ SPEC CHECKSUMS:
   GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
-  onesignal_flutter: b8ac01bc3ebe47e798d7d775455c3a9b5b84f1c5
-  OneSignalXCFramework: 087934ab0d4d7445fcf1c015c7c782359e26c020
+  onesignal_flutter: 2c2f01520fa953d93fad18162538cc98d6da009b
+  OneSignalXCFramework: 7e0a6d68dda7e80b03069bd145232f480f8c2279
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
 
-PODFILE CHECKSUM: af148ed173ea433a7bf0dd84c76390823d89d08c
+PODFILE CHECKSUM: 62d3aeffe2098f1daf22f3564a092246689d468a
 
-COCOAPODS: 1.13.0
+COCOAPODS: 1.14.2

@@ -1,4 +1,4 @@
-package com.clinicahoper.clinica_hoper_app
+package com.clinicahoper.ClinicaHoperApp
 
 import io.flutter.embedding.android.FlutterActivity
 

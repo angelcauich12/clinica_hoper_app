@@ -44,7 +44,8 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
+            Container(
+              margin: (size.height < 670) ? const EdgeInsets.only(top: 50) : null,
               height: size.height,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,6 +76,7 @@ class LoginScreen extends StatelessWidget {
                           const SizedBox(height: 30),
                           _LoginForm(),
                           const SizedBox(height: 20),
+                          (size.height < 670) ? Container() :
                           OrDivider(title: 'O ingresa con'),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
