@@ -27,7 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     Intl.defaultLocale = "es_MX"; //sets global,
-    final sesionExpire = getFormatedDate(Preferences.expirationDate, 'hh:mm a');
+    final sesionExpire = getFormatedDate(Preferences.expirationDate, 'MMMM dd, yyyy hh:mm a');
     final licenseExpire =
         getFormatedDate(Preferences.licenseExp, 'MMMM dd, yyyy');
 
@@ -52,102 +52,100 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(20.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SwitchListTile.adaptive(
-                  value: Preferences.isDarkMode,
-                  title: const Text('DarkMode'),
-                  onChanged: (bool value) {
-                    final themeProvider = Provider.of<ThemeProvider>(
-                      context,
-                      listen: false,
-                    );
-                    Preferences.isDarkMode = value;
-                    value
-                        ? themeProvider.setDarkMode()
-                        : themeProvider.setLightMode();
-                    setState(() {});
-                  },
+                
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SwitchListTile(
+                value: Preferences.isDarkMode,
+                title: const Text('DarkMode'),
+                onChanged: (bool value) {
+                  final themeProvider = Provider.of<ThemeProvider>(
+                    context,
+                    listen: false,
+                  );
+                  Preferences.isDarkMode = value;
+                  value
+                      ? themeProvider.setDarkMode()
+                      : themeProvider.setLightMode();
+                  setState(() {});
+                },
                 ),
                 const Text(
-                  'Datos Generales',
-                  style: TextStyle(
-                      fontSize: 18,
-                      overflow: TextOverflow.ellipsis,
-                      height: 2,
-                      fontWeight: FontWeight.bold),
+                'Datos Generales',
+                style: TextStyle(
+                    fontSize: 18,
+                    overflow: TextOverflow.ellipsis,
+                    height: 2,
+                    fontWeight: FontWeight.bold),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Servidor: ${Preferences.apiServer}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          overflow: TextOverflow.ellipsis,
-                          height: 2,
-                        ),
+                    Text(
+                      'Servidor: ${Preferences.apiServer}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                        height: 2,
                       ),
-                      Text(
-                        'Licencia expira: $licenseExpire',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          overflow: TextOverflow.ellipsis,
-                          height: 2,
-                        ),
+                    ),
+                    Text(
+                      'Licencia expira: $licenseExpire',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                        height: 2,
                       ),
-                      Text(
-                        'Sesión expira: $sesionExpire',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          overflow: TextOverflow.ellipsis,
-                          height: 2,
-                        ),
+                    ),
+                    Text(
+                      'Sesión expira: $sesionExpire',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                        height: 2,
                       ),
-                      Text(
-                        'One Signal ID: ${Preferences.onesignalUserId}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          height: 2,
-                        ),
+                    ),
+                    Text(
+                      'One Signal ID: ${Preferences.onesignalUserId}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 2,
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      // Align(
-                      //   alignment: Alignment.center,
-                      //   child: ElevatedButton(
-                      //       style: ButtonStyle(
-                      //         shape: MaterialStateProperty.all(
-                      //           const RoundedRectangleBorder(
-                      //             borderRadius:
-                      //                 BorderRadius.all(Radius.circular(20)),
-                      //           ),
-                      //         ),
-                      //         backgroundColor: MaterialStateProperty.all(
-                      //             ThemeProvider.lightColor),
-                      //       ),
-                      //       onPressed: () async {
-                      //         await const FlutterSecureStorage().deleteAll();
-                      //         Preferences.apiUser = '';
-                      //         Preferences.apiServer = '192.168.0.100';
-                      //         Preferences.expirationDate =
-                      //             '2099-04-10 00:00:00';
-                      //         Preferences.licenseExp = '2099-04-10 00:00:00';
-                      //         Preferences.isDarkMode = false;
-                      //         Preferences.isActive = true;
-                      //         // ignore: use_build_context_synchronously
-                      //         Navigator.pushReplacementNamed(
-                      //             context, ActivationScreen.routeName);
-                      //       },
-                      //       child: const Text('Borrar Licencia')),
-                      // )
-                    ],
-                  ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    // Align(
+                    //   alignment: Alignment.center,
+                    //   child: ElevatedButton(
+                    //       style: ButtonStyle(
+                    //         shape: MaterialStateProperty.all(
+                    //           const RoundedRectangleBorder(
+                    //             borderRadius:
+                    //                 BorderRadius.all(Radius.circular(20)),
+                    //           ),
+                    //         ),
+                    //         backgroundColor: MaterialStateProperty.all(
+                    //             ThemeProvider.lightColor),
+                    //       ),
+                    //       onPressed: () async {
+                    //         await const FlutterSecureStorage().deleteAll();
+                    //         Preferences.apiUser = '';
+                    //         Preferences.apiServer = '192.168.0.100';
+                    //         Preferences.expirationDate =
+                    //             '2099-04-10 00:00:00';
+                    //         Preferences.licenseExp = '2099-04-10 00:00:00';
+                    //         Preferences.isDarkMode = false;
+                    //         Preferences.isActive = true;
+                    //         // ignore: use_build_context_synchronously
+                    //         Navigator.pushReplacementNamed(
+                    //             context, ActivationScreen.routeName);
+                    //       },
+                    //       child: const Text('Borrar Licencia')),
+                    // )
+                  ],
                 ),
               ],
             ),

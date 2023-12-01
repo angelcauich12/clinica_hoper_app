@@ -171,7 +171,7 @@ class ThemeProvider extends ChangeNotifier {
       bottomNavigationBarTheme:
           BottomNavigationBarThemeData(selectedItemColor: yellowColor),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.all(darkColor),
+        thumbColor: MaterialStateProperty.all(yellowColor),
         trackColor:
             MaterialStateProperty.all(const Color.fromRGBO(240, 171, 0, 0.5)),
       ),

@@ -6,7 +6,6 @@ import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
-import 'package:hope_app/ui/notifications.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -48,7 +47,7 @@ class _RegisterForm extends StatelessWidget {
         Container(
           padding:
               const EdgeInsets.only(left: 20, right: 20, bottom: 15, top: 15),
-          margin: const EdgeInsets.only(left: 30, right: 30),
+          margin: const EdgeInsets.only(left: 30, right: 30, top: 10),
           decoration: BoxDecoration(
             color: Preferences.isDarkMode
                 ? ThemeProvider.darkColor

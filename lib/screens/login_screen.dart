@@ -45,7 +45,8 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             Container(
-              margin: (size.height < 670) ? const EdgeInsets.only(top: 50) : null,
+              margin:
+                  (size.height < 670) ? const EdgeInsets.only(top: 20) : null,
               height: size.height,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -54,10 +55,7 @@ class LoginScreen extends StatelessWidget {
                     flex: 2,
                     child: SizedBox(),
                   ),
-                  Image.asset(
-                    'assets/images/brand/hoper-logo.png',
-                    height: 65,
-                  ),
+                  const LogoBrand(),
                   const SizedBox(height: 30),
                   Container(
                     decoration: BoxDecoration(
@@ -76,15 +74,20 @@ class LoginScreen extends StatelessWidget {
                           const SizedBox(height: 30),
                           _LoginForm(),
                           const SizedBox(height: 20),
-                          (size.height < 670) ? Container() :
-                          OrDivider(title: 'O ingresa con'),
+                          (size.height < 670)
+                              ? Container()
+                              : OrDivider(title: 'O ingresa con'),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SocialMediaButton(
                                 imagePath: 'assets/images/brand/google.png',
-                                onTap: () => onGoogleSignIn(context,
-                                    googleApiService, oneSignalProvider),
+                                onTap: () async {
+                                  Notifications.showSnackBar(
+                                      'Login con Google!!');
+                                },
+                                // onTap: () => onGoogleSignIn(context,
+                                //     googleApiService, oneSignalProvider),
                               ),
                               const SizedBox(width: 20),
                               SocialMediaButton(
@@ -102,7 +105,7 @@ class LoginScreen extends StatelessWidget {
                                   }),
                             ],
                           ),
-                          const SizedBox(height: 25),
+                          SizedBox(height: (size.height < 670) ? 0 : 25),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

@@ -12,6 +12,8 @@ class AuthBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentRoute = ModalRoute.of(context)!.settings.name;
     final size = MediaQuery.of(context).size;
+    final orientation = MediaQuery.of(context).orientation;
+print(size.height);
 
     return Stack(
       children: [
@@ -31,7 +33,7 @@ class AuthBackground extends StatelessWidget {
         ),
         const SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(top: 50),
+            padding: EdgeInsets.only(top: 30),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -45,7 +47,7 @@ class AuthBackground extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.only(top: 25),
             width: size.width,
-            height: size.height * 0.7,
+            height: size.height * 0.8,
             decoration: BoxDecoration(
               color: Preferences.isDarkMode
                   ? ThemeProvider.darkColor

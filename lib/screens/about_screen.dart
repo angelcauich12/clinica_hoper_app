@@ -9,9 +9,27 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       // backgroundColor: Preferences.isDarkMode ? ThemeProvider.darkColor : Colors.grey[100],
-      body: Center(
+            appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        title: Text(
+          'Acerca de',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+            color: Preferences.isDarkMode
+                ? ThemeProvider.white
+                : ThemeProvider.brown,
+          ),
+        ),
+        actions: const [
+          // PopupMenuList(),
+        ],
+      ),
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

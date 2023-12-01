@@ -15,9 +15,9 @@ class NavbarProvider extends ChangeNotifier {
       widget: const MyAppointmentsScreen(),
     ),
     NavbarDTO(
-      label: 'Acerca de',
-      iconData: const FaIcon(FontAwesomeIcons.question),
-      widget: const AboutScreen(),
+      label: 'Configuración',
+      iconData: const Icon(FontAwesomeIcons.gears),
+      widget: const SettingsScreen(),
     ),
   ];
 

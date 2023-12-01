@@ -5,9 +5,12 @@ class LogoBrand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      height: 70,
-      child: Image(
+    final size = MediaQuery.of(context).size;
+    final orientation = MediaQuery.of(context).orientation;
+    
+    return  SizedBox(
+      height: (size.height > 1024 && orientation == Orientation.portrait) ? 100:70,
+      child: const Image(
         image: AssetImage('assets/images/brand/hoper-logo.png'),
       ),
     );

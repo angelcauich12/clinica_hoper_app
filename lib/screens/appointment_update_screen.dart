@@ -96,17 +96,17 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                                           Colors.transparent,
                                     ),
                                     onPressed: () async {
-                                      print('Cita Confirmada!!');
+                                      print('Cita envidada para Confirmar!!');
                                       setState(() {
                                         isLoading = true;
                                       });
                                       final result = await appointmentProvider
-                                          .confirmAppointment(id);
+                                          .confirmAppointment(appointment.id.toString());
 
+                                      setState(() {
+                                        isLoading = false;
+                                      });
                                       if (result) {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
                                         Notifications.showSnackBar(
                                             'Gracias! Su cita con doctor(a) ${appointment.doctor!.name} ${appointment.doctor!.lastName} ha sido confirmada.');
                                         Future.microtask(

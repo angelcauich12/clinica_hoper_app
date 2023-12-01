@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/screens/appointment_update_screen.dart';
@@ -44,15 +45,31 @@ class OneSignalProvider extends ChangeNotifier {
     });
 
     OneSignal.Notifications.addClickListener((event) {
-      print('NOTIFICATION CLICK LISTENER CALLED WITH EVENT: $event');
-      print("Clicked notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}");
-      // Notifications.showSnackBar(
-      //   event.notification.body ?? 'Se recibio una notificacion',
+      print("Clicked notification: \n${event.notification}");
+      final String appointmentId =
+          event.notification.additionalData!['appointment_id'].toString();
+
+      //     Notifications.showSnackBar(
+      //   '${event.notification.body} Cita: $appointmentId' ?? 'Se recibió una notificación',
       // );
+
+      Future.microtask(
+        () {
+          Navigator.pushNamed(
+            context,
+            AppointmentUpdateScreen.routeName,
+            arguments: appointmentId,
+          );
+        },
+      );
     });
 
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {
-      print('NOTIFICATION FOREGROUND WILL DISPLAY LISTENER CALLED WITH: ${event.notification.jsonRepresentation()}');
+      if (!Platform.isIOS) {
+        Notifications.showSnackBar(
+          'ForeGround ${event.notification.body} ',
+        );
+      }
 
       /// Display Notification, preventDefault to not display
       event.preventDefault();
@@ -61,10 +78,10 @@ class OneSignalProvider extends ChangeNotifier {
 
       /// notification.display() to display after preventing default
       event.notification.display();
-
-      print("Notification received in foreground notification: \n${event.notification.jsonRepresentation().replaceAll("\\n", "\n")}");
+      print('*************** Notification received in FOREGROUND');
+      print(event.notification.body);
+      print('*************** Notification received in FOREGROUND');
     });
-
   }
 
   setOneSignalId() async {
@@ -120,6 +137,6 @@ class OneSignalProvider extends ChangeNotifier {
   }
 
   disableNotifications({bool value = false}) {
-    OneSignal.consentGiven( value );
+    OneSignal.consentGiven(value);
   }
 }
