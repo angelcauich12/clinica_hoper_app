@@ -7,8 +7,8 @@ class Preferences {
   static String _apiUser = '';
   static String _activacionServer = '154.56.46.97';
   static String _activacionRoute = '/configuraciones/public_html';
-  static String _apiServer = 'www.clinicahoper.com';
-  static String _projectName = '';
+  static String _apiServer = '154.56.46.97';
+  static String _projectName = '/HoperQA/clinica-hoper-php-7.3/public_html';
   static bool _isActive = true;
   static String _expirationDate = '2099-04-10 00:00:00';
   static String _licenseExp = '2099-04-10 00:00:00';

@@ -19,60 +19,76 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    final appointmentProvider = context.read<AppointmentProvider>();
+    appointmentProvider.getData();
+    appointmentProvider.getAppointments();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
     oneSignalProvider.initOneSignal(context);
-    getData();
     User apiUser = User.fromJson(Preferences.apiUser);
-
+    //  getData();
     return Scaffold(
       // backgroundColor: Preferences.isDarkMode ? ThemeProvider.darkColor : ThemeProvider.lightGrey2,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(top: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _homeGreetings(
-              apiUser: apiUser,
-            ),
-            (apiUser.medicalHistory == null &&
-                    apiUser.miPerfil.nombre == 'Patient')
-                ? Column(
-                    children: [
-                      const SizedBox(height: 35),
-                      DangerMessageWithButton(
-                        color: ThemeProvider.blue.withOpacity(0.3),
-                        title: 'Estimado Paciente',
-                        paragraph1: 'Su expediente clínico no está completo.',
-                        paragraph2: 'Rellenar el formulario',
-                        btnTitle: 'Completar mi expediente',
-                      ),
-                    ],
-                  )
-                : Container(),
-            const SizedBox(height: 25),
-            _homeButtons(
-                profile: apiUser.miPerfil
-                    .nombre), //se envia el nombre del perfil doctor, patient, admin
-            const SizedBox(height: 25),
-            AppointmentSwiper(apiUser: apiUser),
-            const SizedBox(height: 25),
-            SpecialtySlider(specialties: specialties),
-            const SizedBox(height: 25),
-            _findUs(),
-            const SizedBox(height: 50),
-          ],
-        ),
+      body: Consumer<AppointmentProvider>(
+        builder: (context, ap, _) {
+          if (ap.isLoadingCatalogs) {
+            return const SkeletonHome();
+          } else {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _homeGreetings(
+                    apiUser: apiUser,
+                  ),
+                  (apiUser.medicalHistory == null &&
+                          apiUser.miPerfil.nombre == 'Patient')
+                      ? Column(
+                          children: [
+                            const SizedBox(height: 35),
+                            DangerMessageWithButton(
+                              color: ThemeProvider.blue.withOpacity(0.3),
+                              title: 'Estimado Paciente',
+                              paragraph1:
+                                  'Su expediente clínico no está completo.',
+                              paragraph2: 'Rellenar el formulario',
+                              btnTitle: 'Completar mi expediente',
+                            ),
+                          ],
+                        )
+                      : Container(),
+                  const SizedBox(height: 25),
+                  _homeButtons(
+                      profile: apiUser.miPerfil
+                          .nombre), //se envia el nombre del perfil doctor, patient, admin
+                  const SizedBox(height: 25),
+                  AppointmentSwiper(apiUser: apiUser),
+                  const SizedBox(height: 25),
+                  SpecialtySlider(specialties: specialties),
+                  const SizedBox(height: 25),
+                  _findUs(),
+                  const SizedBox(height: 50),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }
 
-  void getData() async {
-    final appointmentProvider =
-        Provider.of<AppointmentProvider>(context, listen: false);
-    await appointmentProvider.getData();
-    await appointmentProvider.getAppointments();
-  }
+  // void getData() async {
+  //   final appointmentProvider =
+  //       Provider.of<AppointmentProvider>(context, listen: false);
+  //   await appointmentProvider.getData();
+  //   await appointmentProvider.getAppointments();
+  // }
 }
 
 class AppointmentSwiper extends StatelessWidget {
@@ -83,8 +99,7 @@ class AppointmentSwiper extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
-    final appointments =
-        appointmentProvider.confirmadasList; //Debe ser confirmadas
+    final appointments = appointmentProvider.confirmadasList; //Debe ser confirmadas
 
     return (appointments.isNotEmpty)
         ? Container(
@@ -196,7 +211,7 @@ class _homeButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(profile);
+    // print(profile);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

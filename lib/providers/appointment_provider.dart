@@ -25,7 +25,7 @@ class AppointmentProvider extends ChangeNotifier {
   String description = '';
   final String _apiUrl = Preferences.apiServer;
   final String _proyectName = Preferences.projectName;
-  String _endPoint = '/api/v1/appointments';
+  String _endPoint = '/api/v1/';
   String jwtToken = '';
   Appointment? appointment;
   List<Appointment> appointments = [];
@@ -66,6 +66,12 @@ class AppointmentProvider extends ChangeNotifier {
   set isLoading(bool value) {
     _isLoading = value;
     notifyListeners();
+  }
+
+  bool _isLoadingCatalogs = false;
+  get isLoadingCatalogs => _isLoadingCatalogs;
+  set isLoadingCatalogs(value) {
+    _isLoadingCatalogs = value;
   }
 
   String? get doctorSelected => _doctorSelected;
@@ -111,8 +117,10 @@ class AppointmentProvider extends ChangeNotifier {
   Stream<List<User>> get userStream => this._userStreamController.stream;
 
   Future<bool> getAppointments() async {
+    isLoadingCatalogs = true;
+    result = false;
     print('Peticion API getAppointments');
-    _endPoint = '/api/v1/appointments';
+    String endPoint = '/api/v1/appointments';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
     print('Api Token: $jwtToken');
@@ -123,11 +131,9 @@ class AppointmentProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
-    print('Url: $url');
+    final url = Uri.http(_apiUrl, '$_proyectName$endPoint');
+    print('Url getAppointments: $url');
     try {
-      isLoading = true;
-      result = false;
       final response = await http.get(url, headers: headers).timeout(
             const Duration(seconds: 30),
           );
@@ -147,9 +153,9 @@ class AppointmentProvider extends ChangeNotifier {
                   appointment.status!.name == 'Atendida' ||
                   appointment.status!.name == 'Cancelada')
               .toList();
-          print(appointments);
+          // print(appointments);
           result = true;
-          isLoading = false;
+          isLoadingCatalogs = false;
           print('200: Appointments ${response.body}');
           notifyListeners();
           break;
@@ -160,14 +166,14 @@ class AppointmentProvider extends ChangeNotifier {
             break;
           }
 
-          isLoading = false;
+          isLoadingCatalogs = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
         case 404:
-          isLoading = false;
+          isLoadingCatalogs = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -175,7 +181,7 @@ class AppointmentProvider extends ChangeNotifier {
           print(serverResponse);
           break;
         case 422:
-          isLoading = false;
+          isLoadingCatalogs = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
@@ -183,18 +189,18 @@ class AppointmentProvider extends ChangeNotifier {
           print(serverResponse);
           break;
         case 500:
-          isLoading = false;
+          isLoadingCatalogs = false;
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
-          isLoading = false;
+          isLoadingCatalogs = false;
           result = false;
       }
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      isLoading = false;
+      isLoadingCatalogs = false;
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
@@ -253,7 +259,8 @@ class AppointmentProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;
@@ -338,7 +345,8 @@ class AppointmentProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;
@@ -388,8 +396,10 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<bool> getData() async {
+    isLoadingCatalogs = true;
+    result = false;
     print('Peticion API getCatalogs');
-    _endPoint = '/api/v1/appointments/catalogs';
+    String endPoint = '/api/v1/appointments/catalogs';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -399,12 +409,10 @@ class AppointmentProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = Uri.http(_apiUrl, '$_proyectName$endPoint');
+    print('Url getCatalogs: $url');
 
     try {
-      isLoading = true;
-      result = false;
-
       final response = await http
           .get(url, headers: headers)
           .timeout(const Duration(seconds: 30));
@@ -412,8 +420,8 @@ class AppointmentProvider extends ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           result = true;
-          isLoading = false;
-          print('200: Data ${response.body}');
+          isLoadingCatalogs = false;
+          print('200: Especialidades encontradas ${response.body}');
           final dataResponse = DataResponse.fromJson(response.body);
           specialties = dataResponse.specialties;
           notifyListeners();
@@ -424,22 +432,23 @@ class AppointmentProvider extends ChangeNotifier {
             print('401 logout');
             break;
           }
-          isLoading = false;
+          isLoadingCatalogs = false;
           result = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
         case 404:
-          isLoading = false;
+          isLoadingCatalogs = false;
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error Desconocido.');
           notifyListeners();
-          print('404 ${serverResponse?.message}');
+          print(
+              '404 no se encontraron especialidades ${serverResponse?.message}');
           break;
         case 422:
-          isLoading = false;
+          isLoadingCatalogs = false;
           result = false;
           ValidatorResponse validatorResponse =
               ValidatorResponse.fromJson(response.body);
@@ -461,18 +470,18 @@ class AppointmentProvider extends ChangeNotifier {
           print('422: ${response.body}');
           break;
         case 500:
-          isLoading = false;
+          isLoadingCatalogs = false;
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
           print('Default: ${response.body}');
-          isLoading = false;
+          isLoadingCatalogs = false;
           result = false;
       }
       notifyListeners();
     } catch (e) {
       print('Error $e');
-      isLoading = false;
+      isLoadingCatalogs = false;
       if (e.toString().contains('TimeoutException')) {
         Notifications.showSnackBar(
             'Tiempo de espera agotado. Favor de reintentar');
@@ -855,7 +864,8 @@ class AppointmentProvider extends ChangeNotifier {
         case 404:
           isLoading = false;
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(Preferences.truncateMessage(serverResponse?.message ?? 'Error Desconocido.'));
+          Notifications.showSnackBar(Preferences.truncateMessage(
+              serverResponse?.message ?? 'Error Desconocido.'));
           notifyListeners();
           print('404 ${serverResponse?.message}');
           break;
