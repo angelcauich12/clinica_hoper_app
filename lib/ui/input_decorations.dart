@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class InputDecorations {
   static InputDecoration authInputDecoration({
     required String hintText,
-    required String labelText,
+    String? labelText,
     IconData? prefixIcon,
     IconData? suffixIcon,
     required Color color,

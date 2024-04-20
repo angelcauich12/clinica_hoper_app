@@ -262,7 +262,7 @@ class HomeActionButton extends StatelessWidget {
       child: GestureDetector(
         onTap: () => Navigator.pushNamed(
           context,
-          CreateAppointmentScreen.routeName,
+          CreateAppointmentScreen2.routeName,
         ),
         child: Container(
           height: 180,
