@@ -72,7 +72,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                             (BuildContext context, ControlsDetails details) {
                           return _currentStep > 0
                               ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     if (details.onStepCancel != null)
                                       ElevatedButton(
@@ -183,17 +184,26 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            if (apiUser.specialties != null &&
-                                                apiUser.specialties!.length >
-                                                    1) {
-                                              _currentStep += 1;
-                                            }else{
-                                              _currentStep += 2;
-                                            }
-                                          });
-                                        },
+                                        onPressed:
+                                            apiUser.miPerfil.nombre != 'Doctor'
+                                                ? () {
+                                                    setState(() {
+                                                      _currentStep += 1;
+                                                    });
+                                                  }
+                                                : () {
+                                                    setState(() {
+                                                      if (apiUser.specialties !=
+                                                              null &&
+                                                          apiUser.specialties!
+                                                                  .length >
+                                                              1) {
+                                                        _currentStep += 1;
+                                                      } else {
+                                                        _currentStep += 3;
+                                                      }
+                                                    });
+                                                  },
                                         child: const Text(
                                           'Continuar',
                                           style: TextStyle(color: myColor),
@@ -249,7 +259,11 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                         ''),
                                                     onTap: () {
                                                       setState(() {
-                                                        _currentStep += 1;
+                                                        apiUser.miPerfil
+                                                                    .nombre !=
+                                                                'Doctor'
+                                                            ? _currentStep += 1
+                                                            : _currentStep += 2;
                                                       });
                                                     },
                                                   ),
@@ -257,8 +271,15 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                   (context, index) =>
                                                       const Divider(),
                                               itemCount:
-                                                  apiUser.specialties?.length ??
-                                                      0))
+                                                  apiUser.miPerfil.nombre !=
+                                                          'Doctor'
+                                                      ? appointmentProv
+                                                              .specialties
+                                                              ?.length ??
+                                                          0
+                                                      : apiUser.specialties
+                                                              ?.length ??
+                                                          0))
                                       : Container(),
                                   const SizedBox(
                                     height: 30,
