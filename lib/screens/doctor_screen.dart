@@ -9,8 +9,8 @@ class DoctorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Appointment appointment =
-        ModalRoute.of(context)!.settings.arguments as Appointment;
+    final MyAppointment appointment =
+        ModalRoute.of(context)!.settings.arguments as MyAppointment;
     final Doctor doctor = appointment.doctor!;
 
     return Scaffold(

@@ -367,13 +367,11 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                                 .format(selectedDate);
                                         print(
                                             'si Se pudo ${formattedDate.toString()}');
-                                        appointmentProv.startDate =
-                                            formattedDate;
+                                        appointmentProv.startDate = formattedDate;
                                         _dateController.text = formattedDate;
                                       });
                                       appointmentProv.allIntervals = [];
-                                      final result = await appointmentProv
-                                          .scheduleIntervals();
+                                      final result = await appointmentProv.scheduleIntervals();
                                       print('Result ******* $result');
                                       appointmentProv.startTime = null;
                                       appointmentForm

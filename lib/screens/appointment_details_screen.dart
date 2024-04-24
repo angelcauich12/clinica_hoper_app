@@ -10,8 +10,8 @@ class AppointmentDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Appointment appointment =
-        ModalRoute.of(context)!.settings.arguments as Appointment;
+    final MyAppointment appointment =
+        ModalRoute.of(context)!.settings.arguments as MyAppointment;
     final double fontSize;
     User apiUser = User.fromJson(Preferences.apiUser);
 

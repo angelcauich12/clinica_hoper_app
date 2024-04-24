@@ -59,10 +59,10 @@ class AppointmentsTabsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
-    final List<Appointment> reservadasList = appointmentProvider.reservadasList;
-    final List<Appointment> confirmadasList =
+    final List<MyAppointment> reservadasList = appointmentProvider.reservadasList;
+    final List<MyAppointment> confirmadasList =
         appointmentProvider.confirmadasList;
-    final List<Appointment> atendidasYCanceladasList =
+    final List<MyAppointment> atendidasYCanceladasList =
         appointmentProvider.atendidasYCanceladasList;
 
     return SafeArea(

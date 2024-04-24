@@ -5,7 +5,7 @@ import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 class AppointmentList extends StatelessWidget {
-  List<Appointment> appointments;
+  List<MyAppointment> appointments;
 
   AppointmentList({required this.appointments});
 

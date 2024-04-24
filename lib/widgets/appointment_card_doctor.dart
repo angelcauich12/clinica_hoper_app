@@ -11,7 +11,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 class AppointmentCardDoctor extends StatelessWidget {
-  final Appointment appointment;
+  final MyAppointment appointment;
   final bool withMargin;
 
   const AppointmentCardDoctor(
@@ -70,7 +70,7 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
     required this.appointment,
   });
 
-  final Appointment appointment;
+  final MyAppointment appointment;
 
   @override
   Widget build(BuildContext context) {
@@ -342,7 +342,7 @@ class AppointmentCardDoctorBody extends StatelessWidget {
   final String scheduleDate;
   final String scheduledTime;
   final String scheduledTimeEnd;
-  final Appointment appointment;
+  final MyAppointment appointment;
 
   @override
   Widget build(BuildContext context) {

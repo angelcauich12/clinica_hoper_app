@@ -10,7 +10,7 @@ import 'package:hope_app/models/models.dart';
 class MyAppointments {
   int code;
   String status;
-  List<Appointment> appointments;
+  List<MyAppointment> appointments;
   int role;
 
   MyAppointments({
@@ -28,8 +28,8 @@ class MyAppointments {
   factory MyAppointments.fromMap(Map<String, dynamic> json) => MyAppointments(
         code: json["code"],
         status: json["status"],
-        appointments: List<Appointment>.from(
-            json["Appointments"].map((x) => Appointment.fromMap(x))),
+        appointments: List<MyAppointment>.from(
+            json["Appointments"].map((x) => MyAppointment.fromMap(x))),
         role: json["role"],
       );
 
@@ -41,7 +41,7 @@ class MyAppointments {
       };
 }
 
-class Appointment {
+class MyAppointment {
   int? id;
   String? description;
   String? scheduledDate;
@@ -65,7 +65,7 @@ class Appointment {
   Specialty? specialty;
   Status? status;
 
-  Appointment({
+  MyAppointment({
     this.id,
     this.description,
     this.scheduledDate,
@@ -90,12 +90,12 @@ class Appointment {
     this.status,
   });
 
-  factory Appointment.fromJson(String str) =>
-      Appointment.fromMap(json.decode(str));
+  factory MyAppointment.fromJson(String str) =>
+      MyAppointment.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Appointment.fromMap(Map<String, dynamic> json) => Appointment(
+  factory MyAppointment.fromMap(Map<String, dynamic> json) => MyAppointment(
         id: json["id"],
         description: json["description"],
         scheduledDate: json["scheduled_date"],
@@ -453,7 +453,7 @@ class Status {
 class AppointmentCreatedResponse {
   int? code;
   String? status;
-  Appointment? appointment;
+  MyAppointment? appointment;
   String? message;
   String? conexion;
 
@@ -476,7 +476,7 @@ class AppointmentCreatedResponse {
         status: json["status"],
         appointment: json["appointment"] == null
             ? null
-            : Appointment.fromMap(json["appointment"]),
+            : MyAppointment.fromMap(json["appointment"]),
         message: json["message"],
         conexion: json["conexion"],
       );

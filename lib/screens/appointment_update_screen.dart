@@ -49,7 +49,7 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: FutureBuilder(
                   future: appointmentProvider.getAppointment(id),
-                  builder: (context, AsyncSnapshot<Appointment> snapshot) {
+                  builder: (context, AsyncSnapshot<MyAppointment> snapshot) {
                     if (!snapshot.hasData) {
                       return Center(
                         child: SpinKitCubeGrid(

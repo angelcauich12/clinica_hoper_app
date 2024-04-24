@@ -12,7 +12,7 @@ class AppointmentResponse {
   String? status;
   bool? success;
   String? message;
-  Appointment? appointment;
+  MyAppointment? appointment;
 
   AppointmentResponse({
     this.code,
@@ -35,7 +35,7 @@ class AppointmentResponse {
         message: json["message"],
         appointment: json["appointment"] == null
             ? null
-            : Appointment.fromMap(json["appointment"]),
+            : MyAppointment.fromMap(json["appointment"]),
       );
 
   Map<String, dynamic> toMap() => {
