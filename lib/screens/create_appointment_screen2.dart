@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/widgets/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../providers/providers.dart';
@@ -131,11 +132,11 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     if (details.onStepCancel != null)
-                                      _currentStep > 0 && _currentStep < 3
+                                      _currentStep > 0 && _currentStep < 2
                                           ? ElevatedButton(
                                               onPressed: details.onStepCancel,
                                               child: const Text(
-                                                'Anterior',
+                                                'Anterior XD',
                                                 style:
                                                     TextStyle(color: myColor),
                                               ),
@@ -347,6 +348,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         dataSource: _getCalendarDataSource(
                                             appointmentProv.appointments),
                                         cellEndPadding: 0.0,
+                                        // allowDragAndDrop: true,
+                                        appointmentTextStyle: const TextStyle(
+                                            fontSize: 10, color: Colors.white),
+                                      
                                       ),
                                     ),
                                   ),
@@ -356,30 +361,34 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: <Widget>[
-                                      ElevatedButton(
-                                        onPressed:
-                                            apiUser.miPerfil.nombre != 'Doctor'
-                                                ? () {
-                                                    setState(() {
-                                                      _currentStep -= 1;
-                                                    });
-                                                  }
-                                                : () {
-                                                    setState(() {
-                                                      if (apiUser.specialties !=
-                                                              null &&
-                                                          apiUser.specialties!
-                                                                  .length >
-                                                              1) {
-                                                        _currentStep -= 2;
-                                                      }
-                                                    });
-                                                  },
-                                        child: const Text(
-                                          'Anterior',
-                                          style: TextStyle(color: myColor),
-                                        ),
-                                      ),
+                                      apiUser.miPerfil.nombre != 'Doctor'
+                                          ? ElevatedButton(
+                                              onPressed:
+                                                  apiUser.miPerfil.nombre !=
+                                                          'Doctor'
+                                                      ? () {
+                                                          setState(() {
+                                                            _currentStep -= 1;
+                                                          });
+                                                        }
+                                                      : () {
+                                                          setState(() {
+                                                            if (apiUser.specialties !=
+                                                                    null &&
+                                                                apiUser.specialties!
+                                                                        .length >
+                                                                    1) {
+                                                              _currentStep -= 2;
+                                                            }
+                                                          });
+                                                        },
+                                              child: const Text(
+                                                'Anterior =)',
+                                                style:
+                                                    TextStyle(color: myColor),
+                                              ),
+                                            )
+                                          : Container(),
                                     ],
                                   ),
                                 ],
@@ -500,7 +509,6 @@ class _AppointmentDataSource extends CalendarDataSource {
 _AppointmentDataSource _getCalendarDataSource(
     List<MyAppointment> sourceAppointments) {
   List<Appointment> appointments = sourceAppointments.map((myAppointment) {
-
     // Convertir la cadena de hora de inicio programada a un objeto DateTime
     DateTime? startTime = myAppointment.scheduledTime != null
         ? DateTime.parse(
@@ -511,15 +519,23 @@ _AppointmentDataSource _getCalendarDataSource(
         ? DateTime.parse(
             '${myAppointment.scheduledDate!} ${myAppointment.scheduledTimeEnd!}')
         : null;
+
+
+      // Dar formato a las horas en el formato 'hh:mm a'
+    String formattedStartTime = startTime != null
+        ? DateFormat('hh:mm ').format(startTime)
+        : 'N/A';
+    String formattedEndTime = endTime != null
+        ? DateFormat('hh:mm ').format(endTime)
+        : 'N/A';
+
     return Appointment(
         id: myAppointment.id,
         startTime: startTime!,
         endTime: endTime!,
         color: Colors.red,
-        subject: "hola mundo"
-
-        // Mapear los otros campos según sea necesario
-        );
+        subject:
+            '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
   }).toList();
 
   return _AppointmentDataSource(appointments);
