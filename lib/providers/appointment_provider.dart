@@ -65,6 +65,8 @@ class AppointmentProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
+  get schedules => null;
+
   set isLoading(bool value) {
     _isLoading = value;
     notifyListeners();
