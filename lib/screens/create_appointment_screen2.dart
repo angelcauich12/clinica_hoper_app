@@ -42,9 +42,15 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   Widget build(BuildContext context) {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
-    final appointmentForm = Provider.of<AppointmentProvider>(context);
     final myColor = ThemeProvider.secondColor;
 
+    final List<TimeRegion> disabledRegions = getDisabledRegions();
+    final List<TimeRegion> enabledRegions =
+        getTimeRegions(appointmentProv.workSchedule);
+    final List<TimeRegion> specialRegions = [
+      ...disabledRegions,
+      ...enabledRegions
+    ];
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -70,7 +76,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                     ),
                     width: size.width * 0.7,
                     height: size.height * 0.75,
-                    child: Stepper(                                   
+                    child: Stepper(
                       physics: const ScrollPhysics(),
                       connectorColor: MaterialStateProperty.resolveWith<Color>(
                           (Set<MaterialState> states) {
@@ -286,6 +292,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                             color: Colors.white),
                                       ),
                                       todayHighlightColor: myColor,
+                                      minDate: DateTime.now(),
+                                      initialSelectedDate: DateTime.now(),
                                       showCurrentTimeIndicator: false,
                                       selectionDecoration: BoxDecoration(
                                         border: Border.all(
@@ -294,8 +302,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(4)),
                                       ),
-                                      specialRegions: getTimeRegions(
-                                          appointmentForm.workSchedule),
+
+                                      specialRegions: specialRegions,
                                       dataSource: _getCalendarDataSource(
                                           appointmentProv.appointments),
                                       cellEndPadding: 0.0,
@@ -303,20 +311,65 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                       appointmentTextStyle: const TextStyle(
                                           fontSize: 10, color: Colors.white),
                                       onTap: (calendarTapDetails) {
-                                        showModalBottomSheet(
+                                        print(calendarTapDetails.targetElement);
+                                        if (calendarTapDetails.targetElement ==
+                                            CalendarElement.calendarCell) {
+                                          showModalBottomSheet(
                                             shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(7)),
+                                              borderRadius:
+                                                  BorderRadius.circular(7),
+                                            ),
                                             barrierColor: Colors.black26,
                                             context: context,
-                                            builder: ((context) {
+                                            builder: (context) {
                                               return const Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   FormCreateAppointment(),
                                                 ],
                                               );
-                                            }));
+                                            },
+                                          );
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return const AlertDialog(
+                                                shape: Border(),
+                                                title: Text(
+                                                  'Detalles de la cita',style: TextStyle(fontSize: 15),
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                      
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: [
+                                                            Text('Paciente:' ),
+                                                          ],
+                                                        )
+                                                      ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                          // ListTile(
+                                          //   trailing: Row(
+                                          //     mainAxisSize: MainAxisSize.min,
+                                          //     mainAxisAlignment:
+                                          //         MainAxisAlignment.spaceEvenly,
+                                          //     crossAxisAlignment:
+                                          //         CrossAxisAlignment.start,
+                                          //         children: [
+                                          //           IconButton(onPressed: () {
+
+                                          //           }, icon: Icon(Icons.edit))
+                                          //         ],
+                                          //   ),
+                                          // );
+                                        }
                                       },
                                     ),
                                   ),
@@ -374,37 +427,73 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     return DateTime(0, 0, 0, hours, minutes);
   }
 
-  List<TimeRegion> getTimeRegions(workSchedule) {
+// Funcion habilitar el horario del doctor
+  List<TimeRegion> getTimeRegions(List<WorkScheduleDoctor> workSchedule) {
+    final List<TimeRegion> regions = [];
+    if (workSchedule.isNotEmpty) {
+      for (var schedule in workSchedule) {
+        final DateTime now = DateTime.now();
+        final DateTime today = DateTime(now.year, now.month, now.day);
+
+        // Obtiene los días de la semana como cadenas
+        final daysOfWeek = schedule.daysOfWeek.map((day) {
+          switch (day) {
+            case 1:
+              return 'MO';
+            case 2:
+              return 'TU';
+            case 3:
+              return 'WE';
+            case 4:
+              return 'TH';
+            case 5:
+              return 'FR';
+            case 6:
+              return 'SA';
+            case 7:
+              return 'SU';
+            default:
+              return '';
+          }
+        }).join(',');
+
+        final DateTime startTime = parseTimeString(schedule.startTime);
+        final DateTime endTime = parseTimeString(schedule.endTime);
+
+        final TimeRegion region = TimeRegion(
+          startTime: DateTime(today.year, today.month, today.day,
+              startTime.hour, startTime.minute),
+          endTime: DateTime(
+              today.year, today.month, today.day, endTime.hour, endTime.minute),
+          color: Colors.green.shade300.withOpacity(0.2),
+          recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$daysOfWeek',
+        );
+        regions.add(region);
+      }
+    }
+    return regions;
+  }
+
+// Función para desabilitar todo el calendario
+  List<TimeRegion> getDisabledRegions() {
     final List<TimeRegion> regions = [];
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
 
-    if (workSchedule.isNotEmpty) {
-      for (int i = 0; i < 50; i++) {
-        final DateTime startOfWeek = today
-            .subtract(Duration(days: today.weekday - 1))
-            .add(Duration(days: 7 * i));
-        startOfWeek.add(const Duration(days: 6));
-        for (int j = 0; j < 7; j++) {
-          final DateTime currentDay = startOfWeek.add(Duration(days: j));
-          for (var schedule in workSchedule) {
-            if (schedule.daysOfWeek.contains(currentDay.weekday)) {
-              final DateTime startTime = parseTimeString(schedule.startTime);
-              final DateTime endTime = parseTimeString(schedule.endTime);
+    // Recurre semanalmente para cada día de la semana
+    final List<String> daysOfWeek = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 
-              final TimeRegion region = TimeRegion(
-                startTime: DateTime(currentDay.year, currentDay.month,
-                    currentDay.day, startTime.hour, startTime.minute),
-                endTime: DateTime(currentDay.year, currentDay.month,
-                    currentDay.day, endTime.hour, endTime.minute),
-                color: Colors.green.shade300.withOpacity(0.2),
-              );
-              regions.add(region);
-            }
-          }
-        }
-      }
+    for (String day in daysOfWeek) {
+      regions.add(TimeRegion(
+        startTime: DateTime(today.year, today.month, today.day, 0, 0),
+        endTime: DateTime(today.year, today.month, today.day, 23, 59, 59),
+        enablePointerInteraction: false,
+        textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+        color: Colors.grey.withOpacity(0.2),
+        recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+      ));
     }
+
     return regions;
   }
 }
