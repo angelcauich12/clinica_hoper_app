@@ -55,12 +55,12 @@ android {
     }
 
     signingConfigs {
-        debug {
-            keyAlias 'upload'
-            keyPassword 'android'
-            storeFile file('upload-keystore.jks')
-            storePassword 'android'
-        }
+        // debug {
+        //     keyAlias 'upload'
+        //     keyPassword 'android'
+        //     storeFile file('upload-keystore.jks')
+        //     storePassword 'android'
+        // }
     }
 
     buildTypes {

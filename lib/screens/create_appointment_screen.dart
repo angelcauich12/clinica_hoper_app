@@ -459,7 +459,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                   labelText: 'Descripción',
                                   suffixIcon: Icons.description_outlined),
                               onChanged: (value) =>
-                                  appointmentProv.description = value,
+                                value.isNotEmpty ? appointmentProv.description = value : '',
                               validator: (value) {
                                 return (value != null && value.length >= 3)
                                     ? null
