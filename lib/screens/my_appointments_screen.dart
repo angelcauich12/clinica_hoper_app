@@ -123,7 +123,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
-                            "Atendidas",
+                            "Historial",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),

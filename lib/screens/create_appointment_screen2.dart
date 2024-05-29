@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hope_app/main.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +12,8 @@ import '../providers/providers.dart';
 
 import '../shared/preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import '../ui/input_decorations.dart';
 
 class CreateAppointmentScreen2 extends StatefulWidget {
   static const String routeName = 'create-appointment2';
@@ -29,6 +34,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   bool _isTappedDate = false;
   final DateFormat formattedDate = DateFormat('yyyy-MM-dd');
   final DateFormat formattedTime = DateFormat('h:mm a');
+  final myColor = ThemeProvider.secondColor;
 
   @override
   void initState() {
@@ -48,7 +54,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   Widget build(BuildContext context) {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
-    final myColor = ThemeProvider.secondColor;
     final List<TimeRegion> disabledRegions = getDisabledRegions();
     final List<TimeRegion> enabledRegions =
         getTimeRegions(appointmentProv.workSchedule);
@@ -57,7 +62,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       ...enabledRegions,
       ..._selectedTimeRegions
     ];
-
 
     return Scaffold(
       body: CustomScrollView(
@@ -405,7 +409,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                               appointmentProv.endTime = null;
                                               appointmentProv
                                                   .specialtySelected = null;
-                                              appointmentProv.doctorSelected = null;
+                                              appointmentProv.doctorSelected =
+                                                  null;
                                             });
                                           },
                                           icon: const Icon(Icons.close)),
@@ -413,7 +418,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                           style: TextButton.styleFrom(
                                               backgroundColor: myColor),
                                           onPressed: () {
-                                            appointmentProv.doctorSelected = apiUser.id.toString();
+                                            appointmentProv.doctorSelected =
+                                                apiUser.id.toString();
                                             appointmentProv.startDate =
                                                 formattedDate
                                                     .format(_selectedDate!);
@@ -438,6 +444,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                         .specialtySelected
                                                         .toString();
                                             showModalBottomSheet(
+                                              isScrollControlled: true,
                                               showDragHandle: true,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -622,31 +629,242 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     } else {
       if (calendarTapDetails.appointments != null &&
           calendarTapDetails.targetElement == CalendarElement.appointment) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return const AlertDialog(
-              shape: Border(),
-              title: Text(
-                'Detalles de la cita',
-                style: TextStyle(fontSize: 15),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('Paciente:'),
-                    ],
-                  )
-                ],
-              ),
-            );
-          },
-        );
+        final Appointment appointment =
+            calendarTapDetails.appointments!.first as Appointment;
+
+        // Extraer el nombre del paciente del subject
+        final RegExp regex = RegExp(r'Px: (.+)');
+        final RegExpMatch? match = regex.firstMatch(appointment.subject);
+        final String patientName =
+            match != null ? match.group(1)! : 'Desconocido';
+
+        final String startTime = formattedTime.format(appointment.startTime);
+        final String endTime = formattedTime.format(appointment.endTime);
+        final String date = DateFormat('EEEE, MMM dd, yyyy', 'es')
+            .format(appointment.startTime);
+        final String appointmentId = appointment.id.toString();
+
+        _showDetails(patientName, date, startTime, endTime, appointmentId);
       }
     }
+  }
+
+  Future<void> _showDetails(String patientName, String date, String startTime,
+      String endTime, String id) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0))),
+          contentPadding: const EdgeInsetsDirectional.symmetric(
+              horizontal: 10.0, vertical: 3.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        showCancelAppointment(context, id);
+                      },
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red.shade800,
+                      )),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        color: myColor,
+                      ))
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Detalles de la cita',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: myColor),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 12.0,
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Preferences.isDarkMode
+                      ? Colors.grey.withOpacity(0.15)
+                      : ThemeProvider.secondColor.withAlpha(70),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.person_pin_outlined),
+                        const Text(
+                          'Paciente:',
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            patientName,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.calendar_month_outlined,
+                        ),
+                        Text(
+                          date,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.timer_outlined),
+                        Text('$startTime - $endTime')
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String?> showCancelAppointment(BuildContext context, String id) {
+    final cancelForm =
+        Provider.of<CancelAppointmentFormProvider>(context, listen: false);
+    final appointmentProv =
+        Provider.of<AppointmentProvider>(context, listen: false);
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5.0))),
+        title: const Text(
+          'Cancelar Cita',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '¿Realmente desea cancelar esta cita?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Form(
+                  key: cancelForm.formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        autocorrect: false,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecorations.authInputDecoration(
+                          color: Colors.grey[350]!,
+                          hintText: 'Motivo de Cancelación',
+                          labelText: 'Justificación',
+                        ),
+                        onChanged: (value) => cancelForm.justification = value,
+                        validator: (value) {
+                          return (value != null && value.length >= 3)
+                              ? null
+                              : 'Escriba una justificación para cancelar';
+                        },
+                      ),
+                    ],
+                  ))
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cerrar'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                ThemeProvider.lightRed,
+              ),
+            ),
+            child: Text(
+              'Cerrar',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: ThemeProvider.white,
+              ),
+            ),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                ThemeProvider.secondColor,
+              ),
+            ),
+            onPressed: () {
+              if (!cancelForm.isValidForm()) return;
+              Navigator.pop(context);
+              appointmentProv.cancelAppointment(id, cancelForm.justification);
+            },
+            child: Text(
+              'Confirmar',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: ThemeProvider.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -682,6 +900,7 @@ _AppointmentDataSource _getCalendarDataSource(
         startTime: startTime!,
         endTime: endTime!,
         color: Colors.red,
+        notes: 'hola',
         subject:
             '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
   }).toList();

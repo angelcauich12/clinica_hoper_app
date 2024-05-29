@@ -415,7 +415,9 @@ class AppointmentProvider extends ChangeNotifier {
           serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Cita $id cancelada correctamente.');
+          getAppointmentsCalendar();
           getAppointments();
+          notifyListeners();
           break;
         case 401:
           isLoading = false;

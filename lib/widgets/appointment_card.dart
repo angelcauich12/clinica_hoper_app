@@ -137,6 +137,10 @@ class AppointmentCardHeader extends StatelessWidget {
         TextButton(
           onPressed: () {
             showModalBottomSheet(
+              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(7),
+                                              ),
               context: context,
               builder: (context) {
                 return Container(
