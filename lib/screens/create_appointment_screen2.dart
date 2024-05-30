@@ -92,7 +92,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                     child: Stack(
                       children: [
                         Stepper(
-                          physics: const NeverScrollableScrollPhysics(),
+                          // physics: const NeverScrollableScrollPhysics(),
                           connectorColor:
                               MaterialStateProperty.resolveWith<Color>(
                                   (Set<MaterialState> states) {
@@ -136,7 +136,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                   )
                                 : const SizedBox.shrink();
                           },
-                          type: StepperType.horizontal,
+                          type: StepperType.vertical,
                           currentStep: _currentStep,
                           onStepCancel: () {
                             if (_currentStep > 0) {
@@ -332,6 +332,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                   const BorderRadius.all(
                                                       Radius.circular(4)),
                                             ),
+                                            onLongPress: _onCalendarLongPress,
                                             specialRegions: specialRegions,
                                             dataSource: _getCalendarDataSource(
                                                 appointmentProv
@@ -342,7 +343,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                 const TextStyle(
                                                     fontSize: 10,
                                                     color: Colors.white),
-                                            onTap: _onCalendarTapped),
+                                            // onTap: _onCalendarTapped
+                                            ),
+                                            
                                       ),
                                     ),
                                     const SizedBox(
@@ -649,6 +652,92 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     }
   }
 
+    void _onCalendarLongPress(CalendarLongPressDetails calendarTapDetails) {
+      print(calendarTapDetails.date);
+    /// Condition added to open the editor, when the calendar elements tapped
+    /// other than the header.
+    if (calendarTapDetails.targetElement == CalendarElement.header ||
+        calendarTapDetails.targetElement == CalendarElement.resourceHeader) {
+      return;
+    }
+
+    if (calendarTapDetails.targetElement == CalendarElement.calendarCell) {
+      _isTappedDate = true;
+      final DateTime tappedDate = calendarTapDetails.date!;
+      final DateTime selectedDate = DateTime(
+        tappedDate.year,
+        tappedDate.month,
+        tappedDate.day,
+      );
+
+      if (_selectedDate == null) {
+        _selectedDate = selectedDate;
+      } else if (_selectedDate != selectedDate) {
+        // ignorar la acción si la fecha no es la misma
+
+        return;
+      }
+
+      final DateTime startTime = tappedDate;
+      final DateTime endTime = startTime.add(const Duration(minutes: 30));
+
+      final bool isAlreadySelected = _selectedTimeRegions.any((region) =>
+          region.startTime.isAtSameMomentAs(startTime) &&
+          region.endTime.isAtSameMomentAs(endTime));
+
+      if (isAlreadySelected) {
+        return;
+      }
+
+      // Verificar si es adyacente a alguna selección existente
+      final bool isAdjacent = _selectedTimeRegions.any((region) =>
+          region.endTime.isAtSameMomentAs(startTime) ||
+          region.startTime.isAtSameMomentAs(endTime));
+
+      if (_selectedTimeRegions.isNotEmpty && !isAdjacent) {
+        return;
+      }
+
+      final TimeRegion newRegion = TimeRegion(
+        startTime: startTime,
+        endTime: endTime,
+        color: Colors.blue.withOpacity(0.5),
+      );
+
+      setState(() {
+        _selectedTimeRegions.add(newRegion);
+
+        if (_intervalStartTime == null ||
+            startTime.isBefore(_intervalStartTime!)) {
+          _intervalStartTime = startTime;
+        }
+        if (_intervalEndTime == null || endTime.isAfter(_intervalEndTime!)) {
+          _intervalEndTime = endTime;
+        }
+      });
+    } else {
+      if (calendarTapDetails.appointments != null &&
+          calendarTapDetails.targetElement == CalendarElement.appointment) {
+        final Appointment appointment =
+            calendarTapDetails.appointments!.first as Appointment;
+
+        // Extraer el nombre del paciente del subject
+        final RegExp regex = RegExp(r'Px: (.+)');
+        final RegExpMatch? match = regex.firstMatch(appointment.subject);
+        final String patientName =
+            match != null ? match.group(1)! : 'Desconocido';
+
+        final String startTime = formattedTime.format(appointment.startTime);
+        final String endTime = formattedTime.format(appointment.endTime);
+        final String date = DateFormat('EEEE, MMM dd, yyyy', 'es')
+            .format(appointment.startTime);
+        final String appointmentId = appointment.id.toString();
+
+        _showDetails(patientName, date, startTime, endTime, appointmentId);
+      }
+    }
+  }
+
   Future<void> _showDetails(String patientName, String date, String startTime,
       String endTime, String id) {
     return showDialog(
@@ -787,43 +876,41 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
           ),
           textAlign: TextAlign.center,
         ),
-        content: Container(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '¿Realmente desea cancelar esta cita?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              '¿Realmente desea cancelar esta cita?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
               ),
-              Form(
-                  key: cancelForm.formKey,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        autocorrect: false,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecorations.authInputDecoration(
-                          color: Colors.grey[350]!,
-                          hintText: 'Motivo de Cancelación',
-                          labelText: 'Justificación',
-                        ),
-                        onChanged: (value) => cancelForm.justification = value,
-                        validator: (value) {
-                          return (value != null && value.length >= 3)
-                              ? null
-                              : 'Escriba una justificación para cancelar';
-                        },
+            ),
+            Form(
+                key: cancelForm.formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      autocorrect: false,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecorations.authInputDecoration(
+                        color: Colors.grey[350]!,
+                        hintText: 'Motivo de Cancelación',
+                        labelText: 'Justificación',
                       ),
-                    ],
-                  ))
-            ],
-          ),
+                      onChanged: (value) => cancelForm.justification = value,
+                      validator: (value) {
+                        return (value != null && value.length >= 3)
+                            ? null
+                            : 'Escriba una justificación para cancelar';
+                      },
+                    ),
+                  ],
+                ))
+          ],
         ),
         actions: <Widget>[
           TextButton(
