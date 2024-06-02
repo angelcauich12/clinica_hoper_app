@@ -18,6 +18,8 @@ class ThemeProvider extends ChangeNotifier {
   static Color darkGreen = const Color.fromARGB(255, 59, 121, 60);
   static Color darkColor = const Color(0xff1E2019);
   static Color yellowColor = const Color(0xFFF0AB00);
+  static Color primaryColor = const Color(0xff247BA0);
+
   static LinearGradient goldenColor = const LinearGradient(
     colors: [Color(0xffe8e22e), Color(0xfff5b223)],
     begin: Alignment.topCenter,

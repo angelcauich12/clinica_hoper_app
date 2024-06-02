@@ -1,22 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hope_app/main.dart';
 import 'package:hope_app/models/models.dart';
-import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../providers/providers.dart';
-
+import '../search/patient_search_delegate.dart';
 import '../shared/preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import '../ui/input_decorations.dart';
 
 class CreateAppointmentScreen2 extends StatefulWidget {
   static const String routeName = 'create-appointment2';
+
   const CreateAppointmentScreen2({super.key});
 
   @override
@@ -35,6 +32,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   final DateFormat formattedDate = DateFormat('yyyy-MM-dd');
   final DateFormat formattedTime = DateFormat('h:mm a');
   final myColor = ThemeProvider.secondColor;
+  final TextEditingController _searchController = TextEditingController();
+  int _numberOfDays = 3;
+  bool _isEmergency = false;
 
   @override
   void initState() {
@@ -62,107 +62,185 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       ...enabledRegions,
       ..._selectedTimeRegions
     ];
+    final appointmentForm = Provider.of<AppointmentProvider>(context);
+
+    Future<void> onRefresh() async {
+      appointmentProv.isLoading = true;
+      await Future.delayed(const Duration(seconds: 2));
+      appointmentProv.getAppointmentsCalendar();
+      appointmentProv.isLoading = false;
+      setState(() {});
+    }
 
     return Scaffold(
-      body: CustomScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        slivers: [
-          CustomAppBar(
-              title: 'Agendar Cita',
-              image: 'assets/images/modules/doctorappointment2.jpeg'),
-          SliverList(
-              delegate: SliverChildListDelegate([
-            (appointmentProv.isLoadingCatalogs)
-                ? SizedBox(
-                    width: size.width,
-                    height: size.height * 0.6,
-                    child: Center(
-                      child: SpinKitCubeGrid(
-                        color: myColor,
+      body: RefreshIndicator(
+        color: myColor,
+        onRefresh: onRefresh,
+        child: CustomScrollView(
+          // physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+                actions: [
+                  PopupMenuButton<int>(
+                    popUpAnimationStyle:
+                        AnimationStyle(curve: Curves.easeInOutCirc),
+                    elevation: 2,
+                    surfaceTintColor: Colors.white,
+                    icon: const Icon(
+                      Icons.more_vert_outlined,
+                      color: Colors.white,
+                    ),
+                    itemBuilder: (context) => <PopupMenuEntry<int>>[
+                      const PopupMenuItem<int>(
+                        value: 3,
+                        child: Text(
+                          'Días',
+                          style: TextStyle(fontFamily: 'Roboto'),
+                        ),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 7,
+                        child: Text(
+                          'Semana',
+                          style: TextStyle(fontFamily: 'Roboto'),
+                        ),
+                      ),
+                      
+                    ],
+                    onSelected: (int result) {
+                      setState(() {
+                        _numberOfDays = result;
+                      });
+                    },
+                  ),
+                ],
+                backgroundColor: myColor,
+                floating: false,
+                // pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  titlePadding: const EdgeInsets.all(0),
+                  title: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    alignment: Alignment.bottomCenter,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.black12,
+                    ),
+                    child: const Text(
+                      'Agendar Cita',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Roboto',
+                        shadows: [
+                          Shadow(
+                            offset: Offset(2.0, 2.0),
+                            blurRadius: 10.0,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      // color: Colors.blue
-                    ),
-                    width: size.width * 0.7,
-                    height: size.height * 0.80,
-                    child: Stack(
-                      children: [
-                        Stepper(
-                          // physics: const NeverScrollableScrollPhysics(),
-                          connectorColor:
-                              MaterialStateProperty.resolveWith<Color>(
-                                  (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.selected)) {
-                              return myColor;
-                            }
-                            return Colors.grey;
-                          }),
-                          controlsBuilder:
-                              (BuildContext context, ControlsDetails details) {
-                            return _currentStep > 0
-                                ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      if (details.onStepCancel != null)
-                                        _currentStep > 0 && _currentStep < 2
-                                            ? ElevatedButton(
-                                                onPressed: details.onStepCancel,
-                                                child: Text(
-                                                  'Anterior XD',
-                                                  style:
-                                                      TextStyle(color: myColor),
-                                                ),
-                                              )
-                                            : const SizedBox.shrink(),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      if (details.onStepContinue != null)
-                                        _currentStep > 4
-                                            ? ElevatedButton(
-                                                onPressed:
-                                                    details.onStepContinue,
-                                                child: Text('Continuar',
+                  ),
+                )),
+            SliverList(
+                delegate: SliverChildListDelegate([
+              (appointmentProv.isLoadingCatalogs)
+                  ? SizedBox(
+                      width: size.width,
+                      height: size.height * 0.6,
+                      child: Center(
+                        child: SpinKitCubeGrid(
+                          color: myColor,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        // color: Colors.blue
+                      ),
+                      width: size.width,
+                      height: size.height,
+                      child: Stack(
+                        children: [
+                          Stepper(
+                            physics: const NeverScrollableScrollPhysics(),
+                            connectorColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                                    (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return myColor;
+                              }
+                              return Colors.grey;
+                            }),
+                            controlsBuilder: (BuildContext context,
+                                ControlsDetails details) {
+                              return _currentStep > 0
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        if (details.onStepCancel != null)
+                                          _currentStep > 0 && _currentStep < 2
+                                              ? ElevatedButton(
+                                                  onPressed:
+                                                      details.onStepCancel,
+                                                  child: Text(
+                                                    'Anterior XD',
                                                     style: TextStyle(
-                                                        color: myColor)),
-                                              )
-                                            : const SizedBox.shrink(),
-                                    ],
-                                  )
-                                : const SizedBox.shrink();
-                          },
-                          type: StepperType.vertical,
-                          currentStep: _currentStep,
-                          onStepCancel: () {
-                            if (_currentStep > 0) {
-                              setState(() {
-                                _currentStep -= 1;
-                              });
-                            }
-                          },
-                          onStepContinue: () {
-                            // si se agrega un Step se aumenta en uno el if
-                            if (_currentStep <= 1) {
-                              setState(() {
-                                _currentStep += 1;
-                              });
-                            }
-                          },
-                          steps: <Step>[
-                            Step(
-                                isActive: _currentStep >= 0,
-                                state: _currentStep > 0
-                                    ? StepState.complete
-                                    : StepState.indexed,
-                                title: const Text(''),
-                                label: Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text(
+                                                        color: myColor),
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink(),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        if (details.onStepContinue != null)
+                                          _currentStep > 4
+                                              ? ElevatedButton(
+                                                  onPressed:
+                                                      details.onStepContinue,
+                                                  child: Text('Continuar',
+                                                      style: TextStyle(
+                                                          color: myColor)),
+                                                )
+                                              : const SizedBox.shrink(),
+                                      ],
+                                    )
+                                  : const SizedBox.shrink();
+                            },
+                            type: StepperType.horizontal,
+                            elevation: 10,
+                            currentStep: _currentStep,
+                            onStepCancel: () {
+                              if (_currentStep > 0) {
+                                setState(() {
+                                  _currentStep -= 1;
+                                });
+                              }
+                            },
+                            onStepContinue: () {
+                              // si se agrega un Step se aumenta en uno el if
+                              if (_currentStep <= 1) {
+                                setState(() {
+                                  _currentStep += 1;
+                                });
+                              }
+                            },
+                            steps: <Step>[
+                              Step(
+                                  isActive: _currentStep >= 0,
+                                  state: _currentStep > 0
+                                      ? StepState.complete
+                                      : StepState.indexed,
+                                  title: const Text(''),
+                                  label: Text(
                                     'Especialidad',
                                     style: TextStyle(
                                         fontFamily: 'Roboto',
@@ -172,97 +250,95 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                             ? myColor
                                             : Colors.grey),
                                   ),
-                                ),
-                                content: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Especialidades',
-                                          style: TextStyle(
-                                              fontFamily: 'Roboto',
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: myColor),
-                                        ),
-                                      ],
-                                    ),
-                                    (appointmentProv.specialties!.isNotEmpty)
-                                        ? SizedBox(
-                                            height: size.height * 0.45,
-                                            //  color: Colors.green,
-                                            child: ListView.builder(
-                                                itemBuilder: (_, index) => Card(
-                                                      child: ListTile(
-                                                        trailing: const Icon(Icons
-                                                            .navigate_next_rounded),
-                                                        title: Text(
-                                                            appointmentProv
-                                                                    .specialties![
-                                                                        index]
-                                                                    .name ??
-                                                                ''),
-                                                        onTap: () {
-                                                          setState(() {
-                                                            apiUser.miPerfil
-                                                                        .nombre !=
-                                                                    'Doctor'
-                                                                ? _currentStep +=
-                                                                    1
-                                                                : _currentStep +=
-                                                                    2;
-                                                          });
-                                                        },
+                                  content: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Especialidades',
+                                            style: TextStyle(
+                                                fontFamily: 'Roboto',
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                                color: myColor),
+                                          ),
+                                        ],
+                                      ),
+                                      (appointmentProv.specialties!.isNotEmpty)
+                                          ? SizedBox(
+                                              height: size.height * 0.45,
+                                              //  color: Colors.green,
+                                              child: ListView.builder(
+                                                  itemBuilder: (_, index) =>
+                                                      Card(
+                                                        child: ListTile(
+                                                          trailing: const Icon(Icons
+                                                              .navigate_next_rounded),
+                                                          title: Text(
+                                                              appointmentProv
+                                                                      .specialties![
+                                                                          index]
+                                                                      .name ??
+                                                                  ''),
+                                                          onTap: () {
+                                                            setState(() {
+                                                              apiUser.miPerfil
+                                                                          .nombre !=
+                                                                      'Doctor'
+                                                                  ? _currentStep +=
+                                                                      1
+                                                                  : _currentStep +=
+                                                                      2;
+                                                            });
+                                                          },
+                                                        ),
                                                       ),
-                                                    ),
-                                                itemCount:
-                                                    apiUser.miPerfil.nombre !=
-                                                            'Doctor'
-                                                        ? appointmentProv
-                                                                .specialties
-                                                                ?.length ??
-                                                            0
-                                                        : apiUser.specialties
-                                                                ?.length ??
-                                                            0))
-                                        : Container(),
-                                    const SizedBox(
-                                      height: 30,
-                                    )
-                                  ],
-                                )),
-                            Step(
-                                isActive: _currentStep >= 1,
-                                state: _currentStep > 1
-                                    ? StepState.complete
-                                    : StepState.indexed,
-                                title: const Text(''),
-                                label: Text(
-                                  'Doctor',
-                                  style: TextStyle(
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 9,
-                                      color: _currentStep >= 1
-                                          ? myColor
-                                          : Colors.grey),
-                                ),
-                                content: Container(
-                                  color: Colors.yellow,
-                                  child:
-                                      const Text('Aquí van a ir los doctores'),
-                                )),
-                            Step(
-                                isActive: _currentStep >= 2,
-                                state: _currentStep > 2
-                                    ? StepState.complete
-                                    : StepState.indexed,
-                                title: const Text(''),
-                                label: Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: Text(
+                                                  itemCount:
+                                                      apiUser.miPerfil.nombre !=
+                                                              'Doctor'
+                                                          ? appointmentProv
+                                                                  .specialties
+                                                                  ?.length ??
+                                                              0
+                                                          : apiUser.specialties
+                                                                  ?.length ??
+                                                              0))
+                                          : Container(),
+                                      const SizedBox(
+                                        height: 30,
+                                      )
+                                    ],
+                                  )),
+                              Step(
+                                  isActive: _currentStep >= 1,
+                                  state: _currentStep > 1
+                                      ? StepState.complete
+                                      : StepState.indexed,
+                                  title: const Text(''),
+                                  label: Text(
+                                    'Doctor',
+                                    style: TextStyle(
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 9,
+                                        color: _currentStep >= 1
+                                            ? myColor
+                                            : Colors.grey),
+                                  ),
+                                  content: Container(
+                                    color: Colors.yellow,
+                                    child: const Text(
+                                        'Aquí van a ir los doctores'),
+                                  )),
+                              Step(
+                                  isActive: _currentStep >= 2,
+                                  state: _currentStep > 2
+                                      ? StepState.complete
+                                      : StepState.indexed,
+                                  title: const Text(''),
+                                  label: Text(
                                     'Fecha y hora',
                                     style: TextStyle(
                                         fontFamily: 'Roboto',
@@ -272,58 +348,61 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                             ? myColor
                                             : Colors.grey),
                                   ),
-                                ),
-                                content: Column(
-                                  children: [
-                                    Container(
-                                      height: size.height * 0.56,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
-                                            spreadRadius: 5,
-                                            blurRadius: 7,
-                                            offset: const Offset(0,
-                                                3), // changes position of shadow
+                                  content: Column(
+                                    children: [
+                                      Container(
+                                        height: size.height * 0.85,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: myColor,
+                                              width: 0.4,
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                      child: MaterialApp(
-                                        debugShowCheckedModeBanner: false,
-                                        locale: const Locale('es'),
-                                        supportedLocales: const [
-                                          Locale('es'),
-                                          Locale('en'),
-                                        ],
-                                        localizationsDelegates: const [
-                                          GlobalMaterialLocalizations.delegate,
-                                          GlobalWidgetsLocalizations.delegate,
-                                          GlobalCupertinoLocalizations.delegate,
-                                        ],
-                                        home: SfCalendar(
+                                        ),
+                                        child: MaterialApp(
+                                          debugShowCheckedModeBanner: false,
+                                          locale: const Locale('es'),
+                                          supportedLocales: const [
+                                            Locale('es'),
+                                            Locale('en'),
+                                          ],
+                                          localizationsDelegates: const [
+                                            GlobalMaterialLocalizations
+                                                .delegate,
+                                            GlobalWidgetsLocalizations.delegate,
+                                            GlobalCupertinoLocalizations
+                                                .delegate,
+                                          ],
+                                          home: SfCalendar(
                                             view: CalendarView.week,
                                             timeSlotViewSettings:
-                                                const TimeSlotViewSettings(
-                                                    timeTextStyle: TextStyle(
+                                                TimeSlotViewSettings(
+                                                    timeTextStyle:
+                                                        const TextStyle(
                                                       fontSize: 8,
                                                     ),
-                                                    numberOfDaysInView: 3,
-                                                    timeInterval: Duration(
+                                                    numberOfDaysInView:
+                                                        _numberOfDays,
+                                                    timeInterval:
+                                                        const Duration(
                                                       minutes: 30,
                                                     ),
                                                     timeFormat: 'h:mm a'),
                                             allowViewNavigation: true,
                                             showDatePickerButton: true,
-                                            showNavigationArrow: true,
+                                            showNavigationArrow: false,
                                             headerStyle: CalendarHeaderStyle(
                                               backgroundColor: myColor,
                                               textStyle: const TextStyle(
+                                           
                                                   color: Colors.white),
                                             ),
                                             todayHighlightColor: myColor,
                                             minDate: DateTime.now(),
-                                            showCurrentTimeIndicator: false,
+                                            showCurrentTimeIndicator: true,
+                                            showTodayButton: true,
                                             selectionDecoration: BoxDecoration(
                                               border: Border.all(
                                                 color: myColor,
@@ -332,69 +411,112 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                   const BorderRadius.all(
                                                       Radius.circular(4)),
                                             ),
-                                            onLongPress: _onCalendarLongPress,
-                                            specialRegions: specialRegions,
-                                            dataSource: _getCalendarDataSource(
-                                                appointmentProv
-                                                    .calendarAppointments),
+                                            dragAndDropSettings:
+                                                DragAndDropSettings(
+                                                    timeIndicatorStyle:
+                                                        TextStyle(
+                                                            color: myColor)),
                                             cellEndPadding: 0.0,
-                                            // allowDragAndDrop: true,
+                                            allowDragAndDrop: true,
                                             appointmentTextStyle:
                                                 const TextStyle(
                                                     fontSize: 10,
                                                     color: Colors.white),
-                                            // onTap: _onCalendarTapped
-                                            ),
-                                            
+                                            specialRegions: specialRegions,
+                                            dataSource: _getCalendarDataSource(
+                                                appointmentProv
+                                                    .calendarAppointments),
+                                            onTap: _onCalendarTapped,
+                                            onDragStart: _onDragStart,
+                                            onDragUpdate: _onDragUpdate,
+                                            onDragEnd: _onDragEnd,
+                                          ),
+                                        ),
                                       ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      apiUser.miPerfil.nombre != 'Doctor'
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: <Widget>[
+                                                ElevatedButton(
+                                                  onPressed: apiUser.miPerfil
+                                                              .nombre !=
+                                                          'Doctor'
+                                                      ? () {
+                                                          setState(() {
+                                                            _currentStep -= 1;
+                                                          });
+                                                        }
+                                                      : () {
+                                                          setState(() {
+                                                            if (apiUser.specialties !=
+                                                                    null &&
+                                                                apiUser.specialties!
+                                                                        .length >
+                                                                    1) {
+                                                              _currentStep -= 2;
+                                                            }
+                                                          });
+                                                        },
+                                                  child: Text(
+                                                    'Anterior =)',
+                                                    style: TextStyle(
+                                                        color: myColor),
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          : Container(),
+                                    ],
+                                  )),
+                            ],
+                          ),
+                          Positioned(
+                            top: 73,
+                            left: 172,
+                            child: Row(
+                            children: [
+                              const Text(
+                                'Emergencia',
+                                style: TextStyle(fontFamily: 'Roboto',color: Colors.white,fontSize: 15),
+                              ),
+                              SizedBox(
+                                height:25,
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: Switch.adaptive(
+                                    inactiveTrackColor: Colors.grey,
+                                    value: _isEmergency,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        _isEmergency = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
+                          appointmentProv.isLoading
+                              ? SizedBox(
+                                  width: size.width,
+                                  height: size.height * 0.6,
+                                  child: Center(
+                                    child: SpinKitCubeGrid(
+                                      color: myColor,
                                     ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    apiUser.miPerfil.nombre != 'Doctor'
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              ElevatedButton(
-                                                onPressed: apiUser
-                                                            .miPerfil.nombre !=
-                                                        'Doctor'
-                                                    ? () {
-                                                        setState(() {
-                                                          _currentStep -= 1;
-                                                        });
-                                                      }
-                                                    : () {
-                                                        setState(() {
-                                                          if (apiUser.specialties !=
-                                                                  null &&
-                                                              apiUser.specialties!
-                                                                      .length >
-                                                                  1) {
-                                                            _currentStep -= 2;
-                                                          }
-                                                        });
-                                                      },
-                                                child: Text(
-                                                  'Anterior =)',
-                                                  style:
-                                                      TextStyle(color: myColor),
-                                                ),
-                                              )
-                                            ],
-                                          )
-                                        : Container(),
-                                  ],
-                                )),
-                          ],
-                        ),
-                        Positioned(
-                            bottom: 27,
-                            right: 22,
-                            child: !_isTappedDate || appointmentProv.isLoading
-                                ? Container()
-                                : Row(
+                                  ),
+                                )
+                              : Container(),
+                          !_isTappedDate
+                              ? Container()
+                              : Positioned(
+                                  bottom: 150,
+                                  right: 20,
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       IconButton.filled(
@@ -456,11 +578,173 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                               barrierColor: Colors.black26,
                                               context: context,
                                               builder: (context) {
-                                                return const Column(
+                                                return Column(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    FormCreateAppointment(),
+                                                    SingleChildScrollView(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: MediaQuery.of(
+                                                                  context)
+                                                              .viewInsets
+                                                              .bottom),
+                                                      child: Form(
+                                                        key: appointmentForm
+                                                            .formKey,
+                                                        child: Column(
+                                                          children: [
+                                                            TextFormField(
+                                                              readOnly: true,
+                                                              controller:
+                                                                  _searchController,
+                                                              autovalidateMode:
+                                                                  AutovalidateMode
+                                                                      .onUserInteraction,
+                                                              decoration: InputDecorations
+                                                                  .authInputDecoration(
+                                                                      color:
+                                                                          myColor,
+                                                                      hintText:
+                                                                          'Buscar paciente',
+                                                                      // labelText: 'Paciente',
+                                                                      suffixIcon:
+                                                                          Icons
+                                                                              .search_outlined),
+                                                              onTap: () async {
+                                                                await showSearch(
+                                                                  context:
+                                                                      context,
+                                                                  delegate:
+                                                                      PatientSearchDelegate(),
+                                                                );
+                                                                if (appointmentProv
+                                                                        .patientFullName !=
+                                                                    '') {
+                                                                  _searchController
+                                                                          .text =
+                                                                      appointmentProv
+                                                                          .patientFullName;
+                                                                }
+                                                              },
+                                                              validator:
+                                                                  (value) {
+                                                                //  if (value != null)  _handleTextChanged();
+                                                                return (value !=
+                                                                            null &&
+                                                                        value.length >=
+                                                                            3)
+                                                                    ? null
+                                                                    : 'Paciente debe contener más de 3 caracteres.';
+                                                              },
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 15),
+                                                            TextFormField(
+                                                              minLines: 1,
+                                                              maxLines: 2,
+                                                              initialValue:
+                                                                  'Consulta',
+                                                              autovalidateMode:
+                                                                  AutovalidateMode
+                                                                      .onUserInteraction,
+                                                              decoration: InputDecoration(
+                                                                  focusedBorder: OutlineInputBorder(
+                                                                      borderSide: BorderSide(
+                                                                          color:
+                                                                              myColor)),
+                                                                  counterText:
+                                                                      '',
+                                                                  border:
+                                                                      const OutlineInputBorder(),
+                                                                  hintText:
+                                                                      'Describa brevemente la razón de la cita',
+                                                                  hintStyle: TextStyle(
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          350],
+                                                                      fontSize:
+                                                                          14),
+                                                                  labelText:
+                                                                      'Descripción',
+                                                                  labelStyle:
+                                                                      TextStyle(
+                                                                          color:
+                                                                              myColor)),
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .multiline,
+                                                              maxLength: 40,
+                                                              onChanged: (value) =>
+                                                                  appointmentProv
+                                                                          .description =
+                                                                      value,
+                                                              validator:
+                                                                  (value) {
+                                                                return (value !=
+                                                                            null &&
+                                                                        value.length >=
+                                                                            3)
+                                                                    ? null
+                                                                    : 'La descripción debe contener más de 3 caracteres.';
+                                                              },
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 10),
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child: ElevatedButton(
+                                                                      style: TextButton.styleFrom(
+                                                                        backgroundColor:
+                                                                            myColor,
+                                                                      ),
+                                                                      onPressed: () async {
+                                                                        if (!appointmentProv
+                                                                            .isValidForm())
+                                                                          return;
+                                                                        FocusScope.of(context)
+                                                                            .unfocus();
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        _isTappedDate =
+                                                                            false;
+                                                                        _selectedTimeRegions
+                                                                            .clear();
+                                                                        appointmentProv.isLoading =
+                                                                            true;
+                                                                        await Future.delayed(const Duration(
+                                                                            seconds:
+                                                                                1));
+                                                                        final result =
+                                                                            await appointmentProv.createAppointment();
+                                                                        if (result) {
+                                                                          appointmentProv.patientSelected =
+                                                                              null;
+                                                                          appointmentProv.startDate =
+                                                                              null;
+                                                                          appointmentForm.endTime =
+                                                                              null;
+                                                                          appointmentProv.startTime =
+                                                                              null;
+                                                                          appointmentProv.doctorSelected =
+                                                                              null;
+                                                                          _searchController
+                                                                              .clear();
+                                                                        }
+                                                                      },
+                                                                      child: const Text(
+                                                                        'Agendar Cita',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.white),
+                                                                      )),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ],
                                                 );
                                               },
@@ -469,23 +753,14 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                           icon:
                                               const Icon(Icons.check_outlined)),
                                     ],
-                                  )),
-                        appointmentProv.isLoading
-                            ? SizedBox(
-                                width: size.width,
-                                height: size.height * 0.6,
-                                child: Center(
-                                  child: SpinKitCubeGrid(
-                                    color: myColor,
                                   ),
-                                ),
-                              )
-                            : Container()
-                      ],
-                    ),
-                  )
-          ]))
-        ],
+                                )
+                        ],
+                      ),
+                    )
+            ]))
+          ],
+        ),
       ),
     );
   }
@@ -554,14 +829,22 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     final List<String> daysOfWeek = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 
     for (String day in daysOfWeek) {
-      regions.add(TimeRegion(
-        startTime: DateTime(today.year, today.month, today.day, 0, 0),
-        endTime: DateTime(today.year, today.month, today.day, 23, 59, 59),
-        enablePointerInteraction: false,
-        textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
-        color: Colors.grey.withOpacity(0.2),
-        recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-      ));
+      !_isEmergency
+          ? regions.add(TimeRegion(
+              startTime: DateTime(today.year, today.month, today.day, 0, 0),
+              endTime: DateTime(today.year, today.month, today.day, 23, 59, 59),
+              enablePointerInteraction: false,
+              textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+              color: Colors.grey.withOpacity(0.2),
+              recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+            ))
+          : regions.add(TimeRegion(
+              startTime: DateTime(today.year, today.month, today.day, 0, 0),
+              endTime: DateTime(today.year, today.month, today.day, 23, 59, 59),
+              textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+              color: Colors.green.shade300.withOpacity(0.2),
+              recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+            ));
     }
 
     return regions;
@@ -588,93 +871,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         _selectedDate = selectedDate;
       } else if (_selectedDate != selectedDate) {
         // ignorar la acción si la fecha no es la misma
-
-        return;
-      }
-
-      final DateTime startTime = tappedDate;
-      final DateTime endTime = startTime.add(const Duration(minutes: 30));
-
-      final bool isAlreadySelected = _selectedTimeRegions.any((region) =>
-          region.startTime.isAtSameMomentAs(startTime) &&
-          region.endTime.isAtSameMomentAs(endTime));
-
-      if (isAlreadySelected) {
-        return;
-      }
-
-      // Verificar si es adyacente a alguna selección existente
-      final bool isAdjacent = _selectedTimeRegions.any((region) =>
-          region.endTime.isAtSameMomentAs(startTime) ||
-          region.startTime.isAtSameMomentAs(endTime));
-
-      if (_selectedTimeRegions.isNotEmpty && !isAdjacent) {
-        return;
-      }
-
-      final TimeRegion newRegion = TimeRegion(
-        startTime: startTime,
-        endTime: endTime,
-        color: Colors.blue.withOpacity(0.5),
-      );
-
-      setState(() {
-        _selectedTimeRegions.add(newRegion);
-
-        if (_intervalStartTime == null ||
-            startTime.isBefore(_intervalStartTime!)) {
-          _intervalStartTime = startTime;
-        }
-        if (_intervalEndTime == null || endTime.isAfter(_intervalEndTime!)) {
-          _intervalEndTime = endTime;
-        }
-      });
-    } else {
-      if (calendarTapDetails.appointments != null &&
-          calendarTapDetails.targetElement == CalendarElement.appointment) {
-        final Appointment appointment =
-            calendarTapDetails.appointments!.first as Appointment;
-
-        // Extraer el nombre del paciente del subject
-        final RegExp regex = RegExp(r'Px: (.+)');
-        final RegExpMatch? match = regex.firstMatch(appointment.subject);
-        final String patientName =
-            match != null ? match.group(1)! : 'Desconocido';
-
-        final String startTime = formattedTime.format(appointment.startTime);
-        final String endTime = formattedTime.format(appointment.endTime);
-        final String date = DateFormat('EEEE, MMM dd, yyyy', 'es')
-            .format(appointment.startTime);
-        final String appointmentId = appointment.id.toString();
-
-        _showDetails(patientName, date, startTime, endTime, appointmentId);
-      }
-    }
-  }
-
-    void _onCalendarLongPress(CalendarLongPressDetails calendarTapDetails) {
-      print(calendarTapDetails.date);
-    /// Condition added to open the editor, when the calendar elements tapped
-    /// other than the header.
-    if (calendarTapDetails.targetElement == CalendarElement.header ||
-        calendarTapDetails.targetElement == CalendarElement.resourceHeader) {
-      return;
-    }
-
-    if (calendarTapDetails.targetElement == CalendarElement.calendarCell) {
-      _isTappedDate = true;
-      final DateTime tappedDate = calendarTapDetails.date!;
-      final DateTime selectedDate = DateTime(
-        tappedDate.year,
-        tappedDate.month,
-        tappedDate.day,
-      );
-
-      if (_selectedDate == null) {
-        _selectedDate = selectedDate;
-      } else if (_selectedDate != selectedDate) {
-        // ignorar la acción si la fecha no es la misma
-
         return;
       }
 
@@ -953,6 +1149,21 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       ),
     );
   }
+
+  void _onDragStart(AppointmentDragStartDetails details) {
+    print('Drag Start: ${details.appointment}');
+  }
+
+  void _onDragUpdate(AppointmentDragUpdateDetails details) {
+    print('Drag Update: ${details.appointment}');
+  }
+
+  void _onDragEnd(AppointmentDragEndDetails details) {
+    print('Drag End: ${details.appointment}');
+    setState(() {
+      // Actualiza el estado de las citas si es necesario
+    });
+  }
 }
 
 // Clase para crear las citas en el calendario
@@ -987,7 +1198,7 @@ _AppointmentDataSource _getCalendarDataSource(
         startTime: startTime!,
         endTime: endTime!,
         color: Colors.red,
-        notes: 'hola',
+        notes: myAppointment.status!.descripcion,
         subject:
             '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
   }).toList();
