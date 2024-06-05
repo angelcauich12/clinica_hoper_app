@@ -141,7 +141,7 @@ class AppointmentCardDoctorHeader extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     (appointment.status!.name == 'Cancelada')
-                        ? const CanceledLabel()
+                        ? const StatusLabel()
                         : Container(),
                   ],
                 ),

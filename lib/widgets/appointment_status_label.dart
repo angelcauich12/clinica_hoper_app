@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 
-class CanceledLabel extends StatelessWidget {
-  const CanceledLabel({super.key});
+class StatusLabel extends StatelessWidget {
+  final  String?  status;
+  final Colors? color;
+  const StatusLabel({super.key, this.status, this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: ThemeProvider.lightRed,
+        color: status == 'Confirmada' ? ThemeProvider.blue : ThemeProvider.lightRed,
         borderRadius: BorderRadius.circular(50),
       ),
       padding: const EdgeInsets.symmetric(
@@ -16,7 +18,7 @@ class CanceledLabel extends StatelessWidget {
         vertical: 2,
       ),
       child: Text(
-        'Cancelada',
+        status ?? 'Sin estado',
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,

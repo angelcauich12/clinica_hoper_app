@@ -153,11 +153,11 @@ class AppointmentProvider extends ChangeNotifier {
           confirmadasList = appointments
               .where((appointment) => appointment.status!.name == 'Confirmada')
               .toList();
-          atendidasYCanceladasList = appointments
-              .where((appointment) =>
-                  appointment.status!.name == 'Atendida' ||
-                  appointment.status!.name == 'Cancelada')
-              .toList();
+          // atendidasYCanceladasList = appointments
+          //     .where((appointment) =>
+          //         appointment.status!.name == 'Atendida' ||
+          //         appointment.status!.name == 'Cancelada')
+          //     .toList();
           // print(appointments);
           result = true;
           isLoadingCatalogs = false;
@@ -936,8 +936,7 @@ class AppointmentProvider extends ChangeNotifier {
           result = true;
           isLoading = false;
           print('200: Get Appointment ${response.body}');
-          singleAppointmentResponse =
-              AppointmentResponse.fromJson(response.body);
+          singleAppointmentResponse = AppointmentResponse.fromJson(response.body);
           appointment = singleAppointmentResponse!.appointment;
           notifyListeners();
           break;
@@ -1092,6 +1091,117 @@ class AppointmentProvider extends ChangeNotifier {
     }
     return users;
   }
+
+  Future<bool> updateAppointment(String id, String scheduledDate, String scheduledTime, String scheduledTimeEnd) async {
+    print('Peticion API update appoinment ');
+    _endPoint = '/api/v1/appointments/update-appointment';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+    final Map<String, dynamic> queryParameters = {
+      'id': id,
+      'scheduled_date': scheduledDate,
+      'scheduled_time': scheduledTime,
+      'scheduled_time_end': scheduledTimeEnd,
+      
+    };
+  
+    print(queryParameters);
+
+    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+
+    try {
+      isLoading = true;
+      result = false;
+
+      final response = await http
+          .put(url, headers: headers, body: json.encode(queryParameters))
+          .timeout(const Duration(seconds: 30));
+
+      switch (response.statusCode) {
+        case 200:
+          print('200: Update appointment ${response.body}');
+          result = true;
+          isLoading = false;
+          singleAppointmentResponse = AppointmentResponse.fromJson(response.body);
+          appointment = singleAppointmentResponse!.appointment;
+          calendarAppointments.removeWhere((appt) => appt.id == appointment?.id);
+          calendarAppointments.add(appointment!);      
+          notifyListeners();
+          break;
+        case 401:
+          isLoading = false;
+          result = false;
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          // print(serverResponse);
+          print('422: ${response.body}');
+          break;
+        case 500:
+          isLoading = false;
+          result = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      Notifications.showSnackBar('$e');
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+
+
+
 
   void getUsersByQuery(String query) {
     debouncer.value = '';

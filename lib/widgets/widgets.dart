@@ -3,7 +3,7 @@
 
 
 export 'package:hope_app/widgets/appointment_card_doctor.dart';
-export 'package:hope_app/widgets/appointment_cancelled_label.dart';
+export 'package:hope_app/widgets/appointment_status_label.dart';
 export 'package:hope_app/widgets/appointment_card.dart';
 export 'package:hope_app/widgets/appointment_list.dart';
 export 'package:hope_app/widgets/auth_background.dart';

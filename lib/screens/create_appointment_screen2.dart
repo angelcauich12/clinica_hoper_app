@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
+import 'package:hope_app/widgets/appointment_status_label.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -106,12 +107,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                         height: 30,
                         value: 7,
                         child: Text(
-                          
                           'Semana',
                           style: TextStyle(fontFamily: 'Roboto'),
                         ),
                       ),
-                      
                     ],
                     onSelected: (int result) {
                       setState(() {
@@ -372,7 +371,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                           locale: const Locale('es'),
                                           supportedLocales: const [
                                             Locale('es'),
-                                            Locale('en'),
                                           ],
                                           localizationsDelegates: const [
                                             GlobalMaterialLocalizations
@@ -586,11 +584,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     SingleChildScrollView(
-                                                      padding: EdgeInsets.only(
-                                                          bottom: MediaQuery.of(
-                                                                  context)
-                                                              .viewInsets
-                                                              .bottom),
+                                                      padding: EdgeInsets.only(right: 15,left: 15, bottom: MediaQuery.of(context).viewInsets.bottom + 60),
                                                       child: Form(
                                                         key: appointmentForm
                                                             .formKey,
@@ -971,8 +965,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     } else {
       if (calendarTapDetails.appointments != null &&
           calendarTapDetails.targetElement == CalendarElement.appointment) {
-        final Appointment appointment =
-            calendarTapDetails.appointments!.first as Appointment;
+        print(calendarTapDetails.appointments!.first);
+        final Appointment appointment = calendarTapDetails.appointments!.first as Appointment;
 
         // Extraer el nombre del paciente del subject
         final RegExp regex = RegExp(r'Px: (.+)');
@@ -985,14 +979,15 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         final String date = DateFormat('EEEE, MMM dd, yyyy', 'es')
             .format(appointment.startTime);
         final String appointmentId = appointment.id.toString();
+        final String status = appointment.notes.toString();
 
-        _showDetails(patientName, date, startTime, endTime, appointmentId);
+        _showDetails(patientName, date, startTime, endTime, appointmentId, status);
       }
     }
   }
 
   Future<void> _showDetails(String patientName, String date, String startTime,
-      String endTime, String id) {
+      String endTime, String id , String status) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -1026,8 +1021,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                       ))
                 ],
               ),
+              const SizedBox(height: 15,),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Detalles de la cita',
@@ -1036,6 +1032,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                         fontWeight: FontWeight.bold,
                         color: myColor),
                   ),
+                  StatusLabel(status: status,)
                 ],
               ),
               const SizedBox(
@@ -1168,10 +1165,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context, 'Cerrar'),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                ThemeProvider.lightRed,
-              ),
+            style: TextButton.styleFrom(
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              backgroundColor: ThemeProvider.lightRed,
             ),
             child: Text(
               'Cerrar',
@@ -1183,11 +1180,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
             ),
           ),
           TextButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                ThemeProvider.secondColor,
-              ),
-            ),
+            style: TextButton.styleFrom(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(4))),
+                backgroundColor: ThemeProvider.secondColor),
             onPressed: () {
               if (!cancelForm.isValidForm()) return;
               Navigator.pop(context);
@@ -1231,6 +1227,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
           id: myAppointment.id,
           startTime: startTime!,
           endTime: endTime!,
+          notes: myAppointment.status!.name,
           color: Colors.red,
           subject:
               '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
@@ -1242,22 +1239,41 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   void _onDragEnd(
     AppointmentDragEndDetails appointmentDragEndDetails,
   ) {
+    final appointmentProv =
+        Provider.of<AppointmentProvider>(context, listen: false);
     Appointment detail = appointmentDragEndDetails.appointment as Appointment;
     Duration duration = detail.endTime.difference(detail.startTime);
 
     DateTime droppingTime = appointmentDragEndDetails.droppingTime!;
-    DateTime start = DateTime(droppingTime.year, droppingTime.month,
-        droppingTime.day, droppingTime.hour, 0, 0);
+
+    int minute = droppingTime.minute;
+    if (minute < 15) {
+      minute = 0;
+    } else if (minute < 45) {
+      minute = 30;
+    } else {
+      minute = 0;
+      droppingTime = droppingTime.add(const Duration(hours: 1));
+    }
+
+    DateTime start = DateTime(
+      droppingTime.year,
+      droppingTime.month,
+      droppingTime.day,
+      droppingTime.hour,
+      minute,
+      0, // Segundos a 0
+    );
+
     DateTime end = start.add(duration);
 
     // Actualiza la cita con los nuevos tiempos ajustados
     detail = Appointment(
-      startTime: start,
-      endTime: end,
-      subject: detail.subject,
-      color: detail.color,
-      isAllDay: detail.isAllDay,
-    );
+        startTime: start,
+        endTime: end,
+        subject: detail.subject,
+        color: detail.color,
+        id: detail.id);
 
     showDialog<String>(
       barrierDismissible: false,
@@ -1313,7 +1329,14 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                 ThemeProvider.secondColor,
               ),
             ),
-            onPressed: () {},
+            onPressed: () async {
+              Navigator.pop(context);
+              await appointmentProv.updateAppointment(
+                  detail.id.toString(),
+                  formattedDate.format(detail.startTime),
+                  formattedTime.format(detail.startTime),
+                  formattedTime.format(detail.endTime));
+            },
             child: Text(
               'Confirmar',
               style: TextStyle(
@@ -1326,21 +1349,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         ],
       ),
     );
-
-    // Aquí puedes actualizar tu lista de citas o el estado de la aplicación
-    // Por ejemplo:
-    // setState(() {
-    //   _appointments.removeWhere((appt) => appt.id == detail.id);
-    //   _appointments.add(detail);
-    // });
-
-    print('Drag End: $detail');
   }
 }
 
 // Clase para crear las citas en el calendario
-class AppointmentDataSource extends CalendarDataSource {
-  AppointmentDataSource(List<Appointment> source) {
-    appointments = source;
-  }
-}
+

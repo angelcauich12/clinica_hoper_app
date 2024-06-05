@@ -37,6 +37,7 @@ final primaryColor = ThemeProvider.primaryColor;
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
     oneSignalProvider.initOneSignal(context);
     User apiUser = User.fromJson(Preferences.apiUser);
+     final appointmentProvider = Provider.of<AppointmentProvider>(context);
  
     return Scaffold(
       // backgroundColor: Preferences.isDarkMode ? ThemeProvider.darkColor : ThemeProvider.lightGrey2,
@@ -95,7 +96,7 @@ final primaryColor = ThemeProvider.primaryColor;
                     child: Column(
                       children: [
                         const SizedBox(height: 15),
-                        const DayCalendar(),
+                         DayCalendar(appointments: appointmentProvider.calendarAppointments),
                         const SizedBox(height: 15),
                         apiUser.miPerfil.nombre != 'Doctor' ?  
                         SpecialtySlider(specialties: specialties)
