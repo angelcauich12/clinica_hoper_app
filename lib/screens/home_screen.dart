@@ -13,11 +13,17 @@ const LatLng currentLocation = LatLng(20.988331640730305, -89.60906162570994);
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = 'home';
+
+  const HomeScreen({super.key});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+final secondColor = ThemeProvider.secondColor;
+final primaryColor = ThemeProvider.primaryColor;
+
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
     oneSignalProvider.initOneSignal(context);
     User apiUser = User.fromJson(Preferences.apiUser);
-    //  getData();
+ 
     return Scaffold(
       // backgroundColor: Preferences.isDarkMode ? ThemeProvider.darkColor : ThemeProvider.lightGrey2,
       body: Consumer<AppointmentProvider>(
@@ -39,43 +45,69 @@ class _HomeScreenState extends State<HomeScreen> {
           if (ap.isLoadingCatalogs) {
             return const SkeletonHome();
           } else {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _homeGreetings(
-                    apiUser: apiUser,
+            return Column(
+              children: [
+                Container(
+                  height: 230,
+                  padding: const EdgeInsets.only(top: 10),
+                  decoration:  BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(30),
+                        bottomRight: Radius.circular(30)),
+                    boxShadow: const [
+                      BoxShadow(
+                        offset: Offset(1.0, 1.0),
+                        blurRadius: 1.0,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ],
+                    color: secondColor,
                   ),
-                  (apiUser.medicalHistory == null &&
-                          apiUser.miPerfil.nombre == 'Patient')
-                      ? Column(
-                          children: [
-                            const SizedBox(height: 35),
-                            DangerMessageWithButton(
-                              color: ThemeProvider.blue.withOpacity(0.3),
-                              title: 'Estimado Paciente',
-                              paragraph1:
-                                  'Su expediente clínico no está completo.',
-                              paragraph2: 'Rellenar el formulario',
-                              btnTitle: 'Completar mi expediente',
-                            ),
-                          ],
-                        )
-                      : Container(),
-                  const SizedBox(height: 25),
-                  _homeButtons(
-                      profile: apiUser.miPerfil
-                          .nombre), //se envia el nombre del perfil doctor, patient, admin
-                  const SizedBox(height: 25),
-                  AppointmentSwiper(apiUser: apiUser),
-                  const SizedBox(height: 25),
-                  SpecialtySlider(specialties: specialties),
-                  const SizedBox(height: 25),
-                  _findUs(),
-                  const SizedBox(height: 50),
-                ],
-              ),
+                  child: Column(
+                    children: [
+                      _homeGreetings(
+                        apiUser: apiUser,
+                      ),
+                      (apiUser.medicalHistory == null &&
+                              apiUser.miPerfil.nombre == 'Patient')
+                          ? Column(
+                              children: [
+                                const SizedBox(height: 35),
+                                DangerMessageWithButton(
+                                  color: ThemeProvider.blue.withOpacity(0.3),
+                                  title: 'Estimado Paciente',
+                                  paragraph1:
+                                      'Su expediente clínico no está completo.',
+                                  paragraph2: 'Rellenar el formulario',
+                                  btnTitle: 'Completar mi expediente',
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      const SizedBox(height: 20),
+                      _homeButtons(profile: apiUser.miPerfil.nombre),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 15),
+                        const DayCalendar(),
+                        const SizedBox(height: 15),
+                        apiUser.miPerfil.nombre != 'Doctor' ?  
+                        SpecialtySlider(specialties: specialties)
+                        : Container(),
+                        const SizedBox(height: 15),
+                        _findUs(),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             );
           }
         },
@@ -99,7 +131,8 @@ class AppointmentSwiper extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
-    final appointments = appointmentProvider.confirmadasList; //Debe ser confirmadas
+    final appointments =
+        appointmentProvider.confirmadasList; //Debe ser confirmadas
 
     return (appointments.isNotEmpty)
         ? Container(
@@ -162,8 +195,8 @@ class _homeGreetings extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   fontFamily: 'Roboto',
                   color: Preferences.isDarkMode
-                      ? ThemeProvider.white
-                      : ThemeProvider.brown,
+                      ? ThemeProvider.brown
+                      : ThemeProvider.white,
                 ),
               ),
               Row(
@@ -175,22 +208,11 @@ class _homeGreetings extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Roboto',
                       color: Preferences.isDarkMode
-                          ? ThemeProvider.white
-                          : ThemeProvider.brown,
+                          ? ThemeProvider.brown
+                          : ThemeProvider.white,
                     ),
                   ),
                   const SizedBox(width: 7),
-                  Text(
-                    '👋',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Roboto',
-                      color: Preferences.isDarkMode
-                          ? ThemeProvider.white
-                          : ThemeProvider.brown,
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -211,15 +233,13 @@ class _homeButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(profile);
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         (profile != 'Patient')
             ? HomeActionButton(
                 title: "Bienvenid@ $profile!",
-                subtitle: "Programa un paciente para cita",
+                subtitle: "Programa una cita",
                 backgroundColor: ThemeProvider.lightColor,
                 backgroundImg: 'bgHospital3.png',
                 iconColor: ThemeProvider.white,
@@ -265,7 +285,7 @@ class HomeActionButton extends StatelessWidget {
           CreateAppointmentScreen2.routeName,
         ),
         child: Container(
-          height: 180,
+          height: 130,
           margin: const EdgeInsets.only(left: 15, right: 15),
           decoration: BoxDecoration(
               // color: ThemeProvider.secondColor,
@@ -273,9 +293,9 @@ class HomeActionButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
                 BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 6,
-                  spreadRadius: 4,
+                  color: Colors.white12,
+                  blurRadius: 4,
+                  spreadRadius: 2,
                 ),
               ]),
           child: Stack(
@@ -287,7 +307,7 @@ class HomeActionButton extends StatelessWidget {
                   height: double.infinity,
                   placeholder: const AssetImage('assets/loading.gif'),
                   image: AssetImage('assets/images/$backgroundImg'),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
               Container(
@@ -313,29 +333,8 @@ class HomeActionButton extends StatelessWidget {
                         size: 28,
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    Expanded(
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 22,
-                          color: iconColor,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              offset: const Offset(-2.0, 2.0),
-                              blurRadius: 5,
-                              color: ThemeProvider.brown,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
+                    const SizedBox(height: 10),
+                            Text(
                       subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -533,8 +532,8 @@ class _findUsState extends State<_findUs> {
               fontWeight: FontWeight.w600,
               fontFamily: 'Roboto',
               color: Preferences.isDarkMode
-                  ? ThemeProvider.white
-                  : ThemeProvider.brown,
+                  ? ThemeProvider.brown
+                  : ThemeProvider.primaryColor,
             ),
           ),
           const SizedBox(height: 15),

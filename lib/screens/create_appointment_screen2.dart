@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:intl/intl.dart';
@@ -54,19 +53,22 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   Widget build(BuildContext context) {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
-    final List<TimeRegion> disabledRegions = getDisabledRegions();
     final List<TimeRegion> enabledRegions =
         getTimeRegions(appointmentProv.workSchedule);
+    final List<TimeRegion> disabledRegions = getDisabledRegions(enabledRegions);
     final List<TimeRegion> specialRegions = [
       ...disabledRegions,
       ...enabledRegions,
       ..._selectedTimeRegions
     ];
+    final AppointmentDataSource calendarAppointments =
+        _getCalendarDataSource(appointmentProv.calendarAppointments);
     final appointmentForm = Provider.of<AppointmentProvider>(context);
 
     Future<void> onRefresh() async {
       appointmentProv.isLoading = true;
       await Future.delayed(const Duration(seconds: 2));
+      appointmentProv.workScheduleDoctor();
       appointmentProv.getAppointmentsCalendar();
       appointmentProv.isLoading = false;
       setState(() {});
@@ -77,7 +79,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         color: myColor,
         onRefresh: onRefresh,
         child: CustomScrollView(
-          // physics: const NeverScrollableScrollPhysics(),
+          physics: const ClampingScrollPhysics(),
           slivers: [
             SliverAppBar(
                 actions: [
@@ -92,15 +94,19 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                     ),
                     itemBuilder: (context) => <PopupMenuEntry<int>>[
                       const PopupMenuItem<int>(
+                        height: 30,
                         value: 3,
                         child: Text(
                           'Días',
                           style: TextStyle(fontFamily: 'Roboto'),
                         ),
                       ),
+                      const PopupMenuDivider(),
                       const PopupMenuItem<int>(
+                        height: 30,
                         value: 7,
                         child: Text(
+                          
                           'Semana',
                           style: TextStyle(fontFamily: 'Roboto'),
                         ),
@@ -393,10 +399,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                             allowViewNavigation: true,
                                             showDatePickerButton: true,
                                             showNavigationArrow: false,
+                                            showWeekNumber: true,
                                             headerStyle: CalendarHeaderStyle(
                                               backgroundColor: myColor,
                                               textStyle: const TextStyle(
-                                           
                                                   color: Colors.white),
                                             ),
                                             todayHighlightColor: myColor,
@@ -423,13 +429,11 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                     fontSize: 10,
                                                     color: Colors.white),
                                             specialRegions: specialRegions,
-                                            dataSource: _getCalendarDataSource(
-                                                appointmentProv
-                                                    .calendarAppointments),
+                                            dataSource: calendarAppointments,
                                             onTap: _onCalendarTapped,
-                                            onDragStart: _onDragStart,
-                                            onDragUpdate: _onDragUpdate,
-                                            onDragEnd: _onDragEnd,
+                                            // onDragStart: _onDragStart,
+                                            onDragEnd: (details) =>
+                                                _onDragEnd(details),
                                           ),
                                         ),
                                       ),
@@ -475,31 +479,34 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                             ],
                           ),
                           Positioned(
-                            top: 73,
-                            left: 172,
-                            child: Row(
-                            children: [
-                              const Text(
-                                'Emergencia',
-                                style: TextStyle(fontFamily: 'Roboto',color: Colors.white,fontSize: 15),
-                              ),
-                              SizedBox(
-                                height:25,
-                                child: FittedBox(
-                                  fit: BoxFit.fill,
-                                  child: Switch.adaptive(
-                                    inactiveTrackColor: Colors.grey,
-                                    value: _isEmergency,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        _isEmergency = value;
-                                      });
-                                    },
+                              top: 73,
+                              left: 172,
+                              child: Row(
+                                children: [
+                                  const Text(
+                                    'Emergencia',
+                                    style: TextStyle(
+                                        fontFamily: 'Roboto',
+                                        color: Colors.white,
+                                        fontSize: 15),
                                   ),
-                                ),
-                              ),
-                            ],
-                          )),
+                                  SizedBox(
+                                    height: 25,
+                                    child: FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: Switch.adaptive(
+                                        inactiveTrackColor: Colors.grey,
+                                        value: _isEmergency,
+                                        onChanged: (bool value) {
+                                          _isEmergency = value;
+                                          print(_isEmergency);
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )),
                           appointmentProv.isLoading
                               ? SizedBox(
                                   width: size.width,
@@ -532,10 +539,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                               appointmentProv.startDate = null;
                                               appointmentProv.startDate = null;
                                               appointmentProv.endTime = null;
-                                              appointmentProv
-                                                  .specialtySelected = null;
-                                              appointmentProv.doctorSelected =
-                                                  null;
                                             });
                                           },
                                           icon: const Icon(Icons.close)),
@@ -811,48 +814,102 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
           endTime: DateTime(
               today.year, today.month, today.day, endTime.hour, endTime.minute),
           color: Colors.green.shade300.withOpacity(0.2),
+          enablePointerInteraction: true,
           recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$daysOfWeek',
         );
-        regions.add(region);
+
+        // Evita duplicados antes de añadir la región
+        if (!regions.any((existingRegion) =>
+            existingRegion.startTime == region.startTime &&
+            existingRegion.endTime == region.endTime &&
+            existingRegion.recurrenceRule == region.recurrenceRule)) {
+          regions.add(region);
+        }
       }
     }
     return regions;
   }
 
 // Función para desabilitar todo el calendario
-  List<TimeRegion> getDisabledRegions() {
+  List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
     final List<TimeRegion> regions = [];
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
 
-    // Recurre semanalmente para cada día de la semana
     final List<String> daysOfWeek = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 
     for (String day in daysOfWeek) {
-      !_isEmergency
-          ? regions.add(TimeRegion(
-              startTime: DateTime(today.year, today.month, today.day, 0, 0),
-              endTime: DateTime(today.year, today.month, today.day, 23, 59, 59),
-              enablePointerInteraction: false,
-              textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
-              color: Colors.grey.withOpacity(0.2),
-              recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-            ))
-          : regions.add(TimeRegion(
-              startTime: DateTime(today.year, today.month, today.day, 0, 0),
-              endTime: DateTime(today.year, today.month, today.day, 23, 59, 59),
-              textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
-              color: Colors.green.shade300.withOpacity(0.2),
-              recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-            ));
+      // print('Day: $day'); // Debugging line
+      final List<TimeRegion> dayEnabledRegions = enabledRegions
+          .where((region) => region.recurrenceRule!.contains(day))
+          .toList();
+
+      // print('Day Enabled Regions: ${dayEnabledRegions.length} items'); // Debugging line
+      // for (var region in dayEnabledRegions) {
+      //   print('Enabled Region: ${region.startTime} - ${region.endTime}'); // Debugging line
+      // }
+      DateTime dayStartTime =
+          DateTime(today.year, today.month, today.day, 0, 0);
+      DateTime dayEndTime =
+          DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+      // Ordenar las regiones habilitadas por hora de inicio
+      dayEnabledRegions.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+      DateTime previousEndTime = dayStartTime;
+
+      for (var region in dayEnabledRegions) {
+        if (region.startTime.isAfter(previousEndTime)) {
+          _isEmergency
+              ? regions.add(TimeRegion(
+                  startTime: previousEndTime,
+                  endTime: region.startTime,
+                  enablePointerInteraction: true,
+                  textStyle:
+                      const TextStyle(color: Colors.black45, fontSize: 15),
+                  color: Colors.green.shade300.withOpacity(0.2),
+                  recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+                ))
+              : regions.add(TimeRegion(
+                  startTime: previousEndTime,
+                  endTime: region.startTime,
+                  enablePointerInteraction: false,
+                  textStyle:
+                      const TextStyle(color: Colors.black45, fontSize: 15),
+                  color: Colors.grey.withOpacity(0.2),
+                  recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+                ));
+          // print('Disabled Region: $previousEndTime - ${region.startTime}'); // Debugging line
+        }
+        previousEndTime = region.endTime;
+      }
+
+      if (previousEndTime.isBefore(dayEndTime)) {
+        _isEmergency
+            ? regions.add(TimeRegion(
+                startTime: previousEndTime,
+                endTime: dayEndTime,
+                enablePointerInteraction: true,
+                textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+                color: Colors.green.shade300.withOpacity(0.2),
+                recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+              ))
+            : regions.add(TimeRegion(
+                startTime: previousEndTime,
+                endTime: dayEndTime,
+                enablePointerInteraction: false,
+                textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+                color: Colors.grey.withOpacity(0.2),
+                recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+              ));
+        // print('Disabled Region: $previousEndTime - $dayEndTime'); // Debugging line
+      }
     }
 
     return regions;
   }
 
   void _onCalendarTapped(CalendarTapDetails calendarTapDetails) {
-    /// Condition added to open the editor, when the calendar elements tapped
-    /// other than the header.
     if (calendarTapDetails.targetElement == CalendarElement.header ||
         calendarTapDetails.targetElement == CalendarElement.resourceHeader) {
       return;
@@ -1150,58 +1207,140 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     );
   }
 
-  void _onDragStart(AppointmentDragStartDetails details) {
-    print('Drag Start: ${details.appointment}');
+  AppointmentDataSource _getCalendarDataSource(
+      List<MyAppointment> sourceAppointments) {
+    List<Appointment> appointments = sourceAppointments.map((myAppointment) {
+      // Convertir la cadena de hora de inicio programada a un objeto DateTime
+      DateTime? startTime = myAppointment.scheduledTime != null
+          ? DateTime.parse(
+              '${myAppointment.scheduledDate!} ${myAppointment.scheduledTime!}')
+          : null;
+
+      DateTime? endTime = myAppointment.scheduledTime != null
+          ? DateTime.parse(
+              '${myAppointment.scheduledDate!} ${myAppointment.scheduledTimeEnd!}')
+          : null;
+
+      // Dar formato a las horas en el formato 'hh:mm a'
+      String formattedStartTime =
+          startTime != null ? DateFormat('hh:mm ').format(startTime) : 'N/A';
+      String formattedEndTime =
+          endTime != null ? DateFormat('hh:mm ').format(endTime) : 'N/A';
+
+      return Appointment(
+          id: myAppointment.id,
+          startTime: startTime!,
+          endTime: endTime!,
+          color: Colors.red,
+          subject:
+              '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
+    }).toList();
+
+    return AppointmentDataSource(appointments);
   }
 
-  void _onDragUpdate(AppointmentDragUpdateDetails details) {
-    print('Drag Update: ${details.appointment}');
-  }
+  void _onDragEnd(
+    AppointmentDragEndDetails appointmentDragEndDetails,
+  ) {
+    Appointment detail = appointmentDragEndDetails.appointment as Appointment;
+    Duration duration = detail.endTime.difference(detail.startTime);
 
-  void _onDragEnd(AppointmentDragEndDetails details) {
-    print('Drag End: ${details.appointment}');
-    setState(() {
-      // Actualiza el estado de las citas si es necesario
-    });
+    DateTime droppingTime = appointmentDragEndDetails.droppingTime!;
+    DateTime start = DateTime(droppingTime.year, droppingTime.month,
+        droppingTime.day, droppingTime.hour, 0, 0);
+    DateTime end = start.add(duration);
+
+    // Actualiza la cita con los nuevos tiempos ajustados
+    detail = Appointment(
+      startTime: start,
+      endTime: end,
+      subject: detail.subject,
+      color: detail.color,
+      isAllDay: detail.isAllDay,
+    );
+
+    showDialog<String>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5.0))),
+        title: const Text(
+          'Modificar cita',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '¿Realmente desea cambiar la fecha y hora de esta cita?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => setState(() {
+              Navigator.pop(context, 'Cerrar');
+            }),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                ThemeProvider.lightRed,
+              ),
+            ),
+            child: Text(
+              'Cerrar',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: ThemeProvider.white,
+              ),
+            ),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                ThemeProvider.secondColor,
+              ),
+            ),
+            onPressed: () {},
+            child: Text(
+              'Confirmar',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 12,
+                color: ThemeProvider.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // Aquí puedes actualizar tu lista de citas o el estado de la aplicación
+    // Por ejemplo:
+    // setState(() {
+    //   _appointments.removeWhere((appt) => appt.id == detail.id);
+    //   _appointments.add(detail);
+    // });
+
+    print('Drag End: $detail');
   }
 }
 
 // Clase para crear las citas en el calendario
-class _AppointmentDataSource extends CalendarDataSource {
-  _AppointmentDataSource(List<Appointment> source) {
+class AppointmentDataSource extends CalendarDataSource {
+  AppointmentDataSource(List<Appointment> source) {
     appointments = source;
   }
-}
-
-_AppointmentDataSource _getCalendarDataSource(
-    List<MyAppointment> sourceAppointments) {
-  List<Appointment> appointments = sourceAppointments.map((myAppointment) {
-    // Convertir la cadena de hora de inicio programada a un objeto DateTime
-    DateTime? startTime = myAppointment.scheduledTime != null
-        ? DateTime.parse(
-            '${myAppointment.scheduledDate!} ${myAppointment.scheduledTime!}')
-        : null;
-
-    DateTime? endTime = myAppointment.scheduledTime != null
-        ? DateTime.parse(
-            '${myAppointment.scheduledDate!} ${myAppointment.scheduledTimeEnd!}')
-        : null;
-
-    // Dar formato a las horas en el formato 'hh:mm a'
-    String formattedStartTime =
-        startTime != null ? DateFormat('hh:mm ').format(startTime) : 'N/A';
-    String formattedEndTime =
-        endTime != null ? DateFormat('hh:mm ').format(endTime) : 'N/A';
-
-    return Appointment(
-        id: myAppointment.id,
-        startTime: startTime!,
-        endTime: endTime!,
-        color: Colors.red,
-        notes: myAppointment.status!.descripcion,
-        subject:
-            '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
-  }).toList();
-
-  return _AppointmentDataSource(appointments);
 }

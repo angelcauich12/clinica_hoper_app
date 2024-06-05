@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/navbar_provider.dart';
+import 'package:hope_app/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -8,8 +9,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mp = Provider.of<NavbarProvider>(context);
-
+    final secondColor = ThemeProvider.secondColor;
     return BottomNavigationBar(
+        backgroundColor: secondColor,
         currentIndex: mp.selectedIndex,
         onTap: (value) {
           mp.selectedIndex = value;

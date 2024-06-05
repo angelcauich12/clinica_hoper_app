@@ -25,9 +25,9 @@ class ThemeProvider extends ChangeNotifier {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
-  static LinearGradient secondGradientColor = const LinearGradient(
+  static LinearGradient secondGradientColor =  LinearGradient(
     colors: [
-      Color(0xff126276),
+      primaryColor,
       Color.fromARGB(255, 25, 153, 185),
     ],
     begin: Alignment.topCenter,
@@ -89,8 +89,8 @@ class ThemeProvider extends ChangeNotifier {
                   foregroundColor: Colors.white,
                 ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                  selectedItemColor: secondColor,
-                  unselectedItemColor: Colors.grey,
+                  selectedItemColor: white,
+                  unselectedItemColor: white.withOpacity(0.2),
                 ),
                 switchTheme: SwitchThemeData(
                   thumbColor: MaterialStateProperty.all(secondColor),
