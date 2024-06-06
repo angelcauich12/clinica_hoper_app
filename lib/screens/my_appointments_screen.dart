@@ -30,7 +30,7 @@ class AppointmentsTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 1,
       child: Scaffold(
         // backgroundColor: Preferences.isDarkMode ? ThemeProvider.brown : Colors.grey[100],
         appBar: AppBar(
@@ -108,19 +108,19 @@ class AppointmentsTabsBody extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Tab(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Confirmadas",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
+                      // Tab(
+                      //   child: Align(
+                      //     alignment: Alignment.center,
+                      //     child: Text(
+                      //       "Confirmadas",
+                      //       style: TextStyle(
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //       maxLines: 1,
+                      //       overflow: TextOverflow.ellipsis,
+                      //     ),
+                      //   ),
+                      // ),
                       // Tab(
                       //   child: Align(
                       //     alignment: Alignment.center,
@@ -142,7 +142,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                   child: TabBarView(
                     children: [
                       AppointmentList(appointments: reservadasList),
-                      AppointmentList(appointments: confirmadasList),
+                      // AppointmentList(appointments: confirmadasList),
                       // AppointmentList(appointments: atendidasYCanceladasList),
                     ],
                   ),

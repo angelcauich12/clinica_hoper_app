@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 final secondColor = ThemeProvider.secondColor;
 final primaryColor = ThemeProvider.primaryColor;
-
+  User apiUser = User.fromJson(Preferences.apiUser);
 
   @override
   void initState() {
@@ -36,11 +36,9 @@ final primaryColor = ThemeProvider.primaryColor;
   Widget build(BuildContext context) {
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
     oneSignalProvider.initOneSignal(context);
-    User apiUser = User.fromJson(Preferences.apiUser);
      final appointmentProvider = Provider.of<AppointmentProvider>(context);
  
     return Scaffold(
-      // backgroundColor: Preferences.isDarkMode ? ThemeProvider.darkColor : ThemeProvider.lightGrey2,
       body: Consumer<AppointmentProvider>(
         builder: (context, ap, _) {
           if (ap.isLoadingCatalogs) {
@@ -96,7 +94,7 @@ final primaryColor = ThemeProvider.primaryColor;
                     child: Column(
                       children: [
                         const SizedBox(height: 15),
-                         DayCalendar(appointments: appointmentProvider.calendarAppointments),
+                         DayCalendar(appointments: appointmentProvider.confirmadasList),
                         const SizedBox(height: 15),
                         apiUser.miPerfil.nombre != 'Doctor' ?  
                         SpecialtySlider(specialties: specialties)

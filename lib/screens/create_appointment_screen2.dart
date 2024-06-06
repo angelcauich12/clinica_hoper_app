@@ -45,7 +45,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         final appointmentRequestProvider = context.read<AppointmentProvider>();
         appointmentRequestProvider.doctorSelected = apiUser.id.toString();
         appointmentRequestProvider.workScheduleDoctor();
-        appointmentRequestProvider.getAppointmentsCalendar();
       });
     }
   }
@@ -54,23 +53,17 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   Widget build(BuildContext context) {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
-    final List<TimeRegion> enabledRegions =
-        getTimeRegions(appointmentProv.workSchedule);
+    final List<TimeRegion> enabledRegions = getTimeRegions(appointmentProv.workSchedule);
     final List<TimeRegion> disabledRegions = getDisabledRegions(enabledRegions);
-    final List<TimeRegion> specialRegions = [
-      ...disabledRegions,
-      ...enabledRegions,
-      ..._selectedTimeRegions
-    ];
-    final AppointmentDataSource calendarAppointments =
-        _getCalendarDataSource(appointmentProv.calendarAppointments);
+    final List<TimeRegion> specialRegions = [...disabledRegions,...enabledRegions,..._selectedTimeRegions];
+    final AppointmentDataSource calendarAppointments = _getCalendarDataSource(appointmentProv.calendarAppointments);
     final appointmentForm = Provider.of<AppointmentProvider>(context);
 
     Future<void> onRefresh() async {
       appointmentProv.isLoading = true;
       await Future.delayed(const Duration(seconds: 2));
       appointmentProv.workScheduleDoctor();
-      appointmentProv.getAppointmentsCalendar();
+      appointmentProv.getAppointments();
       appointmentProv.isLoading = false;
       setState(() {});
     }
