@@ -53,10 +53,16 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   Widget build(BuildContext context) {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
-    final List<TimeRegion> enabledRegions = getTimeRegions(appointmentProv.workSchedule);
+    final List<TimeRegion> enabledRegions =
+        getTimeRegions(appointmentProv.workSchedule);
     final List<TimeRegion> disabledRegions = getDisabledRegions(enabledRegions);
-    final List<TimeRegion> specialRegions = [...disabledRegions,...enabledRegions,..._selectedTimeRegions];
-    final AppointmentDataSource calendarAppointments = _getCalendarDataSource(appointmentProv.calendarAppointments);
+    final List<TimeRegion> specialRegions = [
+      ...disabledRegions,
+      ...enabledRegions,
+      ..._selectedTimeRegions
+    ];
+    final AppointmentDataSource calendarAppointments =
+        _getCalendarDataSource(appointmentProv.appointments);
     final appointmentForm = Provider.of<AppointmentProvider>(context);
 
     Future<void> onRefresh() async {
@@ -248,66 +254,88 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                             ? myColor
                                             : Colors.grey),
                                   ),
-                                  content: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Especialidades',
-                                            style: TextStyle(
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                                color: myColor),
-                                          ),
-                                        ],
-                                      ),
-                                      (appointmentProv.specialties!.isNotEmpty)
-                                          ? SizedBox(
-                                              height: size.height * 0.45,
-                                              //  color: Colors.green,
-                                              child: ListView.builder(
-                                                  itemBuilder: (_, index) =>
-                                                      Card(
-                                                        child: ListTile(
-                                                          trailing: const Icon(Icons
-                                                              .navigate_next_rounded),
-                                                          title: Text(
-                                                              appointmentProv
-                                                                      .specialties![
-                                                                          index]
-                                                                      .name ??
-                                                                  ''),
-                                                          onTap: () {
-                                                            setState(() {
-                                                              apiUser.miPerfil
-                                                                          .nombre !=
-                                                                      'Doctor'
-                                                                  ? _currentStep +=
-                                                                      1
-                                                                  : _currentStep +=
-                                                                      2;
-                                                            });
-                                                          },
+                                  content: Container(
+                                    margin: const EdgeInsets.all(10),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Especialidades',
+                                              style: TextStyle(
+                                                  fontFamily: 'Roboto',
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                  color: myColor),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        (appointmentProv
+                                                .specialties!.isNotEmpty)
+                                            ? ListView.builder(
+                                                padding:
+                                                    EdgeInsetsDirectional.zero,
+                                                scrollDirection: Axis.vertical,
+                                                shrinkWrap: true,
+                                                itemBuilder: (_, index) =>
+                                                    SizedBox(
+                                                      height: 95,
+                                                      child: Card(
+                                                        elevation: 2,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            ListTile(    
+                                                              trailing: CircleAvatar(
+                                                                radius: 15,
+                                                                backgroundColor: ThemeProvider.primaryColor,
+                                                                child: const Icon(Icons.navigate_next_rounded, color: Colors.white,),),
+                                                              title: Text(appointmentProv.specialties![index].name ?? '',
+                                                                style: TextStyle(
+                                                                  color: ThemeProvider
+                                                                      .primaryColor,
+                                                                  fontFamily:
+                                                                      'Roboto',
+                                
+                                                                ),
+                                                              ),
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  apiUser.miPerfil
+                                                                              .nombre !=
+                                                                          'Doctor'
+                                                                      ? _currentStep +=
+                                                                          1
+                                                                      : _currentStep +=
+                                                                          2;
+                                                                });
+                                                              },
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-                                                  itemCount:
-                                                      apiUser.miPerfil.nombre !=
-                                                              'Doctor'
-                                                          ? appointmentProv
-                                                                  .specialties
-                                                                  ?.length ??
-                                                              0
-                                                          : apiUser.specialties
-                                                                  ?.length ??
-                                                              0))
-                                          : Container(),
-                                      const SizedBox(
-                                        height: 30,
-                                      )
-                                    ],
+                                                    ),
+                                                itemCount:
+                                                    apiUser.miPerfil.nombre !=
+                                                            'Doctor'
+                                                        ? appointmentProv
+                                                                .specialties
+                                                                ?.length ??
+                                                            0
+                                                        : apiUser.specialties
+                                                                ?.length ??
+                                                            0)
+                                            : Container(),
+                                        const SizedBox(
+                                          height: 30,
+                                        )
+                                      ],
+                                    ),
                                   )),
                               Step(
                                   isActive: _currentStep >= 1,
@@ -469,35 +497,37 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                   )),
                             ],
                           ),
-                          Positioned(
-                              top: 73,
-                              left: 172,
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    'Emergencia',
-                                    style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        color: Colors.white,
-                                        fontSize: 15),
-                                  ),
-                                  SizedBox(
-                                    height: 25,
-                                    child: FittedBox(
-                                      fit: BoxFit.fill,
-                                      child: Switch.adaptive(
-                                        inactiveTrackColor: Colors.grey,
-                                        value: _isEmergency,
-                                        onChanged: (bool value) {
-                                          _isEmergency = value;
-                                          print(_isEmergency);
-                                          setState(() {});
-                                        },
+                          _currentStep == 2
+                              ? Positioned(
+                                  top: 73,
+                                  left: 175,
+                                  right: 140,
+                                  child: Row(
+                                    children: [
+                                      const Text(
+                                        'Emergencia',
+                                        style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            color: Colors.white,
+                                            fontSize: 15),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              )),
+                                      SizedBox(
+                                        height: 25,
+                                        child: FittedBox(
+                                          fit: BoxFit.fill,
+                                          child: Switch.adaptive(
+                                            inactiveTrackColor: Colors.grey,
+                                            value: _isEmergency,
+                                            onChanged: (bool value) {
+                                              _isEmergency = value;
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ))
+                              : Container(),
                           appointmentProv.isLoading
                               ? SizedBox(
                                   width: size.width,
@@ -527,9 +557,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                               _selectedDate = null;
                                               _intervalStartTime = null;
                                               _intervalEndTime = null;
-                                              appointmentProv.startDate = null;
-                                              appointmentProv.startDate = null;
-                                              appointmentProv.endTime = null;
                                             });
                                           },
                                           icon: const Icon(Icons.close)),
@@ -577,7 +604,14 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     SingleChildScrollView(
-                                                      padding: EdgeInsets.only(right: 15,left: 15, bottom: MediaQuery.of(context).viewInsets.bottom + 60),
+                                                      padding: EdgeInsets.only(
+                                                          right: 15,
+                                                          left: 15,
+                                                          bottom: MediaQuery.of(
+                                                                      context)
+                                                                  .viewInsets
+                                                                  .bottom +
+                                                              60),
                                                       child: Form(
                                                         key: appointmentForm
                                                             .formKey,
@@ -959,7 +993,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       if (calendarTapDetails.appointments != null &&
           calendarTapDetails.targetElement == CalendarElement.appointment) {
         print(calendarTapDetails.appointments!.first);
-        final Appointment appointment = calendarTapDetails.appointments!.first as Appointment;
+        final Appointment appointment =
+            calendarTapDetails.appointments!.first as Appointment;
 
         // Extraer el nombre del paciente del subject
         final RegExp regex = RegExp(r'Px: (.+)');
@@ -974,13 +1009,14 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         final String appointmentId = appointment.id.toString();
         final String status = appointment.notes.toString();
 
-        _showDetails(patientName, date, startTime, endTime, appointmentId, status);
+        _showDetails(
+            patientName, date, startTime, endTime, appointmentId, status);
       }
     }
   }
 
   Future<void> _showDetails(String patientName, String date, String startTime,
-      String endTime, String id , String status) {
+      String endTime, String id, String status) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -1014,7 +1050,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                       ))
                 ],
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1025,7 +1063,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                         fontWeight: FontWeight.bold,
                         color: myColor),
                   ),
-                  StatusLabel(status: status,)
+                  StatusLabel(
+                    status: status,
+                  )
                 ],
               ),
               const SizedBox(

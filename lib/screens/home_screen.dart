@@ -94,7 +94,9 @@ final primaryColor = ThemeProvider.primaryColor;
                     child: Column(
                       children: [
                         const SizedBox(height: 15),
-                         DayCalendar(appointments: appointmentProvider.confirmadasList),
+                        apiUser.miPerfil.nombre == 'Doctor' 
+                        ? DayCalendar(appointments: appointmentProvider.confirmadasList)
+                        : Container(),
                         const SizedBox(height: 15),
                         apiUser.miPerfil.nombre != 'Doctor' ?  
                         SpecialtySlider(specialties: specialties)
@@ -384,11 +386,11 @@ class SpecialtySlider extends StatelessWidget {
               fontFamily: 'Roboto',
               color: Preferences.isDarkMode
                   ? ThemeProvider.white
-                  : ThemeProvider.brown,
+                  : ThemeProvider.primaryColor,
             ),
           ),
           const SizedBox(height: 15),
-          Container(
+          SizedBox(
             height: 200,
             child: ListView.builder(
               shrinkWrap: true,

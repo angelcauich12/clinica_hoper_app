@@ -34,7 +34,7 @@ class AppointmentProvider extends ChangeNotifier {
   List<MyAppointment> confirmadasList = [];
   List<MyAppointment> atendidasYCanceladasList = [];
   List<Specialty>? specialties = [];
-  String? specialtySelected;
+  String? _specialtySelected;
   List<Doctor>? doctors = [];
   List<User> users = [];
   String? _doctorSelected;
@@ -103,6 +103,12 @@ class AppointmentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? get specialtySelected => _specialtySelected;
+  set specialtySelected(String? value) {
+    _specialtySelected = value;
+    print('Specialty Selected: $value');
+  }
+
   final storage = const FlutterSecureStorage();
 
   AppointmentProvider() {
@@ -148,9 +154,12 @@ class AppointmentProvider extends ChangeNotifier {
           print('200: Appointments ${response.body}');
           appointmentResponse = MyAppointments.fromJson(response.body);
           appointments = appointmentResponse.appointments;
-          reservadasList = appointments.where((appointment) => appointment.status!.name == 'Reservada').toList();
-          confirmadasList = appointments.where((appointment) => appointment.status!.name == 'Confirmada').toList();
-          calendarAppointments = [...reservadasList, ...confirmadasList];
+          reservadasList = appointments
+              .where((appointment) => appointment.status!.name == 'Reservada')
+              .toList();
+          confirmadasList = appointments
+              .where((appointment) => appointment.status!.name == 'Confirmada')
+              .toList();
           result = true;
           isLoadingCatalogs = false;
           notifyListeners();
@@ -205,7 +214,6 @@ class AppointmentProvider extends ChangeNotifier {
     }
     return result;
   }
-
 
   Future<bool> confirmAppointment(String id) async {
     print('Peticion API');
@@ -744,7 +752,7 @@ class AppointmentProvider extends ChangeNotifier {
           final appointmentCreatedResponse =
               AppointmentCreatedResponse.fromJson(response.body);
           reservadasList.add(appointmentCreatedResponse.appointment!);
-          calendarAppointments.add(appointmentCreatedResponse.appointment!);
+          appointments.add(appointmentCreatedResponse.appointment!);
           Notifications.showSnackBar(appointmentCreatedResponse.message ??
               'Su Cita ha sido creada correctamente.');
           notifyListeners();
@@ -906,8 +914,7 @@ class AppointmentProvider extends ChangeNotifier {
 
   Future getSpecialtyDoctors() async {
     print(doctors);
-    final specialty = specialties!.firstWhere(
-        (specialty) => specialty.id.toString() == specialtySelected);
+    final specialty = specialties!.firstWhere((specialty) => specialty.id.toString() == specialtySelected);
     doctors = [];
     doctorSelected = null;
     if (doctors!.isEmpty) {
@@ -1042,8 +1049,8 @@ class AppointmentProvider extends ChangeNotifier {
           singleAppointmentResponse =
               AppointmentResponse.fromJson(response.body);
           appointment = singleAppointmentResponse!.appointment;
-          calendarAppointments.removeWhere((appt) => appt.id == appointment?.id);
-          calendarAppointments.add(appointment!);
+          appointments.removeWhere((appt) => appt.id == appointment?.id);
+          appointments.add(appointment!);
           notifyListeners();
           break;
         case 401:
