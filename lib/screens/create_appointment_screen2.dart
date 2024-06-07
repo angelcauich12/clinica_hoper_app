@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/widgets/appointment_status_label.dart';
+import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -39,13 +40,23 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   @override
   void initState() {
     super.initState();
-    if (apiUser.miPerfil.nombre == 'Doctor') {
+    final appointmentRequestProvider = context.read<AppointmentProvider>();
+
+    print(appointmentRequestProvider.specialtySelected);
+
+    if (apiUser.miPerfil.nombre == 'Doctor' &&
+        apiUser.specialties != null &&
+        apiUser.specialties!.length == 1) {
       _currentStep = 2;
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final appointmentRequestProvider = context.read<AppointmentProvider>();
         appointmentRequestProvider.doctorSelected = apiUser.id.toString();
         appointmentRequestProvider.workScheduleDoctor();
       });
+    }
+
+    if (appointmentRequestProvider.specialtySelected != null) {
+      _currentStep = 1;
     }
   }
 
@@ -68,7 +79,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     Future<void> onRefresh() async {
       appointmentProv.isLoading = true;
       await Future.delayed(const Duration(seconds: 2));
-      appointmentProv.workScheduleDoctor();
+      // appointmentProv.workScheduleDoctor();
       appointmentProv.getAppointments();
       appointmentProv.isLoading = false;
       setState(() {});
@@ -186,36 +197,27 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                             controlsBuilder: (BuildContext context,
                                 ControlsDetails details) {
                               return _currentStep > 0
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        if (details.onStepCancel != null)
-                                          _currentStep > 0 && _currentStep < 2
-                                              ? ElevatedButton(
-                                                  onPressed:
-                                                      details.onStepCancel,
-                                                  child: Text(
-                                                    'Anterior XD',
-                                                    style: TextStyle(
-                                                        color: myColor),
-                                                  ),
-                                                )
-                                              : const SizedBox.shrink(),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        if (details.onStepContinue != null)
-                                          _currentStep > 4
-                                              ? ElevatedButton(
-                                                  onPressed:
-                                                      details.onStepContinue,
-                                                  child: Text('Continuar',
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          if (details.onStepCancel != null)
+                                            _currentStep > 0 && _currentStep < 2
+                                                ? ElevatedButton(
+                                                    onPressed:
+                                                        details.onStepCancel,
+                                                    child: Text(
+                                                      'Anterior',
                                                       style: TextStyle(
-                                                          color: myColor)),
-                                                )
-                                              : const SizedBox.shrink(),
-                                      ],
+                                                          color: myColor),
+                                                    ),
+                                                  )
+                                                : const SizedBox.shrink(),
+                                        ],
+                                      ),
                                     )
                                   : const SizedBox.shrink();
                             },
@@ -282,44 +284,77 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                     EdgeInsetsDirectional.zero,
                                                 scrollDirection: Axis.vertical,
                                                 shrinkWrap: true,
-                                                itemBuilder: (_, index) =>
-                                                    SizedBox(
-                                                      height: 95,
-                                                      child: Card(
-                                                        elevation: 2,
-                                                        child: Column(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            ListTile(    
-                                                              trailing: CircleAvatar(
-                                                                radius: 15,
-                                                                backgroundColor: ThemeProvider.primaryColor,
-                                                                child: const Icon(Icons.navigate_next_rounded, color: Colors.white,),),
-                                                              title: Text(appointmentProv.specialties![index].name ?? '',
-                                                                style: TextStyle(
-                                                                  color: ThemeProvider
-                                                                      .primaryColor,
-                                                                  fontFamily:
-                                                                      'Roboto',
-                                
+                                                itemBuilder:
+                                                    (_, index) => SizedBox(
+                                                          height: 70,
+                                                          child: Card(
+                                                            elevation: 2,
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                ListTile(
+                                                                  trailing:
+                                                                      CircleAvatar(
+                                                                    radius: 15,
+                                                                    backgroundColor:
+                                                                        ThemeProvider
+                                                                            .primaryColor,
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .navigate_next_rounded,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                  ),
+                                                                  title: Text(
+                                                                    appointmentProv
+                                                                            .specialties![index]
+                                                                            .name ??
+                                                                        '',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: ThemeProvider
+                                                                          .primaryColor,
+                                                                      fontFamily:
+                                                                          'Roboto',
+                                                                    ),
+                                                                  ),
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      apiUser.miPerfil.nombre !=
+                                                                              'Doctor'
+                                                                          ? _currentStep +=
+                                                                              1
+                                                                          : _currentStep +=
+                                                                              2;
+                                                                      appointmentProv.specialtySelected = appointmentProv
+                                                                          .specialties![
+                                                                              index]
+                                                                          .id
+                                                                          .toString();
+                                                                      appointmentProv
+                                                                          .doctors = [];
+                                                                      final Specialty
+                                                                          specialty =
+                                                                          appointmentProv.specialties!.firstWhere((specialty) =>
+                                                                              specialty.id.toString() ==
+                                                                              appointmentProv.specialtySelected);
+                                                                      appointmentProv
+                                                                              .doctors =
+                                                                          specialty
+                                                                              .doctors!
+                                                                              .toList();
+                                                                    });
+                                                                  },
                                                                 ),
-                                                              ),
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  apiUser.miPerfil
-                                                                              .nombre !=
-                                                                          'Doctor'
-                                                                      ? _currentStep +=
-                                                                          1
-                                                                      : _currentStep +=
-                                                                          2;
-                                                                });
-                                                              },
+                                                              ],
                                                             ),
-                                                          ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ),
                                                 itemCount:
                                                     apiUser.miPerfil.nombre !=
                                                             'Doctor'
@@ -354,9 +389,118 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                             : Colors.grey),
                                   ),
                                   content: Container(
-                                    color: Colors.yellow,
-                                    child: const Text(
-                                        'Aquí van a ir los doctores'),
+                                    margin: const EdgeInsets.all(10),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Doctores',
+                                              style: TextStyle(
+                                                  fontFamily: 'Roboto',
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                  color: myColor),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        (appointmentProv.doctors!.isNotEmpty)
+                                            ? ListView.builder(
+                                                padding:
+                                                    EdgeInsetsDirectional.zero,
+                                                scrollDirection: Axis.vertical,
+                                                shrinkWrap: true,
+                                                itemBuilder:
+                                                    (_, index) => SizedBox(
+                                                          height: 70,
+                                                          child: Card(
+                                                            elevation: 2,
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                ListTile(
+                                                                  leading:
+                                                                      const CircleAvatar(
+                                                                    radius: 20,
+                                                                    backgroundImage:
+                                                                        AssetImage(
+                                                                            'assets/images/medical-team.png'),
+                                                                  ),
+                                                                  trailing:
+                                                                      CircleAvatar(
+                                                                    radius: 15,
+                                                                    backgroundColor:
+                                                                        ThemeProvider
+                                                                            .primaryColor,
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .navigate_next_rounded,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                  ),
+                                                                  title: Text(
+                                                                    appointmentProv
+                                                                            .doctors![index]
+                                                                            .name ??
+                                                                        '',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: ThemeProvider
+                                                                          .primaryColor,
+                                                                      fontFamily:
+                                                                          'Roboto',
+                                                                    ),
+                                                                  ),
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      _currentStep +=
+                                                                          1;
+                                                                      appointmentProv.doctorSelected = appointmentProv
+                                                                          .doctors![
+                                                                              index]
+                                                                          .id
+                                                                          .toString();
+
+                                                                      appointmentProv
+                                                                              .isLoading =
+                                                                          true;
+                                                                      appointmentProv
+                                                                          .workScheduleDoctor();
+                                                                      // appointmentProv.getAppointments();
+                                                                    });
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                itemCount:
+                                                    apiUser.miPerfil.nombre !=
+                                                            'Doctor'
+                                                        ? appointmentProv
+                                                                .doctors
+                                                                ?.length ??
+                                                            0
+                                                        : apiUser.specialties
+                                                                ?.length ??
+                                                            0)
+                                            : const EmptyContainer(
+                                                text: 'Sin doctores'),
+                                        const SizedBox(
+                                          height: 30,
+                                        )
+                                      ],
+                                    ),
                                   )),
                               Step(
                                   isActive: _currentStep >= 2,

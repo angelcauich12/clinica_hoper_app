@@ -123,15 +123,12 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                                     'Specialty Selected: $value');
                                                 appointmentProv.specialtySelected = value;
                                                 setState(() {
-                                                  final Specialty specialty = appointmentProv.specialties!.firstWhere((specialty) =>specialty.id.toString() ==appointmentProv.specialtySelected);
+                                                  final Specialty specialty = appointmentProv.specialties!.firstWhere((specialty) =>specialty.id.toString() == appointmentProv.specialtySelected);
                                                   print(
                                                       'Doctores ${specialty.doctors}');
                                                   appointmentProv.doctors = [];
                                                   appointmentProv.doctorSelected = null;
-                                                  appointmentForm
-                                                      .doctorDropdownKey
-                                                      .currentState
-                                                      ?.reset();
+                                                  appointmentForm.doctorDropdownKey.currentState?.reset();
                                                   appointmentProv.doctors = specialty.doctors!.toList();
                                                 });
                                                 print(appointmentProv.doctors);

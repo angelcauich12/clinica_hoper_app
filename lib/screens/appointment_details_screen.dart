@@ -93,7 +93,7 @@ class AppointmentDetailRow extends StatelessWidget {
   final String value;
   final double fontSize;
 
-  AppointmentDetailRow({
+  const AppointmentDetailRow({super.key, 
     required this.title,
     required this.value,
     this.fontSize = 16,

@@ -16,10 +16,9 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       drawer: const CustomDrawer(),
-      body: SafeArea(child: mp.items[mp.selectedIndex].widget!),
+      body: mp.items[mp.selectedIndex].widget!,
       bottomNavigationBar: const CustomBottomNavigationBar(),
-      floatingActionButton:
-          (mp.items[mp.selectedIndex].label!.contains('Configuración'))
+      floatingActionButton:(mp.items[mp.selectedIndex].label!.contains('Configuración'))
               ? FloatingActionButton(
                   child: const Icon(
                     FontAwesomeIcons.question,

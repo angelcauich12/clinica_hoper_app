@@ -116,34 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    // Align(
-                    //   alignment: Alignment.center,
-                    //   child: ElevatedButton(
-                    //       style: ButtonStyle(
-                    //         shape: MaterialStateProperty.all(
-                    //           const RoundedRectangleBorder(
-                    //             borderRadius:
-                    //                 BorderRadius.all(Radius.circular(20)),
-                    //           ),
-                    //         ),
-                    //         backgroundColor: MaterialStateProperty.all(
-                    //             ThemeProvider.lightColor),
-                    //       ),
-                    //       onPressed: () async {
-                    //         await const FlutterSecureStorage().deleteAll();
-                    //         Preferences.apiUser = '';
-                    //         Preferences.apiServer = '192.168.0.100';
-                    //         Preferences.expirationDate =
-                    //             '2099-04-10 00:00:00';
-                    //         Preferences.licenseExp = '2099-04-10 00:00:00';
-                    //         Preferences.isDarkMode = false;
-                    //         Preferences.isActive = true;
-                    //         // ignore: use_build_context_synchronously
-                    //         Navigator.pushReplacementNamed(
-                    //             context, ActivationScreen.routeName);
-                    //       },
-                    //       child: const Text('Borrar Licencia')),
-                    // )
+                   
                   ],
                 ),
               ],

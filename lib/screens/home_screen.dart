@@ -67,8 +67,17 @@ final primaryColor = ThemeProvider.primaryColor;
                       _homeGreetings(
                         apiUser: apiUser,
                       ),
-                      (apiUser.medicalHistory == null &&
-                              apiUser.miPerfil.nombre == 'Patient')
+                      const SizedBox(height: 20),
+                      _homeButtons(profile: apiUser.miPerfil.nombre),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
+                    child: Column(
+                      children: [
+                         (apiUser.medicalHistory == null &&  apiUser.miPerfil.nombre == 'Patient')
                           ? Column(
                               children: [
                                 const SizedBox(height: 35),
@@ -83,16 +92,6 @@ final primaryColor = ThemeProvider.primaryColor;
                               ],
                             )
                           : Container(),
-                      const SizedBox(height: 20),
-                      _homeButtons(profile: apiUser.miPerfil.nombre),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const ClampingScrollPhysics(),
-                    child: Column(
-                      children: [
                         const SizedBox(height: 15),
                         apiUser.miPerfil.nombre == 'Doctor' 
                         ? DayCalendar(appointments: appointmentProvider.confirmadasList)
@@ -113,16 +112,13 @@ final primaryColor = ThemeProvider.primaryColor;
           }
         },
       ),
+      floatingActionButton: const FloatingMenu(),
     );
   }
 
-  // void getData() async {
-  //   final appointmentProvider =
-  //       Provider.of<AppointmentProvider>(context, listen: false);
-  //   await appointmentProvider.getData();
-  //   await appointmentProvider.getAppointments();
-  // }
 }
+
+
 
 class AppointmentSwiper extends StatelessWidget {
   final User apiUser;
@@ -248,7 +244,7 @@ class _homeButtons extends StatelessWidget {
               )
             : HomeActionButton(
                 title: "¡Ahorra tiempo! 👩‍⚕️",
-                subtitle: "Programa tu cita ahora",
+                subtitle: "Ver horarios disponibles",
                 backgroundColor: ThemeProvider.lightColor,
                 backgroundImg: 'bgHospital2.png',
                 iconColor: ThemeProvider.white,

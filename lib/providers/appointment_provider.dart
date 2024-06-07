@@ -835,9 +835,9 @@ class AppointmentProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final Map<String, dynamic> queryParameters = {
-      'id': id,
-    };
+    // final Map<String, dynamic> queryParameters = {
+    //   'id': id,
+    // };
 
     final url = Uri.http(_apiUrl, '$_proyectName/api/v1/appointments/$id');
 

@@ -11,7 +11,7 @@ class BookAppointmentBtn extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
       child: ElevatedButton(
         onPressed: () =>
-            Navigator.pushNamed(context, CreateAppointmentScreen.routeName),
+            Navigator.pushNamed(context, CreateAppointmentScreen2.routeName),
         style: ElevatedButton.styleFrom(
             backgroundColor: ThemeProvider.secondColor,
             shape: const StadiumBorder()),
