@@ -11,13 +11,13 @@ class MyAppointments {
   int code;
   String status;
   List<MyAppointment> appointments;
-  int role;
+  dynamic role;
 
   MyAppointments({
     required this.code,
     required this.status,
     required this.appointments,
-    required this.role,
+    this.role,
   });
 
   factory MyAppointments.fromJson(String str) =>

@@ -55,7 +55,7 @@ class DangerMessageWithButton extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           size: 16,
                           text: paragraph2,
-                          decoration: TextDecoration.underline,
+                          // decoration: TextDecoration.underline,
                         ),
                       ),
                     ],

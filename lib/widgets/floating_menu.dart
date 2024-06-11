@@ -10,11 +10,11 @@ class FloatingMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () async {
-        final Uri url = Uri(scheme: 'tel', path: '999108969');
+        final Uri url = Uri(scheme: 'tel', path: '9991089659');
         if (await canLaunchUrl(url)) {
           await launchUrl(url);
         } else {
-          print('cannot launch this url');
+          print('cannot launch this url: $url');
         }
       },
       child: const Icon(

@@ -220,7 +220,7 @@ class _LoginForm extends StatelessWidget {
                 TextFormField(
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   textCapitalization: TextCapitalization.none,
-                  autocorrect: true,
+                  autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecorations.authInputDecoration(
                     color: Colors.grey[350]!,

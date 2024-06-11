@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hope_app/models/appointments_response.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
+
+import '../models/models.dart';
 
 List<String> statusList = [
   'Confirmada',
@@ -30,7 +31,7 @@ class AppointmentsTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 1,
+      length: 2,
       child: Scaffold(
         // backgroundColor: Preferences.isDarkMode ? ThemeProvider.brown : Colors.grey[100],
         appBar: AppBar(
@@ -62,10 +63,10 @@ class AppointmentsTabsBody extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
     final List<MyAppointment> reservadasList = appointmentProvider.reservadasList;
-    final List<MyAppointment> confirmadasList =
-        appointmentProvider.confirmadasList;
-    final List<MyAppointment> atendidasYCanceladasList =
-        appointmentProvider.atendidasYCanceladasList;
+    final List<MyAppointment> confirmadasList =  appointmentProvider.confirmadasList;
+      User apiUser = User.fromJson(Preferences.apiUser);
+
+    // final List<MyAppointment> atendidasYCanceladasList = appointmentProvider.atendidasYCanceladasList;
 
     return SafeArea(
       child: (appointmentProvider.isLoading)
@@ -94,8 +95,8 @@ class AppointmentsTabsBody extends StatelessWidget {
                         color: Preferences.isDarkMode
                             ? ThemeProvider.yellowColor
                             : ThemeProvider.secondColor),
-                    tabs: const [
-                      Tab(
+                    tabs:  [
+                      const Tab(
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
@@ -108,19 +109,20 @@ class AppointmentsTabsBody extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Tab(
-                      //   child: Align(
-                      //     alignment: Alignment.center,
-                      //     child: Text(
-                      //       "Confirmadas",
-                      //       style: TextStyle(
-                      //         fontWeight: FontWeight.bold,
-                      //       ),
-                      //       maxLines: 1,
-                      //       overflow: TextOverflow.ellipsis,
-                      //     ),
-                      //   ),
-                      // ),
+                     apiUser.name != 'Doctor' ?  const Tab(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Confirmadas",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      )
+                      : Container(),
                       // Tab(
                       //   child: Align(
                       //     alignment: Alignment.center,
@@ -142,7 +144,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                   child: TabBarView(
                     children: [
                       AppointmentList(appointments: reservadasList),
-                      // AppointmentList(appointments: confirmadasList),
+                      AppointmentList(appointments: confirmadasList),
                       // AppointmentList(appointments: atendidasYCanceladasList),
                     ],
                   ),

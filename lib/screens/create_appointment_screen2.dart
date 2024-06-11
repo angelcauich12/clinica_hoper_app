@@ -42,7 +42,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     super.initState();
     final appointmentRequestProvider = context.read<AppointmentProvider>();
 
-    print(appointmentRequestProvider.specialtySelected);
+    print('especialidad seleccionada: ${appointmentRequestProvider.specialtySelected}');
 
     if (apiUser.miPerfil.nombre == 'Doctor' &&
         apiUser.specialties != null &&
@@ -55,9 +55,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       });
     }
 
-    if (appointmentRequestProvider.specialtySelected != null) {
-      _currentStep = 1;
-    }
+  
   }
 
   @override
@@ -72,8 +70,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       ...enabledRegions,
       ..._selectedTimeRegions
     ];
-    final AppointmentDataSource calendarAppointments =
-        _getCalendarDataSource(appointmentProv.appointments);
+    final AppointmentDataSource calendarAppointments = _getCalendarDataSource(appointmentProv.appointments);
+    final AppointmentDataSource doctorAppointments = _getCalendarDataSource(appointmentProv.doctorAppointments);
     final appointmentForm = Provider.of<AppointmentProvider>(context);
 
     Future<void> onRefresh() async {
@@ -460,12 +458,14 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                           'Roboto',
                                                                     ),
                                                                   ),
-                                                                  onTap: () {
+                                                                  onTap: () async {
                                                                     setState(
-                                                                        () {
+                                                                        ()  {
                                                                       _currentStep +=
                                                                           1;
-                                                                      appointmentProv.doctorSelected = appointmentProv
+                                                                    });
+
+                                                                    appointmentProv.doctorSelected = appointmentProv
                                                                           .doctors![
                                                                               index]
                                                                           .id
@@ -474,10 +474,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                       appointmentProv
                                                                               .isLoading =
                                                                           true;
-                                                                      appointmentProv
-                                                                          .workScheduleDoctor();
-                                                                      // appointmentProv.getAppointments();
-                                                                    });
+                                                                     await appointmentProv.workScheduleDoctor();
+                                                                     await appointmentProv.getDoctorAppointments();
                                                                   },
                                                                 ),
                                                               ],
@@ -586,14 +584,14 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                         TextStyle(
                                                             color: myColor)),
                                             cellEndPadding: 0.0,
-                                            allowDragAndDrop: true,
+                                            allowDragAndDrop: apiUser.name != 'Doctor' ? false :  true,
                                             appointmentTextStyle:
                                                 const TextStyle(
                                                     fontSize: 10,
                                                     color: Colors.white),
                                             specialRegions: specialRegions,
-                                            dataSource: calendarAppointments,
-                                            onTap: _onCalendarTapped,
+                                            dataSource: apiUser.name != 'Doctor' ? doctorAppointments : calendarAppointments,
+                                            onTap: apiUser.name != 'Doctor' ? null : _onCalendarTapped,
                                             // onDragStart: _onDragStart,
                                             onDragEnd: (details) =>
                                                 _onDragEnd(details),
@@ -604,73 +602,78 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         height: 5,
                                       ),
                                       apiUser.miPerfil.nombre != 'Doctor'
-                                          ? Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: <Widget>[
-                                                ElevatedButton(
-                                                  onPressed: apiUser.miPerfil
-                                                              .nombre !=
-                                                          'Doctor'
-                                                      ? () {
-                                                          setState(() {
-                                                            _currentStep -= 1;
-                                                          });
-                                                        }
-                                                      : () {
-                                                          setState(() {
-                                                            if (apiUser.specialties !=
-                                                                    null &&
-                                                                apiUser.specialties!
-                                                                        .length >
-                                                                    1) {
-                                                              _currentStep -= 2;
-                                                            }
-                                                          });
-                                                        },
-                                                  child: Text(
-                                                    'Anterior =)',
-                                                    style: TextStyle(
-                                                        color: myColor),
-                                                  ),
-                                                )
-                                              ],
-                                            )
+                                          ? Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  ElevatedButton(
+                                                    onPressed: apiUser.miPerfil
+                                                                .nombre !=
+                                                            'Doctor'
+                                                        ? () {
+                                                            setState(() {
+                                                              _currentStep -= 1;
+                                                            });
+                                                          }
+                                                        : () {
+                                                            setState(() {
+                                                              if (apiUser.specialties !=
+                                                                      null &&
+                                                                  apiUser.specialties!
+                                                                          .length >
+                                                                      1) {
+                                                                _currentStep -= 2;
+                                                              }
+                                                            });
+                                                          },
+                                                    child: Text(
+                                                      'Anterior',
+                                                      style: TextStyle(
+                                                          color: myColor),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                          )
                                           : Container(),
                                     ],
                                   )),
                             ],
                           ),
-                          _currentStep == 2
-                              ? Positioned(
-                                  top: 73,
-                                  left: 175,
-                                  right: 140,
-                                  child: Row(
-                                    children: [
-                                      const Text(
-                                        'Emergencia',
-                                        style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            color: Colors.white,
-                                            fontSize: 15),
-                                      ),
-                                      SizedBox(
-                                        height: 25,
-                                        child: FittedBox(
-                                          fit: BoxFit.fill,
-                                          child: Switch.adaptive(
-                                            inactiveTrackColor: Colors.grey,
-                                            value: _isEmergency,
-                                            onChanged: (bool value) {
-                                              _isEmergency = value;
-                                              setState(() {});
-                                            },
+                          apiUser.name == 'Doctor'
+                              ? _currentStep == 2
+                                  ? Positioned(
+                                      top: 73,
+                                      left: 160,
+                                      // right: 120,
+                                      child: Row(
+                                        children: [
+                                          const Text(
+                                            'Emergencia',
+                                            style: TextStyle(
+                                                fontFamily: 'Roboto',
+                                                color: Colors.white,
+                                                fontSize: 15),
                                           ),
-                                        ),
-                                      ),
-                                    ],
-                                  ))
+                                          SizedBox(
+                                            height: 25,
+                                            child: FittedBox(
+                                              fit: BoxFit.fill,
+                                              child: Switch.adaptive(
+                                                inactiveTrackColor: Colors.grey,
+                                                value: _isEmergency,
+                                                onChanged: (bool value) {
+                                                  _isEmergency = value;
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ))
+                                  : Container()
                               : Container(),
                           appointmentProv.isLoading
                               ? SizedBox(
@@ -951,19 +954,19 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         // Obtiene los días de la semana como cadenas
         final daysOfWeek = schedule.daysOfWeek.map((day) {
           switch (day) {
-            case 1:
+            case 0:
               return 'MO';
-            case 2:
+            case 1:
               return 'TU';
-            case 3:
+            case 2:
               return 'WE';
-            case 4:
+            case 3:
               return 'TH';
-            case 5:
+            case 4:
               return 'FR';
-            case 6:
+            case 5:
               return 'SA';
-            case 7:
+            case 6:
               return 'SU';
             default:
               return '';
@@ -979,7 +982,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
           endTime: DateTime(
               today.year, today.month, today.day, endTime.hour, endTime.minute),
           color: Colors.green.shade300.withOpacity(0.2),
-          enablePointerInteraction: true,
+          enablePointerInteraction: apiUser.name != 'Doctor' ? false : true,
           recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$daysOfWeek',
         );
 
@@ -1010,9 +1013,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
           .toList();
 
       // print('Day Enabled Regions: ${dayEnabledRegions.length} items'); // Debugging line
-      // for (var region in dayEnabledRegions) {
-      //   print('Enabled Region: ${region.startTime} - ${region.endTime}'); // Debugging line
-      // }
+      for (var region in dayEnabledRegions) {
+        // print('Enabled Region: ${region.startTime} - ${region.endTime}'); // Debugging line
+      }
       DateTime dayStartTime =
           DateTime(today.year, today.month, today.day, 0, 0);
       DateTime dayEndTime =
@@ -1406,8 +1409,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
           endTime: endTime!,
           notes: myAppointment.status!.name,
           color: Colors.red,
-          subject:
-              '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
+          subject: apiUser.name != 'Doctor' ? '$formattedStartTime - $formattedEndTime\nOcupado ' : '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
     }).toList();
 
     return AppointmentDataSource(appointments);

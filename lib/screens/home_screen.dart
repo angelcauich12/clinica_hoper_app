@@ -47,8 +47,8 @@ final primaryColor = ThemeProvider.primaryColor;
             return Column(
               children: [
                 Container(
-                  height: 230,
-                  padding: const EdgeInsets.only(top: 10),
+                  height: 280,
+                  padding: const EdgeInsets.only(top: 60),
                   decoration:  BoxDecoration(
                     borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(30),

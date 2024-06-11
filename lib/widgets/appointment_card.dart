@@ -125,9 +125,7 @@ class AppointmentCardHeader extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    (appointment.status!.name == 'Cancelada')
-                        ?  StatusLabel(status:appointment.status!.name)
-                        : Container(),
+                    StatusLabel(status: appointment.status!.name)
                   ],
                 ),
               ],
@@ -138,9 +136,8 @@ class AppointmentCardHeader extends StatelessWidget {
           onPressed: () {
             showModalBottomSheet(
               shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(7),
-                                              ),
+                borderRadius: BorderRadius.circular(7),
+              ),
               context: context,
               builder: (context) {
                 return Container(
