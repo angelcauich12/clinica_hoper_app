@@ -20,8 +20,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-final secondColor = ThemeProvider.secondColor;
-final primaryColor = ThemeProvider.primaryColor;
+  final secondColor = ThemeProvider.secondColor;
+  final primaryColor = ThemeProvider.primaryColor;
   User apiUser = User.fromJson(Preferences.apiUser);
 
   @override
@@ -36,8 +36,8 @@ final primaryColor = ThemeProvider.primaryColor;
   Widget build(BuildContext context) {
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
     oneSignalProvider.initOneSignal(context);
-     final appointmentProvider = Provider.of<AppointmentProvider>(context);
- 
+    final appointmentProvider = Provider.of<AppointmentProvider>(context);
+
     return Scaffold(
       body: Consumer<AppointmentProvider>(
         builder: (context, ap, _) {
@@ -49,7 +49,7 @@ final primaryColor = ThemeProvider.primaryColor;
                 Container(
                   height: 280,
                   padding: const EdgeInsets.only(top: 60),
-                  decoration:  BoxDecoration(
+                  decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(30),
                         bottomRight: Radius.circular(30)),
@@ -77,29 +77,32 @@ final primaryColor = ThemeProvider.primaryColor;
                     physics: const ClampingScrollPhysics(),
                     child: Column(
                       children: [
-                         (apiUser.medicalHistory == null &&  apiUser.miPerfil.nombre == 'Patient')
-                          ? Column(
-                              children: [
-                                const SizedBox(height: 35),
-                                DangerMessageWithButton(
-                                  color: ThemeProvider.blue.withOpacity(0.3),
-                                  title: 'Estimado Paciente',
-                                  paragraph1:
-                                      'Su expediente clínico no está completo.',
-                                  paragraph2: 'Rellenar el formulario',
-                                  btnTitle: 'Completar mi expediente',
-                                ),
-                              ],
-                            )
-                          : Container(),
+                        (apiUser.medicalHistory == null &&
+                                apiUser.miPerfil.nombre == 'Patient')
+                            ? Column(
+                                children: [
+                                  const SizedBox(height: 35),
+                                  DangerMessageWithButton(
+                                    color: ThemeProvider.blue.withOpacity(0.3),
+                                    title: 'Estimado Paciente',
+                                    paragraph1:
+                                        'Su expediente clínico no está completo.',
+                                    paragraph2: 'Rellenar el formulario',
+                                    btnTitle: 'Completar mi expediente',
+                                  ),
+                                ],
+                              )
+                            : Container(),
                         const SizedBox(height: 15),
-                        apiUser.miPerfil.nombre == 'Doctor' 
-                        ? DayCalendar(appointments: appointmentProvider.confirmadasList)
-                        : Container(),
+                        apiUser.miPerfil.nombre == 'Doctor'
+                            ? DayCalendar(
+                                appointments:
+                                    appointmentProvider.confirmadasList)
+                            : Container(),
                         const SizedBox(height: 15),
-                        apiUser.miPerfil.nombre != 'Doctor' ?  
-                        SpecialtySlider(specialties: specialties)
-                        : Container(),
+                        apiUser.miPerfil.nombre != 'Doctor'
+                            ? SpecialtySlider(specialties: specialties)
+                            : Container(),
                         const SizedBox(height: 15),
                         _findUs(),
                         const SizedBox(height: 50),
@@ -115,10 +118,7 @@ final primaryColor = ThemeProvider.primaryColor;
       floatingActionButton: const FloatingMenu(),
     );
   }
-
 }
-
-
 
 class AppointmentSwiper extends StatelessWidget {
   final User apiUser;
@@ -331,7 +331,7 @@ class HomeActionButton extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                            Text(
+                    Text(
                       subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -580,6 +580,14 @@ class _findUsState extends State<_findUs> {
 
 List<SpecialtyDTO> specialties = [
   SpecialtyDTO(
+      id: '1',
+      title: "Ginecología",
+      subtitle: "Consultas, control prenatal y atención de parto",
+      image: "assets/images/specialties/image02.jpg",
+      description:
+          "En la Clínica Hoper, comprendemos la importancia de la salud de la mujer en todas las etapas de la vida.\n\nNuestros ginecólogos están aquí para brindarte atención integral y compasiva, desde exámenes de rutina hasta cuidados especializados. Ya sea que necesites una consulta prenatal, atención para problemas ginecológicos o asesoramiento en planificación familiar, nuestro equipo está preparado para ayudarte.\n\nTu bienestar es nuestra prioridad. Programa una cita de ginecología hoy y toma el control de tu salud femenina.\n\nTu salud ginecológica es importante. Solicita una cita de ginecología ahora para recibir atención experta y personalizada."),
+  SpecialtyDTO(
+    id: '2',
     title: "Odontología",
     subtitle: "Servicio integral a nuestros pacientes",
     image: "assets/images/specialties/image01.jpg",
@@ -587,12 +595,7 @@ List<SpecialtyDTO> specialties = [
         "Nuestra especialidad en Odontología en la Clínica Hoper se dedica a mantener tus dientes y encías en óptimas condiciones de salud. Ofrecemos una amplia gama de servicios, desde limpiezas dentales preventivas hasta tratamientos avanzados de ortodoncia.\n\nNuestro equipo de dentistas altamente capacitados está comprometido en proporcionarte una atención personalizada y cuidadosa para que puedas mantener tu sonrisa radiante. No dejes pasar más tiempo sin cuidar tu salud bucal, ¡solicita una cita hoy mismo y descubre por qué somos la elección preferida en odontología en la zona!\n\n¿Listo para mostrar tu mejor sonrisa? Solicita una cita de odontología ahora mismo y permite que nuestros expertos cuiden de tu salud bucal.",
   ),
   SpecialtyDTO(
-      title: "Ginecología",
-      subtitle: "Consultas, control prenatal y atención de parto",
-      image: "assets/images/specialties/image02.jpg",
-      description:
-          "En la Clínica Hoper, comprendemos la importancia de la salud de la mujer en todas las etapas de la vida.\n\nNuestros ginecólogos están aquí para brindarte atención integral y compasiva, desde exámenes de rutina hasta cuidados especializados. Ya sea que necesites una consulta prenatal, atención para problemas ginecológicos o asesoramiento en planificación familiar, nuestro equipo está preparado para ayudarte.\n\nTu bienestar es nuestra prioridad. Programa una cita de ginecología hoy y toma el control de tu salud femenina.\n\nTu salud ginecológica es importante. Solicita una cita de ginecología ahora para recibir atención experta y personalizada."),
-  SpecialtyDTO(
+    id: '3',
       title: "Pediatría",
       subtitle:
           "Los mejores especialistas médicos cuidando la salud de tus hijos",
@@ -600,22 +603,25 @@ List<SpecialtyDTO> specialties = [
       description:
           "En la Clínica Hoper, comprendemos lo especial que es la salud de tus hijos. Nuestros pediatras están dedicados a brindar la mejor atención médica pediátrica disponible. Desde chequeos de desarrollo hasta tratamientos para enfermedades infantiles, estamos aquí para cuidar a tus pequeños con cariño y profesionalismo.Tu hijo merece lo mejor.\n\nSolicita una cita de pediatría hoy y garantiza un futuro saludable para ellos.\n\nLa salud de tu hijo es nuestra prioridad. Solicita una cita de pediatría ahora para brindarles la atención que necesitan."),
   SpecialtyDTO(
+    id: '4',
       title: "Alergología",
       subtitle: "Tratamos todo tipo de Alergias",
       image: "assets/images/specialties/image04.jpg",
       description:
           "Las alergias pueden ser desafiantes, pero en la Clínica Hoper, nuestros alergólogos están listos para ayudarte a identificar y controlar tus alergias. Ya sea que necesites pruebas de alergia, tratamiento para alergias estacionales o consejos para vivir con alergias alimentarias, nuestro equipo tiene la experiencia necesaria.\n\nNo dejes que las alergias controlen tu vida. Solicita una cita de alergología hoy y recupera tu comodidad. La comodidad es clave para una vida plena.\n\nSolicita una cita de alergología ahora y descubre cómo vivir sin preocupaciones por las alergias."),
   SpecialtyDTO(
+    id: '5',
       title: "Nutrición",
       subtitle: "El Comienzo de la Salud",
       image: "assets/images/specialties/image05.jpg",
       description:
           "En la Clínica Hoper, creemos que la nutrición es fundamental para una vida saludable. Nuestros especialistas en nutrición te ayudarán a diseñar un plan alimenticio personalizado que se adapte a tus necesidades y metas.\n\nYa sea que busques perder peso, mejorar tu salud general o manejar condiciones específicas, estamos aquí para guiarte. Tu viaje hacia una alimentación más saludable comienza aquí. Solicita una consulta de nutrición hoy y da el primer paso hacia un estilo de vida más saludable. La nutrición es la base de una buena salud.\n\nSolicita una cita de nutrición ahora y comienza a transformar tu vida a través de la alimentación."),
-  SpecialtyDTO(
-    title: "Medicina General",
-    subtitle: "Cuidamos la salud de tu familia",
-    image: "assets/images/specialties/image06.jpg",
-    description:
-        "En la Clínica Hoper, creemos en el poder de la atención médica familiar y la medicina general como piedra angular de la salud de todos.\n\nNuestros médicos generales son el primer punto de contacto para ti y tu familia cuando se trata de cuidado de la salud. Están dedicados a brindar atención integral y continua, desde chequeos médicos de rutina hasta el manejo de enfermedades crónicas.\n\nValoramos la relación médico-paciente y nos comprometemos a cuidar de ti en todas las etapas de la vida. La salud de tu familia es nuestra prioridad número uno. En Clínica Hoper, te ofrecemos un hogar para tu atención médica familiar.\n\nSolicita una cita de medicina general hoy y experimenta el cuidado y la dedicación que mereces.",
-  ),
+  // SpecialtyDTO(
+  //   id: 5,
+  //   title: "Medicina General",
+  //   subtitle: "Cuidamos la salud de tu familia",
+  //   image: "assets/images/specialties/image06.jpg",
+  //   description:
+  //       "En la Clínica Hoper, creemos en el poder de la atención médica familiar y la medicina general como piedra angular de la salud de todos.\n\nNuestros médicos generales son el primer punto de contacto para ti y tu familia cuando se trata de cuidado de la salud. Están dedicados a brindar atención integral y continua, desde chequeos médicos de rutina hasta el manejo de enfermedades crónicas.\n\nValoramos la relación médico-paciente y nos comprometemos a cuidar de ti en todas las etapas de la vida. La salud de tu familia es nuestra prioridad número uno. En Clínica Hoper, te ofrecemos un hogar para tu atención médica familiar.\n\nSolicita una cita de medicina general hoy y experimenta el cuidado y la dedicación que mereces.",
+  // ),
 ];

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hope_app/models/doctor_schedule_response.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/widgets/appointment_status_label.dart';
 import 'package:hope_app/widgets/widgets.dart';
@@ -55,6 +56,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       });
     }
 
+    if(appointmentRequestProvider.specialtySelected != null ){
+      _currentStep = 1;
+    }
+
   
   }
 
@@ -62,25 +67,45 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   Widget build(BuildContext context) {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
-    final List<TimeRegion> enabledRegions =
-        getTimeRegions(appointmentProv.workSchedule);
+      List<WorkScheduleDoctor> simpleSchedule = [
+  WorkScheduleDoctor(daysOfWeek: [1], startTime: '08:00', endTime: '14:30', id: 1, description: '', display: ''),
+  // WorkScheduleDoctor(daysOfWeek: [1], startTime: '16:30', endTime: '18:30', id: 2, description: '', display: ''),
+  // WorkScheduleDoctor(daysOfWeek: [2], startTime: '08:00', endTime: '14:30', id: 3, description: '', display: ''),
+  WorkScheduleDoctor(daysOfWeek: [2], startTime: '16:30', endTime: '20:30', id: 4, description: '', display: ''),
+  // WorkScheduleDoctor(daysOfWeek: [4], startTime: '08:00', endTime: '14:00', id: 1, description: '', display: ''),
+  // WorkScheduleDoctor(daysOfWeek: [6], startTime: '16:30', endTime: '20:30', id: 2, description: '', display: ''),
+  ];
+    final List<TimeRegion> enabledRegions = getTimeRegions(appointmentProv.workSchedule);
     final List<TimeRegion> disabledRegions = getDisabledRegions(enabledRegions);
+  
     final List<TimeRegion> specialRegions = [
       ...disabledRegions,
       ...enabledRegions,
       ..._selectedTimeRegions
     ];
+
+
+//      void printRegions(List<TimeRegion> regions, String type) {
+//     for (var region in regions) {
+//       print('$type Region: Start: ${region.startTime}, End: ${region.endTime}, Rule: ${region.recurrenceRule}');
+//     }
+//     } 
+
+// printRegions(enabledRegions, 'Enabled');
+// printRegions(disabledRegions, 'Disabled');
+
     final AppointmentDataSource calendarAppointments = _getCalendarDataSource(appointmentProv.appointments);
     final AppointmentDataSource doctorAppointments = _getCalendarDataSource(appointmentProv.doctorAppointments);
     final appointmentForm = Provider.of<AppointmentProvider>(context);
+  
 
     Future<void> onRefresh() async {
-      appointmentProv.isLoading = true;
-      await Future.delayed(const Duration(seconds: 2));
-      // appointmentProv.workScheduleDoctor();
-      appointmentProv.getAppointments();
-      appointmentProv.isLoading = false;
-      setState(() {});
+      // appointmentProv.isLoading = true;
+      // await Future.delayed(const Duration(seconds: 2));
+      // // appointmentProv.workScheduleDoctor();
+      // appointmentProv.getAppointments();
+      // appointmentProv.isLoading = false;
+      // setState(() {});
     }
 
     return Scaffold(
@@ -329,8 +354,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                               1
                                                                           : _currentStep +=
                                                                               2;
-                                                                      appointmentProv.specialtySelected = appointmentProv
-                                                                          .specialties![
+                                                                      appointmentProv.specialtySelected = appointmentProv.specialties![
                                                                               index]
                                                                           .id
                                                                           .toString();
@@ -474,6 +498,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                       appointmentProv
                                                                               .isLoading =
                                                                           true;
+                                                                      appointmentProv.workSchedule = [];
                                                                      await appointmentProv.workScheduleDoctor();
                                                                      await appointmentProv.getDoctorAppointments();
                                                                   },
@@ -584,15 +609,16 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                         TextStyle(
                                                             color: myColor)),
                                             cellEndPadding: 0.0,
-                                            allowDragAndDrop: apiUser.name != 'Doctor' ? false :  true,
+                                            allowDragAndDrop: apiUser.miPerfil.nombre != 'Doctor' ? false :  true,
                                             appointmentTextStyle:
                                                 const TextStyle(
                                                     fontSize: 10,
                                                     color: Colors.white),
                                             specialRegions: specialRegions,
-                                            dataSource: apiUser.name != 'Doctor' ? doctorAppointments : calendarAppointments,
-                                            onTap: apiUser.name != 'Doctor' ? null : _onCalendarTapped,
+                                            dataSource: apiUser.miPerfil.nombre != 'Doctor' ? doctorAppointments : calendarAppointments,
+                                            onTap: apiUser.miPerfil.nombre != 'Doctor' ? null : _onCalendarTapped,
                                             // onDragStart: _onDragStart,
+                                           
                                             onDragEnd: (details) =>
                                                 _onDragEnd(details),
                                           ),
@@ -642,7 +668,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                   )),
                             ],
                           ),
-                          apiUser.name == 'Doctor'
+                          apiUser.miPerfil.nombre == 'Doctor'
                               ? _currentStep == 2
                                   ? Positioned(
                                       top: 73,
@@ -936,57 +962,52 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     );
   }
 
-  DateTime parseTimeString(String timeString) {
-    final List<String> parts = timeString.split(':');
-    final int hours = int.parse(parts[0]);
-    final int minutes = int.parse(parts[1]);
-    return DateTime(0, 0, 0, hours, minutes);
-  }
 
-// Funcion habilitar el horario del doctor
-  List<TimeRegion> getTimeRegions(List<WorkScheduleDoctor> workSchedule) {
-    final List<TimeRegion> regions = [];
-    if (workSchedule.isNotEmpty) {
-      for (var schedule in workSchedule) {
-        final DateTime now = DateTime.now();
-        final DateTime today = DateTime(now.year, now.month, now.day);
 
-        // Obtiene los días de la semana como cadenas
-        final daysOfWeek = schedule.daysOfWeek.map((day) {
-          switch (day) {
-            case 0:
-              return 'MO';
-            case 1:
-              return 'TU';
-            case 2:
-              return 'WE';
-            case 3:
-              return 'TH';
-            case 4:
-              return 'FR';
-            case 5:
-              return 'SA';
-            case 6:
-              return 'SU';
-            default:
-              return '';
-          }
-        }).join(',');
 
-        final DateTime startTime = parseTimeString(schedule.startTime);
-        final DateTime endTime = parseTimeString(schedule.endTime);
+// Función habilitar el horario del doctor
+// Función para convertir cadena de tiempo a DateTime
+DateTime parseTimeString(String timeString) {
+  final List<String> parts = timeString.split(':');
+  final int hours = int.parse(parts[0]);
+  final int minutes = int.parse(parts[1]);
+  return DateTime(0, 1, 1, hours, minutes); // Asegúrate de que la fecha no afecte la lógica
+}
 
+// Función habilitar el horario del doctor
+List<TimeRegion> getTimeRegions(List<WorkScheduleDoctor> workSchedule) {
+  final List<TimeRegion> regions = [];
+  if (workSchedule.isNotEmpty) {
+    for (var schedule in workSchedule) {
+      final DateTime now = DateTime.now();
+      final DateTime today = DateTime(now.year, now.month, now.day);
+
+      final daysOfWeek = schedule.daysOfWeek.map((day) {
+        switch (day) {
+          case 1: return 'MO';
+          case 2: return 'TU';
+          case 3: return 'WE';
+          case 4: return 'TH';
+          case 5: return 'FR';
+          case 6: return 'SA';
+          case 0: return 'SU';
+          default: return '';
+        }
+      }).join(',');
+
+      final DateTime startTime = parseTimeString(schedule.startTime);
+      final DateTime endTime = parseTimeString(schedule.endTime);
+
+      for (String day in daysOfWeek.split(',')) {
         final TimeRegion region = TimeRegion(
           startTime: DateTime(today.year, today.month, today.day,
               startTime.hour, startTime.minute),
-          endTime: DateTime(
-              today.year, today.month, today.day, endTime.hour, endTime.minute),
+          endTime: DateTime(today.year, today.month, today.day, endTime.hour, endTime.minute),
           color: Colors.green.shade300.withOpacity(0.2),
-          enablePointerInteraction: apiUser.name != 'Doctor' ? false : true,
-          recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$daysOfWeek',
+          enablePointerInteraction: apiUser.miPerfil.nombre != 'Doctor' ? false : true,
+          recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
         );
 
-        // Evita duplicados antes de añadir la región
         if (!regions.any((existingRegion) =>
             existingRegion.startTime == region.startTime &&
             existingRegion.endTime == region.endTime &&
@@ -995,87 +1016,71 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         }
       }
     }
-    return regions;
   }
+  return regions;
+}
 
-// Función para desabilitar todo el calendario
-  List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
-    final List<TimeRegion> regions = [];
-    final DateTime now = DateTime.now();
-    final DateTime today = DateTime(now.year, now.month, now.day);
+// Función para deshabilitar todo el calendario
+List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
+  final List<TimeRegion> regions = [];
+  final DateTime now = DateTime.now();
+  final DateTime today = DateTime(now.year, now.month, now.day);
 
-    final List<String> daysOfWeek = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+  final List<String> daysOfWeek = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
 
-    for (String day in daysOfWeek) {
-      // print('Day: $day'); // Debugging line
-      final List<TimeRegion> dayEnabledRegions = enabledRegions
-          .where((region) => region.recurrenceRule!.contains(day))
-          .toList();
+  for (String day in daysOfWeek) {
+    final List<TimeRegion> dayEnabledRegions = enabledRegions
+        .where((region) => region.recurrenceRule!.contains(day))
+        .toList();
 
-      // print('Day Enabled Regions: ${dayEnabledRegions.length} items'); // Debugging line
-      for (var region in dayEnabledRegions) {
-        // print('Enabled Region: ${region.startTime} - ${region.endTime}'); // Debugging line
-      }
-      DateTime dayStartTime =
-          DateTime(today.year, today.month, today.day, 0, 0);
-      DateTime dayEndTime =
-          DateTime(today.year, today.month, today.day, 23, 59, 59);
-
-      // Ordenar las regiones habilitadas por hora de inicio
-      dayEnabledRegions.sort((a, b) => a.startTime.compareTo(b.startTime));
-
-      DateTime previousEndTime = dayStartTime;
-
-      for (var region in dayEnabledRegions) {
-        if (region.startTime.isAfter(previousEndTime)) {
-          _isEmergency
-              ? regions.add(TimeRegion(
-                  startTime: previousEndTime,
-                  endTime: region.startTime,
-                  enablePointerInteraction: true,
-                  textStyle:
-                      const TextStyle(color: Colors.black45, fontSize: 15),
-                  color: Colors.green.shade300.withOpacity(0.2),
-                  recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-                ))
-              : regions.add(TimeRegion(
-                  startTime: previousEndTime,
-                  endTime: region.startTime,
-                  enablePointerInteraction: false,
-                  textStyle:
-                      const TextStyle(color: Colors.black45, fontSize: 15),
-                  color: Colors.grey.withOpacity(0.2),
-                  recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-                ));
-          // print('Disabled Region: $previousEndTime - ${region.startTime}'); // Debugging line
-        }
-        previousEndTime = region.endTime;
-      }
-
-      if (previousEndTime.isBefore(dayEndTime)) {
-        _isEmergency
-            ? regions.add(TimeRegion(
-                startTime: previousEndTime,
-                endTime: dayEndTime,
-                enablePointerInteraction: true,
-                textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
-                color: Colors.green.shade300.withOpacity(0.2),
-                recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-              ))
-            : regions.add(TimeRegion(
-                startTime: previousEndTime,
-                endTime: dayEndTime,
-                enablePointerInteraction: false,
-                textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
-                color: Colors.grey.withOpacity(0.2),
-                recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-              ));
-        // print('Disabled Region: $previousEndTime - $dayEndTime'); // Debugging line
-      }
+    if (dayEnabledRegions.isEmpty) {
+      // Si no hay regiones habilitadas para este día, deshabilitar todo el día
+      regions.add(TimeRegion(
+        startTime: DateTime(today.year, today.month, today.day, 0, 0),
+        endTime: DateTime(today.year, today.month, today.day, 23, 59, 59),
+        enablePointerInteraction: _isEmergency,
+        textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+        color: !_isEmergency ? Colors.grey.withOpacity(0.2) : Colors.green.shade300.withOpacity(0.2),
+        recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+      ));
+      continue;
     }
 
-    return regions;
+    DateTime dayStartTime = DateTime(today.year, today.month, today.day, 0, 0);
+    DateTime dayEndTime = DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+    dayEnabledRegions.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    DateTime previousEndTime = dayStartTime;
+
+    for (var region in dayEnabledRegions) {
+      if (region.startTime.isAfter(previousEndTime)) {
+        regions.add(TimeRegion(
+          startTime: previousEndTime,
+          endTime: region.startTime,
+          enablePointerInteraction: _isEmergency,
+          textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+          color: !_isEmergency ? Colors.grey.withOpacity(0.2) : Colors.green.shade300.withOpacity(0.2),
+          recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+        ));
+      }
+      previousEndTime = region.endTime;
+    }
+
+    if (previousEndTime.isBefore(dayEndTime)) {
+      regions.add(TimeRegion(
+        startTime: previousEndTime,
+        endTime: dayEndTime,
+        enablePointerInteraction: _isEmergency,
+        textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+        color: !_isEmergency ? Colors.grey.withOpacity(0.2) : Colors.green.shade300.withOpacity(0.2),
+        recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+      ));
+    }
   }
+
+  return regions;
+}
 
   void _onCalendarTapped(CalendarTapDetails calendarTapDetails) {
     if (calendarTapDetails.targetElement == CalendarElement.header ||
@@ -1409,7 +1414,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
           endTime: endTime!,
           notes: myAppointment.status!.name,
           color: Colors.red,
-          subject: apiUser.name != 'Doctor' ? '$formattedStartTime - $formattedEndTime\nOcupado ' : '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
+          subject: apiUser.miPerfil.nombre != 'Doctor' ? '$formattedStartTime - $formattedEndTime\nOcupado ' : '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
     }).toList();
 
     return AppointmentDataSource(appointments);

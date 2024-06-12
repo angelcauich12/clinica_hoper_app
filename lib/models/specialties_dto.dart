@@ -5,6 +5,6 @@ class SpecialtyDTO {
   String? subtitle;
   String? description;
   String? image;
-
-  SpecialtyDTO({this.title, this.subtitle, this.description, this.image});
+  String? id;
+  SpecialtyDTO({this.title, this.subtitle, this.description, this.image, this.id});
 }

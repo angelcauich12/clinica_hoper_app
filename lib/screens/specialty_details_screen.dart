@@ -7,8 +7,7 @@ class SpecialtyDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SpecialtyDTO specialty =
-        ModalRoute.of(context)!.settings.arguments as SpecialtyDTO;
+    final SpecialtyDTO specialty = ModalRoute.of(context)!.settings.arguments as SpecialtyDTO;
 
     return Scaffold(
       body: CustomScrollView(
@@ -32,7 +31,7 @@ class SpecialtyDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const BookAppointmentBtn(),
+                BookAppointmentBtn(specialtyId: specialty.id),
                 const SizedBox(height: 50),
               ],
             ),
