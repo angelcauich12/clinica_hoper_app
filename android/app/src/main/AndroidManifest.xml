@@ -32,12 +32,5 @@
             android:value="2" />
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBCe6JXHo_myYDSMgNDtqBAHzGwPkfOWH8"/>
     </application>
-    <queries>
    
-  <!-- If your app checks for call support -->
-  <intent>
-    <action android:name="android.intent.action.VIEW" />
-    <data android:scheme="tel" />
-  </intent>
-</queries>
 </manifest>

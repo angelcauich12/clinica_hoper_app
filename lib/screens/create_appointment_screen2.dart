@@ -629,7 +629,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                       ),
                                       apiUser.miPerfil.nombre != 'Doctor'
                                           ? Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.only(top: 5, left: 25),
                                             child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
