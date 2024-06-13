@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      floatingActionButton: const FloatingMenu(),
+      floatingActionButton: apiUser.miPerfil.nombre != 'Doctor' ? const FloatingMenu() : Container(),
     );
   }
 }

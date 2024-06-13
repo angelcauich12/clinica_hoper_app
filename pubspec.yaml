@@ -51,6 +51,7 @@ dependencies:
   card_swiper : ^3.0.0
   skeleton_text: ^3.0.1
   syncfusion_flutter_calendar: ^25.1.40
+  flutter_phone_direct_caller: ^2.1.1
   flutter_localizations:
     sdk: flutter
 

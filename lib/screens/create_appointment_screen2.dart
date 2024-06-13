@@ -712,6 +712,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                   ),
                                 )
                               : Container(),
+                            apiUser.miPerfil.nombre != 'Doctor' && _currentStep == 2 ?   const Positioned(  bottom: 150,
+                                  right: 20, child: FloatingMenu() ) : Container(),
                           !_isTappedDate
                               ? Container()
                               : Positioned(
