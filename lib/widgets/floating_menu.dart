@@ -12,7 +12,7 @@ class FloatingMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () async {
-        _callNumber('+52','9991089659');
+        _callNumber('9999444404');
       },
       child: const Icon(
         Icons.phone_enabled_outlined,
@@ -23,7 +23,7 @@ class FloatingMenu extends StatelessWidget {
 
     
   }
-  _callNumber(String lada, String number ) async{
-   await FlutterPhoneDirectCaller.callNumber('$lada $number');
+  _callNumber(String number ) async{
+   await FlutterPhoneDirectCaller.callNumber(number);
 }
 }
