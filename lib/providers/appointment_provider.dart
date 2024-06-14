@@ -156,9 +156,7 @@ class AppointmentProvider extends ChangeNotifier {
           print('200: Appointments ${response.body}');
           appointmentResponse = MyAppointments.fromJson(response.body);
           appointments = appointmentResponse.appointments;
-          reservadasList = appointments
-              .where((appointment) => appointment.status!.name == 'Reservada')
-              .toList();
+          reservadasList = appointments.where((appointment) => appointment.status!.name == 'Reservada').toList();
           confirmadasList = appointments
               .where((appointment) => appointment.status!.name == 'Confirmada')
               .toList();
@@ -431,7 +429,7 @@ class AppointmentProvider extends ChangeNotifier {
           isLoadingCatalogs = false;
           print('200: Especialidades encontradas ${response.body}');
           final dataResponse = DataResponse.fromJson(response.body);
-          specialties = dataResponse.specialties;
+          specialties = dataResponse.specialties?.where((specialty) => specialty.doctors!.isNotEmpty).toList();
           notifyListeners();
           break;
         case 401:

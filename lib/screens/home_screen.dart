@@ -51,8 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(top: 50),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30)),
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
                     boxShadow: const [
                       BoxShadow(
                         offset: Offset(1.0, 1.0),
@@ -115,7 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      floatingActionButton: apiUser.miPerfil.nombre != 'Doctor' ? const FloatingMenu() : Container(),
+      floatingActionButton: apiUser.miPerfil.nombre != 'Doctor'
+          ? const FloatingMenu()
+          : Container(),
     );
   }
 }
@@ -238,7 +240,7 @@ class _homeButtons extends StatelessWidget {
                 title: "Bienvenid@ $profile!",
                 subtitle: "Programa una cita",
                 backgroundColor: ThemeProvider.lightColor,
-                backgroundImg: 'bgHospital3.png',
+                backgroundImg: 'nurse.png',
                 iconColor: ThemeProvider.white,
                 icon: FontAwesomeIcons.userDoctor,
               )
@@ -246,7 +248,7 @@ class _homeButtons extends StatelessWidget {
                 title: "¡Ahorra tiempo! 👩‍⚕️",
                 subtitle: "Ver horarios disponibles",
                 backgroundColor: ThemeProvider.lightColor,
-                backgroundImg: 'bgHospital2.png',
+                backgroundImg: 'doctor.png',
                 iconColor: ThemeProvider.white,
                 icon: FontAwesomeIcons.handHoldingMedical,
               )
@@ -295,18 +297,8 @@ class HomeActionButton extends StatelessWidget {
                   spreadRadius: 2,
                 ),
               ]),
-          child: Stack(
+          child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: FadeInImage(
-                  width: double.infinity,
-                  height: double.infinity,
-                  placeholder: const AssetImage('assets/loading.gif'),
-                  image: AssetImage('assets/images/$backgroundImg'),
-                  fit: BoxFit.contain,
-                ),
-              ),
               Container(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -349,6 +341,19 @@ class HomeActionButton extends StatelessWidget {
                       ),
                     )
                   ],
+                ),
+              ),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: FadeInImage(
+                     width: double.infinity,
+                     height: double.infinity,
+                    placeholder: const AssetImage('assets/loading.gif'),
+                    image: AssetImage('assets/images/$backgroundImg'),
+                   fit: BoxFit.cover,
+                   alignment: Alignment.topCenter,
+                  ),
                 ),
               ),
             ],
@@ -585,37 +590,37 @@ List<SpecialtyDTO> specialties = [
       subtitle: "Consultas, control prenatal y atención de parto",
       image: "assets/images/specialties/image02.jpg",
       description:
-          "En la Clínica Hoper, comprendemos la importancia de la salud de la mujer en todas las etapas de la vida.\n\nNuestros ginecólogos están aquí para brindarte atención integral y compasiva, desde exámenes de rutina hasta cuidados especializados. Ya sea que necesites una consulta prenatal, atención para problemas ginecológicos o asesoramiento en planificación familiar, nuestro equipo está preparado para ayudarte.\n\nTu bienestar es nuestra prioridad. Programa una cita de ginecología hoy y toma el control de tu salud femenina.\n\nTu salud ginecológica es importante. Solicita una cita de ginecología ahora para recibir atención experta y personalizada."),
+          "En la Clínica Hoper, comprendemos la importancia de la salud de la mujer en todas las etapas de la vida."),
   SpecialtyDTO(
     id: '2',
     title: "Odontología",
     subtitle: "Servicio integral a nuestros pacientes",
     image: "assets/images/specialties/image01.jpg",
     description:
-        "Nuestra especialidad en Odontología en la Clínica Hoper se dedica a mantener tus dientes y encías en óptimas condiciones de salud. Ofrecemos una amplia gama de servicios, desde limpiezas dentales preventivas hasta tratamientos avanzados de ortodoncia.\n\nNuestro equipo de dentistas altamente capacitados está comprometido en proporcionarte una atención personalizada y cuidadosa para que puedas mantener tu sonrisa radiante. No dejes pasar más tiempo sin cuidar tu salud bucal, ¡solicita una cita hoy mismo y descubre por qué somos la elección preferida en odontología en la zona!\n\n¿Listo para mostrar tu mejor sonrisa? Solicita una cita de odontología ahora mismo y permite que nuestros expertos cuiden de tu salud bucal.",
+        "Nuestra especialidad en Odontología en la Clínica Hoper se dedica a mantener tus dientes y encías en óptimas condiciones de salud.",
   ),
   SpecialtyDTO(
-    id: '3',
+      id: '3',
       title: "Pediatría",
       subtitle:
           "Los mejores especialistas médicos cuidando la salud de tus hijos",
       image: "assets/images/specialties/image03.jpg",
       description:
-          "En la Clínica Hoper, comprendemos lo especial que es la salud de tus hijos. Nuestros pediatras están dedicados a brindar la mejor atención médica pediátrica disponible. Desde chequeos de desarrollo hasta tratamientos para enfermedades infantiles, estamos aquí para cuidar a tus pequeños con cariño y profesionalismo.Tu hijo merece lo mejor.\n\nSolicita una cita de pediatría hoy y garantiza un futuro saludable para ellos.\n\nLa salud de tu hijo es nuestra prioridad. Solicita una cita de pediatría ahora para brindarles la atención que necesitan."),
+          "En la Clínica Hoper, comprendemos lo especial que es la salud de tus hijos. Nuestros pediatras están dedicados a brindar la mejor atención médica pediátrica disponible."),
   SpecialtyDTO(
-    id: '4',
+      id: '4',
       title: "Alergología",
       subtitle: "Tratamos todo tipo de Alergias",
       image: "assets/images/specialties/image04.jpg",
       description:
-          "Las alergias pueden ser desafiantes, pero en la Clínica Hoper, nuestros alergólogos están listos para ayudarte a identificar y controlar tus alergias. Ya sea que necesites pruebas de alergia, tratamiento para alergias estacionales o consejos para vivir con alergias alimentarias, nuestro equipo tiene la experiencia necesaria.\n\nNo dejes que las alergias controlen tu vida. Solicita una cita de alergología hoy y recupera tu comodidad. La comodidad es clave para una vida plena.\n\nSolicita una cita de alergología ahora y descubre cómo vivir sin preocupaciones por las alergias."),
-  SpecialtyDTO(
-    id: '5',
-      title: "Nutrición",
-      subtitle: "El Comienzo de la Salud",
-      image: "assets/images/specialties/image05.jpg",
-      description:
-          "En la Clínica Hoper, creemos que la nutrición es fundamental para una vida saludable. Nuestros especialistas en nutrición te ayudarán a diseñar un plan alimenticio personalizado que se adapte a tus necesidades y metas.\n\nYa sea que busques perder peso, mejorar tu salud general o manejar condiciones específicas, estamos aquí para guiarte. Tu viaje hacia una alimentación más saludable comienza aquí. Solicita una consulta de nutrición hoy y da el primer paso hacia un estilo de vida más saludable. La nutrición es la base de una buena salud.\n\nSolicita una cita de nutrición ahora y comienza a transformar tu vida a través de la alimentación."),
+          "Las alergias pueden ser desafiantes, pero en la Clínica Hoper, nuestros alergólogos están listos para ayudarte a identificar y controlar tus alergias."),
+  // SpecialtyDTO(
+  //     id: '5',
+  //     title: "Nutrición",
+  //     subtitle: "El Comienzo de la Salud",
+  //     image: "assets/images/specialties/image05.jpg",
+  //     description:
+  //         "En la Clínica Hoper, creemos que la nutrición es fundamental para una vida saludable. Nuestros especialistas en nutrición te ayudarán a diseñar un plan alimenticio personalizado que se adapte a tus necesidades y metas.\n\nYa sea que busques perder peso, mejorar tu salud general o manejar condiciones específicas, estamos aquí para guiarte. Tu viaje hacia una alimentación más saludable comienza aquí. Solicita una consulta de nutrición hoy y da el primer paso hacia un estilo de vida más saludable. La nutrición es la base de una buena salud.\n\nSolicita una cita de nutrición ahora y comienza a transformar tu vida a través de la alimentación."),
   // SpecialtyDTO(
   //   id: 5,
   //   title: "Medicina General",
