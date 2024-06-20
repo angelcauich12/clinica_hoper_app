@@ -134,7 +134,7 @@ class AppointmentSwiper extends StatelessWidget {
         appointmentProvider.confirmadasList; //Debe ser confirmadas
 
     return (appointments.isNotEmpty)
-        ? Container(
+        ? SizedBox(
             width: double.infinity,
             height: (apiUser.miPerfil.nombre != 'Doctor') ? 270 : 230,
             child: Column(

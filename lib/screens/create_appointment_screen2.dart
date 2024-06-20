@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hope_app/models/doctor_schedule_response.dart';
 import 'package:hope_app/models/models.dart';
-import 'package:hope_app/widgets/appointment_status_label.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -963,8 +961,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       ),
     );
   }
-
-
 
 
 // Función habilitar el horario del doctor

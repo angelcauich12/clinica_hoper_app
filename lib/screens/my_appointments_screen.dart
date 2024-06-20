@@ -64,7 +64,7 @@ class AppointmentsTabsBody extends StatelessWidget {
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
     final List<MyAppointment> reservadasList = appointmentProvider.reservadasList;
     final List<MyAppointment> confirmadasList =  appointmentProvider.confirmadasList;
-      User apiUser = User.fromJson(Preferences.apiUser);
+    User apiUser = User.fromJson(Preferences.apiUser);
 
     // final List<MyAppointment> atendidasYCanceladasList = appointmentProvider.atendidasYCanceladasList;
 
@@ -109,7 +109,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                           ),
                         ),
                       ),
-                     apiUser.name != 'Doctor' ?  const Tab(
+                     apiUser.miPerfil.nombre != 'Doctor' ?  const Tab(
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
