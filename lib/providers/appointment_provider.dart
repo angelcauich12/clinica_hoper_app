@@ -404,7 +404,7 @@ class AppointmentProvider extends ChangeNotifier {
   Future<bool> getData() async {
     isLoadingCatalogs = true;
     result = false;
-    print('Peticion API getCatalogs');
+    print('Peticion API getCatalogs Specialties');
     String endPoint = '/api/v1/appointments/catalogs';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';

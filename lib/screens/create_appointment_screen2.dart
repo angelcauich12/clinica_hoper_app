@@ -43,10 +43,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
 
     print('especialidad seleccionada: ${appointmentRequestProvider.specialtySelected}');
 
-    if (apiUser.miPerfil.nombre == 'Doctor' &&
-        apiUser.specialties != null &&
+    if (apiUser.miPerfil.nombre == 'Doctor' && apiUser.specialties != null &&
         apiUser.specialties!.length == 1) {
-      _currentStep = 2;
+        _currentStep = 2;
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         appointmentRequestProvider.doctorSelected = apiUser.id.toString();
@@ -54,7 +53,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       });
     }
 
-    if(appointmentRequestProvider.specialtySelected != null ){
+    if(appointmentRequestProvider.specialtySelected != null && apiUser.miPerfil.nombre != 'Doctor' ){
       _currentStep = 1;
     }
 
@@ -98,12 +97,23 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   
 
     Future<void> onRefresh() async {
-      // appointmentProv.isLoading = true;
-      // await Future.delayed(const Duration(seconds: 2));
-      // // appointmentProv.workScheduleDoctor();
-      // appointmentProv.getAppointments();
-      // appointmentProv.isLoading = false;
-      // setState(() {});
+      appointmentProv.isLoading = true;
+      await Future.delayed(const Duration(seconds: 2));
+      switch (_currentStep) {
+        case 0:
+        appointmentProv.getData();
+          break;
+        case 1:
+        appointmentProv.getData();
+        break;  
+         case 2:
+        appointmentProv.workScheduleDoctor();
+        appointmentProv.getAppointments();
+        break;  
+        default: appointmentProv.getData();
+      }
+      appointmentProv.isLoading = false;
+      setState(() {});
     }
 
     return Scaffold(
@@ -912,8 +922,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                         await Future.delayed(const Duration(
                                                                             seconds:
                                                                                 1));
-                                                                        final result =
-                                                                            await appointmentProv.createAppointment();
+                                                                        final result = await appointmentProv.createAppointment();
                                                                         if (result) {
                                                                           appointmentProv.patientSelected =
                                                                               null;
@@ -922,8 +931,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                           appointmentForm.endTime =
                                                                               null;
                                                                           appointmentProv.startTime =
-                                                                              null;
-                                                                          appointmentProv.doctorSelected =
                                                                               null;
                                                                           _searchController
                                                                               .clear();
@@ -1154,8 +1161,7 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
 
         final String startTime = formattedTime.format(appointment.startTime);
         final String endTime = formattedTime.format(appointment.endTime);
-        final String date = DateFormat('EEEE, MMM dd, yyyy', 'es')
-            .format(appointment.startTime);
+        final String date = DateFormat('EEEE, MMM dd, yyyy', 'es').format(appointment.startTime);
         final String appointmentId = appointment.id.toString();
         final String status = appointment.notes.toString();
 
@@ -1290,8 +1296,7 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
   }
 
   Future<String?> showCancelAppointment(BuildContext context, String id) {
-    final cancelForm =
-        Provider.of<CancelAppointmentFormProvider>(context, listen: false);
+    final cancelForm = Provider.of<CancelAppointmentFormProvider>(context, listen: false);
     final appointmentProv =
         Provider.of<AppointmentProvider>(context, listen: false);
 

@@ -72,7 +72,7 @@ class ThemeProvider extends ChangeNotifier {
               )
             : ThemeData.light().copyWith(
                 appBarTheme: AppBarTheme(
-                  backgroundColor: transparent,
+                  backgroundColor: secondColor,
                   iconTheme: const IconThemeData(color: Colors.white, shadows: [
                     Shadow(
                       offset: Offset(2.0, 2.0),

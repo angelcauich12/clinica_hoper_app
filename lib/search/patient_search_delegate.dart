@@ -290,6 +290,11 @@ class UserSearchList extends StatelessWidget {
         );
 
         return ListTile(
+          onTap: () {
+              appointmentForm.patientFullName = '${user.name} ${user.lastName}';
+              appointmentProv.patientSelected = user.id.toString();
+              Navigator.pop(context);
+          },
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 15,
             vertical: 10,
@@ -351,8 +356,8 @@ class UserSearchList extends StatelessWidget {
               (users[index].medicalHistory != null)
                   ? TextButton(
                       onPressed: () => {
-                        Notifications.showSnackBar(
-                            'Se mostrará el historial del Paciente en un modal')
+                        // Notifications.showSnackBar(
+                        //     'Se mostrará el historial del Paciente en un modal')
                       },
                       style: TextButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -387,19 +392,17 @@ class UserSearchList extends StatelessWidget {
                     )
             ],
           ),
-          trailing: IconButton(
-            padding: EdgeInsets.zero,
-            icon: FaIcon(
-              FontAwesomeIcons.personCirclePlus,
-              color: ThemeProvider.secondColor,
-              size: 32,
-            ),
-            onPressed: () {
-              appointmentForm.patientFullName = '${user.name} ${user.lastName}';
-              appointmentProv.patientSelected = user.id.toString();
-              Navigator.pop(context);
-            },
-          ),
+          // trailing: IconButton(
+          //   padding: EdgeInsets.zero,
+          //   icon: FaIcon(
+          //     FontAwesomeIcons.personCirclePlus,
+          //     color: ThemeProvider.secondColor,
+          //     size: 32,
+          //   ),
+          //   onPressed: () {
+            
+          //   },
+          // ),
         );
       },
     );

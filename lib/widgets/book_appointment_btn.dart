@@ -15,13 +15,16 @@ class BookAppointmentBtn extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
       child: ElevatedButton(
-        onPressed: () {
-          Navigator.pushNamed(context, CreateAppointmentScreen2.routeName);
+         onPressed: () {
+          appointmentProv.specialties!.isEmpty
+        ? null
+        : Navigator.pushNamed(context, CreateAppointmentScreen2.routeName);
           appointmentProv.specialtySelected = specialtyId;
           appointmentProv.doctors = [];
           final Specialty specialty = appointmentProv.specialties!.firstWhere((specialty) => specialty.id.toString() == appointmentProv.specialtySelected);
           appointmentProv.doctors = specialty.doctors!.toList();
         },
+        
         style: ElevatedButton.styleFrom(
             backgroundColor: ThemeProvider.secondColor,
             shape: const StadiumBorder()),

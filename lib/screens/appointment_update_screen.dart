@@ -4,11 +4,14 @@ import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/home.dart';
 import 'package:hope_app/ui/notifications.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:hope_app/widgets/custom_appbar.dart';
 import 'package:provider/provider.dart';
 
 class AppointmentUpdateScreen extends StatefulWidget {
   static const String routeName = 'appointment-update';
+
+  const AppointmentUpdateScreen({super.key});
 
   @override
   State<AppointmentUpdateScreen> createState() =>
@@ -59,6 +62,11 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                     }
 
                     final appointment = snapshot.data;
+                    String formattedTime = GeneralFunctions.formatTime(
+                        appointment!.scheduledTime!);
+                    String formattedDate =
+                        GeneralFunctions.formatDate(appointment.scheduledDate!);
+
                     return (isLoading)
                         ? SizedBox(
                             width: size.width,
@@ -73,7 +81,7 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Su cita con el doctor ${appointment!.doctor?.name} ${appointment.doctor?.lastName} es mañana ${appointment.scheduledDate} a las ${appointment.scheduledTime}. Favor de confirmar su asistencia y llegar con anticipación. Gracias!',
+                                'Su cita con el doctor ${appointment!.doctor?.name} ${appointment.doctor?.lastName} es el $formattedDate a las $formattedTime. Favor de confirmar su asistencia y llegar con anticipación. Gracias!',
                                 style: const TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w400,
@@ -101,8 +109,8 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                                         isLoading = true;
                                       });
                                       final result = await appointmentProvider
-                                          .confirmAppointment(appointment.id.toString());
-
+                                          .confirmAppointment(
+                                              appointment.id.toString());
                                       setState(() {
                                         isLoading = false;
                                       });
@@ -131,8 +139,17 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                                       disabledBackgroundColor:
                                           Colors.transparent,
                                     ),
-                                    onPressed: () {
-                                      print('Cita Cancelada!!');
+                                    // ignore: void_checks
+                                    onPressed: () async {
+                                     await GeneralFunctions.showCancelAppointment(context, id);
+                                        Future.microtask(
+                                          () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              Home.routeName,
+                                            );
+                                          },
+                                        );
                                     },
                                     child: const Text('Cancelar Cita'),
                                   ),

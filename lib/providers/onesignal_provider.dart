@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hope_app/screens/appointment_update_screen.dart';
+import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -45,9 +45,12 @@ class OneSignalProvider extends ChangeNotifier {
     });
 
     OneSignal.Notifications.addClickListener((event) {
-      print("Clicked notification: \n${event.notification}");
-      final String appointmentId =
-          event.notification.additionalData!['appointment_id'].toString();
+      print("Clicked notification: \n${event.notification.additionalData}");
+      final String notificationType =
+          event.notification.additionalData!['notification_type'] ?? '';
+      final String id =
+          event.notification.additionalData!['payload']?['id']?.toString() ??
+              '';
 
       //     Notifications.showSnackBar(
       //   '${event.notification.body} Cita: $appointmentId' ?? 'Se recibió una notificación',
@@ -55,20 +58,36 @@ class OneSignalProvider extends ChangeNotifier {
 
       Future.microtask(
         () {
+          String routeName;
+          String? arguments;
+          switch (notificationType) {
+            case 'REMINDER':
+              routeName = HomeScreen.routeName;
+              break;
+            case 'STATUS_UPDATE':
+              routeName = AppointmentUpdateScreen.routeName;
+              arguments = id;
+              break;
+            case 'MEDICAL_RECORD':
+              routeName = MedicalRecordsScreen.routeName;
+              break;
+            default:
+              routeName = HomeScreen.routeName;
+          }
+
           Navigator.pushNamed(
-            context,
-            AppointmentUpdateScreen.routeName,
-            arguments: appointmentId,
-          );
+          context, 
+          routeName,
+          arguments: arguments);
         },
       );
     });
 
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {
       if (!Platform.isIOS) {
-        Notifications.showSnackBar(
-          'ForeGround ${event.notification.body} ',
-        );
+        // Notifications.showSnackBar(
+        //   'ForeGround ${event.notification.body} ',
+        // );
       }
 
       /// Display Notification, preventDefault to not display
@@ -78,6 +97,7 @@ class OneSignalProvider extends ChangeNotifier {
 
       /// notification.display() to display after preventing default
       event.notification.display();
+
       print('*************** Notification received in FOREGROUND');
       print(event.notification.body);
       print('*************** Notification received in FOREGROUND');

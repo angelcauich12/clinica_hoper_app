@@ -30,8 +30,10 @@ class AppointmentsTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      User apiUser = User.fromJson(Preferences.apiUser);
+       int tabLength = apiUser.miPerfil.nombre != 'Doctor' ? 2 : 1;
     return DefaultTabController(
-      length: 2,
+      length: tabLength,
       child: Scaffold(
         // backgroundColor: Preferences.isDarkMode ? ThemeProvider.brown : Colors.grey[100],
         appBar: AppBar(
@@ -44,20 +46,25 @@ class AppointmentsTabs extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: Preferences.isDarkMode
                   ? ThemeProvider.white
-                  : ThemeProvider.brown,
+                  : ThemeProvider.white,
             ),
           ),
-          backgroundColor: Preferences.isDarkMode
-              ? ThemeProvider.transparent
-              : ThemeProvider.white,
+          // backgroundColor: Preferences.isDarkMode
+          //     ? ThemeProvider.transparent
+          //     : ThemeProvider.white,
         ),
-        body: AppointmentsTabsBody(),
+        body: const Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: AppointmentsTabsBody(),
+        ),
       ),
     );
   }
 }
 
 class AppointmentsTabsBody extends StatelessWidget {
+  const AppointmentsTabsBody({super.key});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -65,8 +72,46 @@ class AppointmentsTabsBody extends StatelessWidget {
     final List<MyAppointment> reservadasList = appointmentProvider.reservadasList;
     final List<MyAppointment> confirmadasList =  appointmentProvider.confirmadasList;
     User apiUser = User.fromJson(Preferences.apiUser);
+    int tabLength = apiUser.miPerfil.nombre != 'Doctor' ? 2 : 1;
+   
+    List<Widget> tabs = [
+      const Tab(
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            "Próximas",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    ];
 
-    // final List<MyAppointment> atendidasYCanceladasList = appointmentProvider.atendidasYCanceladasList;
+    List<Widget> tabViews = [
+      AppointmentList(appointments: reservadasList),
+    ];
+
+    if (tabLength == 2) {
+      tabs.add(const Tab(
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            "Confirmadas",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ));
+
+      tabViews.add(AppointmentList(appointments: confirmadasList));
+    }
+
 
     return SafeArea(
       child: (appointmentProvider.isLoading)
@@ -95,48 +140,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                         color: Preferences.isDarkMode
                             ? ThemeProvider.yellowColor
                             : ThemeProvider.secondColor),
-                    tabs:  [
-                      const Tab(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Próximas",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                     apiUser.miPerfil.nombre != 'Doctor' ?  const Tab(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Confirmadas",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      )
-                      : Container(),
-                      // Tab(
-                      //   child: Align(
-                      //     alignment: Alignment.center,
-                      //     child: Text(
-                      //       "Historial",
-                      //       style: TextStyle(
-                      //         fontWeight: FontWeight.bold,
-                      //       ),
-                      //       maxLines: 1,
-                      //       overflow: TextOverflow.ellipsis,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                    tabs: tabs
                   ),
                 ),
                 const SizedBox(height: 25),
@@ -144,7 +148,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                   child: TabBarView(
                     children: [
                       AppointmentList(appointments: reservadasList),
-                      AppointmentList(appointments: confirmadasList),
+                      if (apiUser.miPerfil.nombre != 'Doctor') AppointmentList(appointments: confirmadasList),
                       // AppointmentList(appointments: atendidasYCanceladasList),
                     ],
                   ),

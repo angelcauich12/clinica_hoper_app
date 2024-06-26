@@ -39,82 +39,76 @@ class _HomeScreenState extends State<HomeScreen> {
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
 
     return Scaffold(
-      body: Consumer<AppointmentProvider>(
-        builder: (context, ap, _) {
-          if (ap.isLoadingCatalogs) {
-            return const SkeletonHome();
-          } else {
-            return Column(
-              children: [
-                Container(
-                  height: 280,
-                  padding: const EdgeInsets.only(top: 50),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10)),
-                    boxShadow: const [
-                      BoxShadow(
-                        offset: Offset(1.0, 1.0),
-                        blurRadius: 1.0,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                    ],
-                    color: secondColor,
+      body:appointmentProvider.isLoadingCatalogs
+          ? const SkeletonHome() 
+          :Column(
+          children: [
+            Container(
+              height: 280,
+              padding: const EdgeInsets.only(top: 50),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10)),
+                boxShadow: const [
+                  BoxShadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 1.0,
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
-                  child: Column(
-                    children: [
-                      _homeGreetings(
-                        apiUser: apiUser,
-                      ),
-                      const SizedBox(height: 20),
-                      _homeButtons(profile: apiUser.miPerfil.nombre),
-                    ],
+                ],
+                color: secondColor,
+              ),
+              child: Column(
+                children: [
+                  _homeGreetings(
+                    apiUser: apiUser,
                   ),
+                  const SizedBox(height: 20),
+                  _homeButtons(profile: apiUser.miPerfil.nombre),
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: Column(
+                  children: [
+                    (apiUser.medicalHistory == null &&
+                            apiUser.miPerfil.nombre == 'Patient')
+                        ? Column(
+                            children: [
+                              const SizedBox(height: 35),
+                              DangerMessageWithButton(
+                                color: ThemeProvider.blue.withOpacity(0.3),
+                                title: 'Estimado Paciente',
+                                paragraph1:
+                                    'Su expediente clínico no está completo.',
+                                paragraph2: 'Rellenar el formulario',
+                                btnTitle: 'Completar mi expediente',
+                              ),
+                            ],
+                          )
+                        : Container(),
+                    const SizedBox(height: 15),
+                    apiUser.miPerfil.nombre == 'Doctor'
+                        ? DayCalendar(
+                            appointments:
+                                appointmentProvider.confirmadasList)
+                        : Container(),
+                    const SizedBox(height: 15),
+                    apiUser.miPerfil.nombre != 'Doctor'
+                        ? SpecialtySlider(specialties: specialties)
+                        : Container(),
+                    const SizedBox(height: 15),
+                    _findUs(),
+                    const SizedBox(height: 50),
+                  ],
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const ClampingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        (apiUser.medicalHistory == null &&
-                                apiUser.miPerfil.nombre == 'Patient')
-                            ? Column(
-                                children: [
-                                  const SizedBox(height: 35),
-                                  DangerMessageWithButton(
-                                    color: ThemeProvider.blue.withOpacity(0.3),
-                                    title: 'Estimado Paciente',
-                                    paragraph1:
-                                        'Su expediente clínico no está completo.',
-                                    paragraph2: 'Rellenar el formulario',
-                                    btnTitle: 'Completar mi expediente',
-                                  ),
-                                ],
-                              )
-                            : Container(),
-                        const SizedBox(height: 15),
-                        apiUser.miPerfil.nombre == 'Doctor'
-                            ? DayCalendar(
-                                appointments:
-                                    appointmentProvider.confirmadasList)
-                            : Container(),
-                        const SizedBox(height: 15),
-                        apiUser.miPerfil.nombre != 'Doctor'
-                            ? SpecialtySlider(specialties: specialties)
-                            : Container(),
-                        const SizedBox(height: 15),
-                        _findUs(),
-                        const SizedBox(height: 50),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-        },
-      ),
+              ),
+            ),
+          ],
+        ),
       floatingActionButton: apiUser.miPerfil.nombre != 'Doctor'
           ? const FloatingMenu()
           : Container(),
@@ -347,12 +341,12 @@ class HomeActionButton extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: FadeInImage(
-                     width: double.infinity,
-                     height: double.infinity,
+                    width: double.infinity,
+                    height: double.infinity,
                     placeholder: const AssetImage('assets/loading.gif'),
                     image: AssetImage('assets/images/$backgroundImg'),
-                   fit: BoxFit.cover,
-                   alignment: Alignment.topCenter,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
                   ),
                 ),
               ),

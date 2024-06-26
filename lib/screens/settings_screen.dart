@@ -40,10 +40,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           style: TextStyle(
             fontFamily: 'Roboto',
             fontSize: 20,
-            fontWeight: FontWeight.w400,
+             fontWeight: FontWeight.bold,
             color: Preferences.isDarkMode
                 ? ThemeProvider.white
-                : ThemeProvider.brown,
+                : ThemeProvider.white,
           ),
         ),
         actions: const [

@@ -14,7 +14,9 @@ class AppointmentList extends StatelessWidget {
     final appointmentProvider = Provider.of<AppointmentProvider>(context);
 
     Future<void> onRefresh() async {
-      appointmentProvider.getAppointments();
+      appointmentProvider.isLoading = true;
+      await appointmentProvider.getAppointments();
+      appointmentProvider.isLoading = false;
     }
 
     return RefreshIndicator(

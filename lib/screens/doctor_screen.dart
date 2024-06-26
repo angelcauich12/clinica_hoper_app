@@ -25,7 +25,7 @@ class DoctorScreen extends StatelessWidget {
               _DoctorImage(doctor: doctor, specialty: appointment.specialty!),
               const Experience(),
               _AboutDoctor(),
-              const BookAppointmentBtn(),
+              // const BookAppointmentBtn(),
               const SizedBox(height: 50)
             ]),
           )
@@ -85,7 +85,7 @@ class DoctorPosterAndName extends StatelessWidget {
               width: 100,
               height: 120,
               placeholder: AssetImage('assets/loading.gif'),
-              image: AssetImage('assets/images/doctor.jpg'),
+              image: AssetImage('assets/images/doctor.png'),
               fit: BoxFit.cover,
             ),
           ),
