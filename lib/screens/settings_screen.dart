@@ -59,21 +59,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                //     SwitchListTile(
-                // value: Preferences.isDarkMode,
-                // title: const Text('DarkMode'),
-                // onChanged: (bool value) {
-                //   final themeProvider = Provider.of<ThemeProvider>(
-                //     context,
-                //     listen: false,
-                //   );
-                //   Preferences.isDarkMode = value;
-                //   value
-                //       ? themeProvider.setDarkMode()
-                //       : themeProvider.setLightMode();
-                //   setState(() {});
-                // },
-                // ),
+                    SwitchListTile(
+                value: Preferences.isDarkMode,
+                title: const Text('DarkMode'),
+                onChanged: (bool value) {
+                  final themeProvider = Provider.of<ThemeProvider>(
+                    context,
+                    listen: false,
+                  );
+                  Preferences.isDarkMode = value;
+                  value
+                      ? themeProvider.setDarkMode()
+                      : themeProvider.setLightMode();
+                  setState(() {});
+                },
+                ),
                 const Text(
                 'Datos Generales',
                 style: TextStyle(

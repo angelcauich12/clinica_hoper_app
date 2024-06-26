@@ -112,17 +112,13 @@ class MyApp extends StatelessWidget {
         NotificationScreen.routeName: (context) => NotificationScreen(),
         DoctorScreen.routeName: (context) => DoctorScreen(),
         SpecialtyDetailsScreen.routeName: (context) => SpecialtyDetailsScreen(),
-        AppointmentDetailsScreen.routeName: (context) =>
-            AppointmentDetailsScreen(),
-        AppointmentUpdateScreen.routeName: (context) =>
-            AppointmentUpdateScreen(),
+        AppointmentDetailsScreen.routeName: (context) => AppointmentDetailsScreen(),
+        AppointmentUpdateScreen.routeName: (context) => AppointmentUpdateScreen(),
         CreateAppointmentScreen.routeName: (context) =>CreateAppointmentScreen(),
         CreateAppointmentScreen2.routeName:(context) => CreateAppointmentScreen2(),
-        MyAppointmentsScreen.routeName: (context) =>
-            const MyAppointmentsScreen(),
+        MyAppointmentsScreen.routeName: (context) => const MyAppointmentsScreen(),
         MedicalRecordsScreen.routeName: (context) => MedicalRecordsScreen(),
-        UnderConstructionScreen.routeName: (context) =>
-            const UnderConstructionScreen(),
+        UnderConstructionScreen.routeName: (context) => const UnderConstructionScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );
