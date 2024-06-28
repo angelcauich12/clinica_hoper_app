@@ -243,7 +243,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                     child: Text(
                                                       'Anterior',
                                                       style: TextStyle(
-                                                          color: myColor),
+                                                          color: Preferences.isDarkMode 
+                                                          ? ThemeProvider.white
+                                                          : myColor),
                                                     ),
                                                   )
                                                 : const SizedBox.shrink(),
@@ -284,7 +286,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 9,
                                         color: _currentStep >= 0
-                                            ? myColor
+                                            ?  Preferences.isDarkMode ? ThemeProvider.white : myColor
                                             : Colors.grey),
                                   ),
                                   content: Container(
@@ -301,7 +303,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                   fontFamily: 'Roboto',
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 18,
-                                                  color: myColor),
+                                                  color: Preferences.isDarkMode
+                                                  ? ThemeProvider.white 
+                                                  : myColor),
                                             ),
                                           ],
                                         ),
@@ -347,8 +351,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                         '',
                                                                     style:
                                                                         TextStyle(
-                                                                      color: ThemeProvider
-                                                                          .primaryColor,
+                                                                      color: Preferences.isDarkMode 
+                                                                      ? ThemeProvider.white
+                                                                      :ThemeProvider.primaryColor,
                                                                       fontFamily:
                                                                           'Roboto',
                                                                     ),
@@ -415,7 +420,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 9,
                                         color: _currentStep >= 1
-                                            ? myColor
+                                            ?  Preferences.isDarkMode ? ThemeProvider.white : myColor
                                             : Colors.grey),
                                   ),
                                   content: Container(
@@ -432,7 +437,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                   fontFamily: 'Roboto',
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 18,
-                                                  color: myColor),
+                                                  color:  Preferences.isDarkMode ? ThemeProvider.white : myColor),
                                             ),
                                           ],
                                         ),
@@ -484,7 +489,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                         '',
                                                                     style:
                                                                         TextStyle(
-                                                                      color: ThemeProvider
+                                                                      color:  Preferences.isDarkMode ? ThemeProvider.white : ThemeProvider
                                                                           .primaryColor,
                                                                       fontFamily:
                                                                           'Roboto',
@@ -546,7 +551,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 9,
                                         color: _currentStep >= 2
-                                            ? myColor
+                                            ?  Preferences.isDarkMode ? ThemeProvider.white : myColor
                                             : Colors.grey),
                                   ),
                                   content: Column(
@@ -665,7 +670,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                     child: Text(
                                                       'Anterior',
                                                       style: TextStyle(
-                                                          color: myColor),
+                                                          color:  Preferences.isDarkMode ? ThemeProvider.white : myColor),
                                                     ),
                                                   )
                                                 ],
@@ -875,8 +880,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                       'Descripción',
                                                                   labelStyle:
                                                                       TextStyle(
-                                                                          color:
-                                                                              myColor)),
+                                                                          color: Preferences.isDarkMode ? ThemeProvider.white : myColor)),
                                                               keyboardType:
                                                                   TextInputType
                                                                       .multiline,
@@ -1202,7 +1206,7 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
                       },
                       icon: Icon(
                         Icons.close,
-                        color: myColor,
+                        color: Preferences.isDarkMode ? ThemeProvider.white :  myColor,
                       ))
                 ],
               ),
@@ -1217,7 +1221,7 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: myColor),
+                        color: Preferences.isDarkMode ? ThemeProvider.white : myColor),
                   ),
                   StatusLabel(
                     status: status,

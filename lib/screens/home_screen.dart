@@ -6,6 +6,7 @@ import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -101,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? SpecialtySlider(specialties: specialties)
                         : Container(),
                     const SizedBox(height: 15),
-                    _findUs(),
+                    _FindUs(),
                     const SizedBox(height: 50),
                   ],
                 ),
@@ -188,7 +189,7 @@ class _homeGreetings extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   fontFamily: 'Roboto',
                   color: Preferences.isDarkMode
-                      ? ThemeProvider.brown
+                      ? ThemeProvider.white
                       : ThemeProvider.white,
                 ),
               ),
@@ -201,7 +202,7 @@ class _homeGreetings extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Roboto',
                       color: Preferences.isDarkMode
-                          ? ThemeProvider.brown
+                          ? ThemeProvider.white
                           : ThemeProvider.white,
                     ),
                   ),
@@ -504,18 +505,34 @@ class SpecialtyImageCard extends StatelessWidget {
   }
 }
 
-class _findUs extends StatefulWidget {
+class _FindUs extends StatefulWidget {
   @override
-  State<_findUs> createState() => _findUsState();
+  State<_FindUs> createState() => _FindUsState();
 }
 
-class _findUsState extends State<_findUs> {
+class _FindUsState extends State<_FindUs> {
   late GoogleMapController mapController;
 
-  Map<String, Marker> _markers = {};
+  final Map<String, Marker> _markers = {};
+  bool isMapCreated = false;
+
+  changeMapMode(){
+    if(Preferences.isDarkMode){
+      GeneralFunctions.getJsonFile("assets/json/dark_map.json").then(setMapStyle);
+    }
+  }
+  
+  void setMapStyle(String mapStyle){
+    mapController.setMapStyle(mapStyle);
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    if(isMapCreated){
+      changeMapMode();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
@@ -528,7 +545,7 @@ class _findUsState extends State<_findUs> {
               fontWeight: FontWeight.w600,
               fontFamily: 'Roboto',
               color: Preferences.isDarkMode
-                  ? ThemeProvider.brown
+                  ? ThemeProvider.white
                   : ThemeProvider.primaryColor,
             ),
           ),
@@ -553,6 +570,9 @@ class _findUsState extends State<_findUs> {
               onMapCreated: (controller) {
                 mapController = controller;
                 _addMarker('Clínica Hoper', currentLocation);
+                isMapCreated = true;
+                changeMapMode();
+                setState(() {});
               },
               markers: _markers.values.toSet(),
             ),

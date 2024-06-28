@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,7 @@ class GeneralFunctions{
     return formattedTime.format(parsedValue);
   }
 
+  
   static Future<bool> showCancelAppointment(BuildContext context, String id,) async {
     final cancelForm = Provider.of<CancelAppointmentFormProvider>(context, listen: false);
     final appointmentProv = Provider.of<AppointmentProvider>(context, listen: false);
@@ -120,6 +122,10 @@ class GeneralFunctions{
    
 
     return result!;
+  }
+
+  static Future<String> getJsonFile(String path) async {
+    return await rootBundle.loadString(path);
   }
 
 }

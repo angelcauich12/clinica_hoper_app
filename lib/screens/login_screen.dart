@@ -76,35 +76,36 @@ class LoginScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                           (size.height < 670)
                               ? Container()
-                              : OrDivider(title: 'O ingresa con'),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SocialMediaButton(
-                                imagePath: 'assets/images/brand/google.png',
-                                onTap: () async {
-                                  Notifications.showSnackBar(
-                                      'Login con Google!!');
-                                },
-                                // onTap: () => onGoogleSignIn(context,
-                                //     googleApiService, oneSignalProvider),
-                              ),
-                              const SizedBox(width: 20),
-                              SocialMediaButton(
-                                  imagePath: 'assets/images/brand/facebook.png',
-                                  onTap: () async {
-                                    Notifications.showSnackBar(
-                                        'Login con Facebook!!');
-                                  }),
-                              const SizedBox(width: 20),
-                              SocialMediaButton(
-                                  imagePath: 'assets/images/brand/apple.png',
-                                  onTap: () async {
-                                    Notifications.showSnackBar(
-                                        'Login con Apple!!');
-                                  }),
-                            ],
-                          ),
+                              : Container(),
+                              // OrDivider(title: 'O ingresa con'),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     SocialMediaButton(
+                          //       imagePath: 'assets/images/brand/google.png',
+                          //       onTap: () async {
+                          //         Notifications.showSnackBar(
+                          //             'Login con Google!!');
+                          //       },
+                          //       // onTap: () => onGoogleSignIn(context,
+                          //       //     googleApiService, oneSignalProvider),
+                          //     ),
+                          //     const SizedBox(width: 20),
+                          //     SocialMediaButton(
+                          //         imagePath: 'assets/images/brand/facebook.png',
+                          //         onTap: () async {
+                          //           Notifications.showSnackBar(
+                          //               'Login con Facebook!!');
+                          //         }),
+                          //     const SizedBox(width: 20),
+                          //     SocialMediaButton(
+                          //         imagePath: 'assets/images/brand/apple.png',
+                          //         onTap: () async {
+                          //           Notifications.showSnackBar(
+                          //               'Login con Apple!!');
+                          //         }),
+                          //   ],
+                          // ),
                           SizedBox(height: (size.height < 670) ? 0 : 25),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

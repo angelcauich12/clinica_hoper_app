@@ -112,7 +112,6 @@ class AppointmentsTabsBody extends StatelessWidget {
       tabViews.add(AppointmentList(appointments: confirmadasList));
     }
 
-
     return SafeArea(
       child: (appointmentProvider.isLoading)
           ? SizedBox(
@@ -138,7 +137,7 @@ class AppointmentsTabsBody extends StatelessWidget {
                     indicator: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: Preferences.isDarkMode
-                            ? ThemeProvider.yellowColor
+                            ? ThemeProvider.primaryColor
                             : ThemeProvider.secondColor),
                     tabs: tabs
                   ),

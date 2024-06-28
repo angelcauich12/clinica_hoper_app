@@ -12,7 +12,7 @@ class ThemeProvider extends ChangeNotifier {
   static Color? lightGrey2 = Colors.grey[100];
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color brown = const Color.fromARGB(255, 41, 41, 41);
-  static Color blue =  Colors.blue;
+  static Color blue = Colors.blue;
   static Color lightRed = const Color(0xffD11149);
   static Color green = Colors.green;
   static Color darkGreen = const Color.fromARGB(255, 59, 121, 60);
@@ -25,10 +25,10 @@ class ThemeProvider extends ChangeNotifier {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
-  static LinearGradient secondGradientColor =  LinearGradient(
+  static LinearGradient secondGradientColor = LinearGradient(
     colors: [
       primaryColor,
-      Color.fromARGB(255, 25, 153, 185),
+      const Color.fromARGB(255, 25, 153, 185),
     ],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
@@ -41,7 +41,7 @@ class ThemeProvider extends ChangeNotifier {
       : currentTheme = isDarkmode
             ? ThemeData.dark().copyWith(
                 appBarTheme: AppBarTheme(
-                  backgroundColor: transparent,
+                  backgroundColor: secondColor,
                   // iconTheme: const IconThemeData(
                   //   color: Colors.white,
                   // ),
@@ -50,26 +50,30 @@ class ThemeProvider extends ChangeNotifier {
                   ),
                 ),
                 floatingActionButtonTheme: FloatingActionButtonThemeData(
-                  backgroundColor: darkColor,
+                  backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
                 ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                    selectedItemColor: yellowColor),
+                  selectedItemColor: white,
+                  unselectedItemColor: white.withOpacity(0.2),
+                ),
                 switchTheme: SwitchThemeData(
-                  thumbColor: MaterialStateProperty.all(yellowColor),
+                  thumbColor: MaterialStateProperty.all(white),
                   trackColor: MaterialStateProperty.all(
-                      const Color.fromRGBO(240, 171, 0, 0.5)),
+                      const Color.fromARGB(255, 25, 153, 185)),
                 ),
                 expansionTileTheme: ExpansionTileThemeData(
                   backgroundColor: Colors.grey.shade800,
                   textColor: darkColor,
                   iconColor: darkColor,
                 ),
-
-                // popupMenuTheme: const PopupMenuThemeData(
-                //   color: Colors.white,
-                // ),
-              )
+                elevatedButtonTheme: ElevatedButtonThemeData(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(primaryColor))),
+                iconButtonTheme: IconButtonThemeData(
+                    style: ButtonStyle(
+                        iconColor: MaterialStatePropertyAll(white))))
             : ThemeData.light().copyWith(
                 appBarTheme: AppBarTheme(
                   backgroundColor: secondColor,
@@ -85,7 +89,7 @@ class ThemeProvider extends ChangeNotifier {
                   ),
                 ),
                 floatingActionButtonTheme: FloatingActionButtonThemeData(
-                  backgroundColor: secondColor,
+                  backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
                 ),
                 bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -93,10 +97,8 @@ class ThemeProvider extends ChangeNotifier {
                   unselectedItemColor: white.withOpacity(0.2),
                 ),
                 switchTheme: SwitchThemeData(
-                  thumbColor: MaterialStateProperty.all(secondColor),
-                  trackColor: MaterialStateProperty.all(
-                    const Color.fromARGB(255, 129, 208, 248),
-                  ),
+                  thumbColor: MaterialStateProperty.all(lightGrey),
+                  trackColor: MaterialStateProperty.all(Colors.grey.shade400),
                 ),
                 expansionTileTheme: ExpansionTileThemeData(
                   backgroundColor: Colors.grey.shade200,
@@ -114,7 +116,7 @@ class ThemeProvider extends ChangeNotifier {
   setLightMode() {
     currentTheme = ThemeData.light().copyWith(
       appBarTheme: AppBarTheme(
-        backgroundColor: transparent,
+        backgroundColor: secondColor,
         iconTheme: const IconThemeData(color: Colors.white, shadows: [
           Shadow(
             offset: Offset(2.0, 2.0),
@@ -127,18 +129,16 @@ class ThemeProvider extends ChangeNotifier {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: secondColor,
+        backgroundColor: primaryColor,
         foregroundColor: Colors.white,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedItemColor: secondColor,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: white,
+        unselectedItemColor: white.withOpacity(0.2),
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.all(secondColor),
-        trackColor: MaterialStateProperty.all(
-          const Color.fromARGB(255, 129, 208, 248),
-        ),
+        thumbColor: MaterialStateProperty.all(lightGrey),
+        trackColor: MaterialStateProperty.all(Colors.grey.shade400),
       ),
       expansionTileTheme: ExpansionTileThemeData(
         backgroundColor: Colors.grey.shade200,
@@ -148,44 +148,47 @@ class ThemeProvider extends ChangeNotifier {
       datePickerTheme: DatePickerThemeData(
         headerBackgroundColor: lightColor,
       ),
-      // popupMenuTheme: const PopupMenuThemeData(
-      //   color: Colors.black,
-      // ),
+     
     );
     notifyListeners();
   }
 
   setDarkMode() {
     currentTheme = ThemeData.dark().copyWith(
-      appBarTheme: AppBarTheme(
-        backgroundColor: transparent,
-        // iconTheme: const IconThemeData(
-        //   color: Colors.white,
-        // ),
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
+        appBarTheme: AppBarTheme(
+          backgroundColor: secondColor,
+          // iconTheme: const IconThemeData(
+          //   color: Colors.white,
+          // ),
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+          ),
         ),
-      ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: darkColor,
-        foregroundColor: Colors.white,
-      ),
-      bottomNavigationBarTheme:
-          BottomNavigationBarThemeData(selectedItemColor: yellowColor),
-      switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.all(yellowColor),
-        trackColor:
-            MaterialStateProperty.all(const Color.fromRGBO(240, 171, 0, 0.5)),
-      ),
-      expansionTileTheme: ExpansionTileThemeData(
-        backgroundColor: Colors.grey.shade800,
-        textColor: darkColor,
-        iconColor: darkColor,
-      ),
-      // popupMenuTheme: const PopupMenuThemeData(
-      //   color: Colors.white,
-      // ),
-    );
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          selectedItemColor: white,
+          unselectedItemColor: white.withOpacity(0.2),
+        ),
+        switchTheme: SwitchThemeData(
+          thumbColor: MaterialStateProperty.all(white),
+          trackColor: MaterialStateProperty.all(
+              const Color.fromARGB(255, 25, 153, 185)),
+        ),
+        expansionTileTheme: ExpansionTileThemeData(
+          backgroundColor: Colors.grey.shade800,
+          textColor: darkColor,
+          iconColor: darkColor,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(primaryColor))),
+        iconButtonTheme: IconButtonThemeData(
+            style: ButtonStyle(iconColor: MaterialStatePropertyAll(white)))
+       
+        );
     notifyListeners();
   }
 }
