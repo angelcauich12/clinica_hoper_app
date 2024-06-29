@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easter_egg_trigger/easter_egg_trigger.dart';
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
@@ -7,6 +8,7 @@ import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/input_decorations.dart';
 import 'package:hope_app/ui/notifications.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +57,16 @@ class LoginScreen extends StatelessWidget {
                     flex: 2,
                     child: SizedBox(),
                   ),
-                  const LogoBrand(),
+                  EasterEggTrigger(
+                    action: () => GeneralFunctions.showModalCode(context),
+                    codes: const [
+                      EasterEggTriggers.SwipeDown,
+                      EasterEggTriggers.SwipeRight,
+                      EasterEggTriggers.LongPress,
+                    ],
+                    child:   const LogoBrand(),
+                  ),
+                 
                   const SizedBox(height: 30),
                   Container(
                     decoration: BoxDecoration(
@@ -72,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           const SizedBox(height: 30),
-                          _LoginForm(),
+                          const _LoginForm(),
                           const SizedBox(height: 20),
                           (size.height < 670)
                               ? Container()
