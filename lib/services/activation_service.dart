@@ -17,8 +17,7 @@ class ActivationService extends ChangeNotifier {
       'activation_code': codigo,
     };
 
-    final url =
-        Uri.http(_apiUrl, '$_proyectName/api/v1/getLicense', activationData);
+    final url = Uri.http(_apiUrl, '$_proyectName/api/v1/getLicense', activationData);
 
     try {
       final response = await http

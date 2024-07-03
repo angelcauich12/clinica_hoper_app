@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hope_app/models/models.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -40,8 +41,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   void initState() {
     super.initState();
     final appointmentRequestProvider = context.read<AppointmentProvider>();
-
-    print('especialidad seleccionada: ${appointmentRequestProvider.specialtySelected}');
+    print('especialidad seleccionada desde create appointment: ${appointmentRequestProvider.specialtySelected}');
 
     if (apiUser.miPerfil.nombre == 'Doctor' && apiUser.specialties != null &&
         apiUser.specialties!.length == 1) {
@@ -64,35 +64,13 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   Widget build(BuildContext context) {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
-      List<WorkScheduleDoctor> simpleSchedule = [
-  WorkScheduleDoctor(daysOfWeek: [1], startTime: '08:00', endTime: '14:30', id: 1, description: '', display: ''),
-  // WorkScheduleDoctor(daysOfWeek: [1], startTime: '16:30', endTime: '18:30', id: 2, description: '', display: ''),
-  // WorkScheduleDoctor(daysOfWeek: [2], startTime: '08:00', endTime: '14:30', id: 3, description: '', display: ''),
-  WorkScheduleDoctor(daysOfWeek: [2], startTime: '16:30', endTime: '20:30', id: 4, description: '', display: ''),
-  // WorkScheduleDoctor(daysOfWeek: [4], startTime: '08:00', endTime: '14:00', id: 1, description: '', display: ''),
-  // WorkScheduleDoctor(daysOfWeek: [6], startTime: '16:30', endTime: '20:30', id: 2, description: '', display: ''),
-  ];
-    final List<TimeRegion> enabledRegions = getTimeRegions(appointmentProv.workSchedule);
+    final List<TimeRegion> enabledRegions = GeneralFunctions.getTimeRegions(appointmentProv.workSchedule);
     final List<TimeRegion> disabledRegions = getDisabledRegions(enabledRegions);
-  
-    final List<TimeRegion> specialRegions = [
-      ...disabledRegions,
-      ...enabledRegions,
-      ..._selectedTimeRegions
+    final List<TimeRegion> specialRegions = [...disabledRegions,...enabledRegions,..._selectedTimeRegions
     ];
 
-
-//      void printRegions(List<TimeRegion> regions, String type) {
-//     for (var region in regions) {
-//       print('$type Region: Start: ${region.startTime}, End: ${region.endTime}, Rule: ${region.recurrenceRule}');
-//     }
-//     } 
-
-// printRegions(enabledRegions, 'Enabled');
-// printRegions(disabledRegions, 'Disabled');
-
-    final AppointmentDataSource calendarAppointments = _getCalendarDataSource(appointmentProv.appointments);
-    final AppointmentDataSource doctorAppointments = _getCalendarDataSource(appointmentProv.doctorAppointments);
+    final AppointmentDataSource calendarAppointments = GeneralFunctions.getCalendarDataSource(appointmentProv.appointments);
+    final AppointmentDataSource doctorAppointments = GeneralFunctions.getCalendarDataSource(appointmentProv.doctorAppointments);
     final appointmentForm = Provider.of<AppointmentProvider>(context);
   
 
@@ -885,10 +863,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                   TextInputType
                                                                       .multiline,
                                                               maxLength: 40,
-                                                              onChanged: (value) =>
-                                                                  appointmentProv
-                                                                          .description =
-                                                                      value,
+                                                              onChanged: (value) => appointmentProv.description = value,
                                                               validator:
                                                                   (value) {
                                                                 return (value !=
@@ -974,60 +949,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   }
 
 
-// Función habilitar el horario del doctor
-// Función para convertir cadena de tiempo a DateTime
-DateTime parseTimeString(String timeString) {
-  final List<String> parts = timeString.split(':');
-  final int hours = int.parse(parts[0]);
-  final int minutes = int.parse(parts[1]);
-  return DateTime(0, 1, 1, hours, minutes); // Asegúrate de que la fecha no afecte la lógica
-}
 
-// Función habilitar el horario del doctor
-List<TimeRegion> getTimeRegions(List<WorkScheduleDoctor> workSchedule) {
-  final List<TimeRegion> regions = [];
-  if (workSchedule.isNotEmpty) {
-    for (var schedule in workSchedule) {
-      final DateTime now = DateTime.now();
-      final DateTime today = DateTime(now.year, now.month, now.day);
 
-      final daysOfWeek = schedule.daysOfWeek.map((day) {
-        switch (day) {
-          case 1: return 'MO';
-          case 2: return 'TU';
-          case 3: return 'WE';
-          case 4: return 'TH';
-          case 5: return 'FR';
-          case 6: return 'SA';
-          case 0: return 'SU';
-          default: return '';
-        }
-      }).join(',');
-
-      final DateTime startTime = parseTimeString(schedule.startTime);
-      final DateTime endTime = parseTimeString(schedule.endTime);
-
-      for (String day in daysOfWeek.split(',')) {
-        final TimeRegion region = TimeRegion(
-          startTime: DateTime(today.year, today.month, today.day,
-              startTime.hour, startTime.minute),
-          endTime: DateTime(today.year, today.month, today.day, endTime.hour, endTime.minute),
-          color: Colors.green.shade300.withOpacity(0.2),
-          enablePointerInteraction: apiUser.miPerfil.nombre != 'Doctor' ? false : true,
-          recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-        );
-
-        if (!regions.any((existingRegion) =>
-            existingRegion.startTime == region.startTime &&
-            existingRegion.endTime == region.endTime &&
-            existingRegion.recurrenceRule == region.recurrenceRule)) {
-          regions.add(region);
-        }
-      }
-    }
-  }
-  return regions;
-}
 
 // Función para deshabilitar todo el calendario
 List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
@@ -1151,8 +1074,7 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
         }
       });
     } else {
-      if (calendarTapDetails.appointments != null &&
-          calendarTapDetails.targetElement == CalendarElement.appointment) {
+      if (calendarTapDetails.appointments != null && calendarTapDetails.targetElement == CalendarElement.appointment) {
         print(calendarTapDetails.appointments!.first);
         final Appointment appointment =
             calendarTapDetails.appointments!.first as Appointment;
@@ -1169,136 +1091,12 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
         final String appointmentId = appointment.id.toString();
         final String status = appointment.notes.toString();
 
-        _showDetails(
-            patientName, date, startTime, endTime, appointmentId, status);
+        GeneralFunctions.showDetails(patientName, date, startTime, endTime, appointmentId, status, context);
       }
     }
   }
 
-  Future<void> _showDetails(String patientName, String date, String startTime,
-      String endTime, String id, String status) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5.0))),
-          contentPadding: const EdgeInsetsDirectional.symmetric(
-              horizontal: 10.0, vertical: 3.0),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        showCancelAppointment(context, id);
-                      },
-                      icon: Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.red.shade800,
-                      )),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(
-                        Icons.close,
-                        color: Preferences.isDarkMode ? ThemeProvider.white :  myColor,
-                      ))
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Detalles de la cita',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Preferences.isDarkMode ? ThemeProvider.white : myColor),
-                  ),
-                  StatusLabel(
-                    status: status,
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 12.0,
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  color: Preferences.isDarkMode
-                      ? Colors.grey.withOpacity(0.15)
-                      : ThemeProvider.secondColor.withAlpha(70),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.person_pin_outlined),
-                        const Text(
-                          'Paciente:',
-                        ),
-                        const SizedBox(
-                          width: 5.0,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            patientName,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 5.0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(
-                          Icons.calendar_month_outlined,
-                        ),
-                        Text(
-                          date,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 5.0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.timer_outlined),
-                        Text('$startTime - $endTime')
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
+  
   Future<String?> showCancelAppointment(BuildContext context, String id) {
     final cancelForm = Provider.of<CancelAppointmentFormProvider>(context, listen: false);
     final appointmentProv =
@@ -1395,43 +1193,10 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
     );
   }
 
-  AppointmentDataSource _getCalendarDataSource(
-      List<MyAppointment> sourceAppointments) {
-    List<Appointment> appointments = sourceAppointments.map((myAppointment) {
-      // Convertir la cadena de hora de inicio programada a un objeto DateTime
-      DateTime? startTime = myAppointment.scheduledTime != null
-          ? DateTime.parse(
-              '${myAppointment.scheduledDate!} ${myAppointment.scheduledTime!}')
-          : null;
+  
 
-      DateTime? endTime = myAppointment.scheduledTime != null
-          ? DateTime.parse(
-              '${myAppointment.scheduledDate!} ${myAppointment.scheduledTimeEnd!}')
-          : null;
-
-      // Dar formato a las horas en el formato 'hh:mm a'
-      String formattedStartTime =
-          startTime != null ? DateFormat('hh:mm ').format(startTime) : 'N/A';
-      String formattedEndTime =
-          endTime != null ? DateFormat('hh:mm ').format(endTime) : 'N/A';
-
-      return Appointment(
-          id: myAppointment.id,
-          startTime: startTime!,
-          endTime: endTime!,
-          notes: myAppointment.status!.name,
-          color: Colors.red,
-          subject: apiUser.miPerfil.nombre != 'Doctor' ? '$formattedStartTime - $formattedEndTime\nOcupado ' : '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
-    }).toList();
-
-    return AppointmentDataSource(appointments);
-  }
-
-  void _onDragEnd(
-    AppointmentDragEndDetails appointmentDragEndDetails,
-  ) {
-    final appointmentProv =
-        Provider.of<AppointmentProvider>(context, listen: false);
+  void _onDragEnd( AppointmentDragEndDetails appointmentDragEndDetails) {
+    final appointmentProv = Provider.of<AppointmentProvider>(context, listen: false);
     Appointment detail = appointmentDragEndDetails.appointment as Appointment;
     Duration duration = detail.endTime.difference(detail.startTime);
 

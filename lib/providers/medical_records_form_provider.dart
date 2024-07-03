@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 
 import '../locator.dart';
 import '../models/models.dart';
@@ -15,8 +16,8 @@ import 'package:http/http.dart' as http;
 class MedicalRecordsProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool result = false;
-  final String _apiUrl = Preferences.apiServer;
-  final String _proyectName = Preferences.projectName;
+  String _apiUrl = Preferences.apiServer;
+  String _proyectName = Preferences.projectName;
   String _endPoint = '/api/v1/medical-records';
   String jwtToken = '';
 
@@ -33,7 +34,10 @@ class MedicalRecordsProvider extends ChangeNotifier {
   }
 
   Future<bool> saveMedicalRecords(MedicalRecordsRequest medicalRecords) async {
-    print('Peticion API');
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
+    print('Peticion API medical records');
     _endPoint = '/api/v1/medical-records';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -44,8 +48,8 @@ class MedicalRecordsProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
-
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
+    print('url medical records: $url');
     try {
       isLoading = true;
       result = false;

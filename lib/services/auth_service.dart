@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/models/models.dart';
-import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/ui/notifications.dart';
 
 class AuthService extends ChangeNotifier {
-  final String _apiUrl = Preferences.apiServer;
-  final String _proyectName = Preferences.projectName;
+   String _apiUrl = Preferences.apiServer;
+   String _proyectName = Preferences.projectName;
   ServerResponse? serverResponse;
   final storage = const FlutterSecureStorage();
   bool result = false;
@@ -44,15 +44,19 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String?> loginUser(String email, String password) async {
+    //se lee de nuevo los valores de las preferencias por si hubo algún cambio
+    _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+    
     final Map<String, dynamic> authData = {
       'email': email,
       'password': password
     };
 
-    final url = Uri.http(_apiUrl, '$_proyectName/api/login', authData);
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName/api/login', authData);
 
     try {
-      print('Url: $url');
+      print('Url login: $url');
       final response = await http
           .post(url, body: json.encode(authData))
           .timeout(const Duration(seconds: 10));
@@ -80,13 +84,10 @@ class AuthService extends ChangeNotifier {
     //print(decodedResp);
   }
 
-  Future<bool?> registerUser(
-    String name,
-    String lastName,
-    String email,
-    String phone,
-    String password,
-  ) async {
+  Future<bool?> registerUser(String name,String lastName,String email,String phone,String password,) async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     final Map<String, dynamic> registerData = {
       'name': name,
       'last_name': lastName,

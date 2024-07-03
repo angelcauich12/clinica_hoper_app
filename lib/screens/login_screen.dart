@@ -286,8 +286,7 @@ class _LoginForm extends StatelessWidget {
                   FocusScope.of(context).unfocus();
 
                   //hacer la peticion al backend para validar usuario
-                  final authService =
-                      Provider.of<AuthService>(context, listen: false);
+                  final authService = Provider.of<AuthService>(context, listen: false);
                   final String? loginMessage = await authService.loginUser(
                       loginForm.email, loginForm.password);
 

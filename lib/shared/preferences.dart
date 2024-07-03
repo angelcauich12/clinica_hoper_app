@@ -7,19 +7,20 @@ class Preferences {
   static String _apiUser = '';
   static String _activacionServer = '154.56.46.97';
   static String _activacionRoute = '/configuraciones/public_html';
-  static String _apiServer = '154.56.46.97';
-  static String _projectName = '/HoperQA/clinica-hoper-php-7.3/public_html';
+  static String _apiServer = 'clinicahoper.com'; //QA
+  static String _projectName = ''; //QA
   static bool _isActive = true;
   static String _expirationDate = '2099-04-10 00:00:00';
   static String _licenseExp = '2099-04-10 00:00:00';
   static bool _isDarkMode = false;
   static bool _isModulesActive = true;
-  // static String _oneSignalAppId = '7edc135c-d979-4e44-b761-4e523d31f65b';
   static String _oneSignalAppId = '6bd80d52-1cb2-4080-9183-242b3052937f';
   static String _onesignalUserId = '';
   static String _clientImage = '';
   static String _gender = 'F';
   static int _specialty = 1;
+  static bool _isHttps = true; 
+
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;
@@ -159,6 +160,17 @@ class Preferences {
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
   }
+
+  static bool get isHttps {
+    return _prefs.getBool('isHttps') ?? _isHttps;
+  }
+
+  static set isHttps(bool value){
+    _isHttps = value;
+    _prefs.setBool('isHttps', value);
+  }
+
+
 
   static String timestampToDate(int timestamp) {
     var now = DateTime.now();

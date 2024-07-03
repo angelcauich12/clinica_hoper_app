@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/ui/notifications.dart';
 
 class OneSignalProvider extends ChangeNotifier {
-  final String _apiUrl = Preferences.apiServer;
-  final String _proyectName = Preferences.projectName;
+  String _apiUrl = Preferences.apiServer;
+  String _proyectName = Preferences.projectName;
   bool result = false;
   final storage = const FlutterSecureStorage();
 
@@ -110,6 +111,8 @@ class OneSignalProvider extends ChangeNotifier {
   }
 
   Future<bool> saveUpdateId() async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
     result = false;
     print('guardando one signal id en servidor...');
 
@@ -126,9 +129,8 @@ class OneSignalProvider extends ChangeNotifier {
       'device_token': Preferences.onesignalUserId,
     };
 
-    final url =
-        Uri.http(_apiUrl, '$_proyectName/api/v1/os/token', oneSignalData);
-    print('url $url');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName/api/v1/os/token', oneSignalData);
+    print('url onesignal: $url');
 
     try {
       final response = await http

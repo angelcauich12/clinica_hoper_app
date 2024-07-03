@@ -5,11 +5,12 @@ import 'package:hope_app/models/models.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:http/http.dart' as http;
 
 class ModulosProvider extends ChangeNotifier {
-  final String _apiUrl = Preferences.apiServer;
-  final String _proyectName = Preferences.projectName;
+   String _apiUrl = Preferences.apiServer;
+   String _proyectName = Preferences.projectName;
   final String _endPoint = '/api/v1/home';
   String jwtToken = '';
   ModuleResponse? moduleResponse;
@@ -29,6 +30,9 @@ class ModulosProvider extends ChangeNotifier {
   }
 
   Future<bool> getModulosApp() async {
+    _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     isLoading = true;
     result = false;
     print('listado de Modulos');
@@ -42,7 +46,7 @@ class ModulosProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
 
     try {
       final response = await http

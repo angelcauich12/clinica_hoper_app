@@ -8,6 +8,7 @@ import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:http/http.dart' as http;
 
 class CreateUserFormProvider extends ChangeNotifier {
@@ -22,8 +23,8 @@ class CreateUserFormProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _result = false;
   late User user;
-  final String _apiUrl = Preferences.apiServer;
-  final String _proyectName = Preferences.projectName;
+  String _apiUrl = Preferences.apiServer;
+  String _proyectName = Preferences.projectName;
   String _endPoint = '/api/v1/appointments';
   String jwtToken = '';
   ServerResponse? serverResponse;
@@ -50,6 +51,9 @@ class CreateUserFormProvider extends ChangeNotifier {
   }
 
   Future<bool> registerUser() async {
+    _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API Search');
     _endPoint = '/api/v1/users';
     isLoading = false;
@@ -68,7 +72,8 @@ class CreateUserFormProvider extends ChangeNotifier {
       'last_name': lastName,
       'phone': phone,
     };
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
+    print('url API Search: $url');
 
     try {
       isLoading = true;

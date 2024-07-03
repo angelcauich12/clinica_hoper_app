@@ -444,8 +444,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                       'Describa brevemente la razón de su visita',
                                   labelText: 'Descripción',
                                   suffixIcon: Icons.description_outlined),
-                              onChanged: (value) =>
-                                value.isNotEmpty ? appointmentProv.description = value : '',
+                              onChanged: (value) => value.isNotEmpty ? appointmentProv.description = value : '',
                               validator: (value) {
                                 return (value != null && value.length >= 3)
                                     ? null
@@ -457,8 +456,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                               onPressed: (appointmentProv.isLoading)
                                   ? null
                                   : () async {
-                                      if (!appointmentProv.isValidForm())
-                                        return;
+                                      if (!appointmentProv.isValidForm())return;
                                       appointmentProv.isLoading = true;
                                       FocusScope.of(context).unfocus();
 

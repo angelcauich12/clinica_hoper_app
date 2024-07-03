@@ -9,6 +9,7 @@ import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/models.dart';
@@ -23,8 +24,8 @@ class AppointmentProvider extends ChangeNotifier {
   String? startTime;
   String? endTime;
   String description = 'Consulta';
-  final String _apiUrl = Preferences.apiServer;
-  final String _proyectName = Preferences.projectName;
+  String _apiUrl = Preferences.apiServer;
+  String _proyectName = Preferences.projectName;
   String _endPoint = '/api/v1/';
   String jwtToken = '';
   MyAppointment? appointment;
@@ -130,6 +131,9 @@ class AppointmentProvider extends ChangeNotifier {
   Stream<List<User>> get userStream => this._userStreamController.stream;
 
   Future<bool> getAppointments() async {
+    _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     isLoadingCatalogs = true;
     result = false;
     print('Peticion API getAppointments');
@@ -144,7 +148,7 @@ class AppointmentProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final url = Uri.http(_apiUrl, '$_proyectName$endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$endPoint');
     print('Url getAppointments: $url');
     try {
       final response = await http.get(url, headers: headers).timeout(
@@ -216,6 +220,9 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<bool> confirmAppointment(String id) async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API');
     _endPoint = '/api/v1/confirm-appointment';
 
@@ -230,7 +237,7 @@ class AppointmentProvider extends ChangeNotifier {
     final Map<String, dynamic> queryParameters = {
       'id': id,
     };
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
 
     try {
       isLoading = true;
@@ -300,6 +307,9 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<bool> cancelAppointment(String id, String justification) async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API Cancel Appointment $id');
     _endPoint = '/api/v1/cancel-appointment';
 
@@ -315,7 +325,7 @@ class AppointmentProvider extends ChangeNotifier {
       'id': id,
       'justification': justification,
     };
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
 
     try {
       isLoading = true;
@@ -402,6 +412,9 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<bool> getData() async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     isLoadingCatalogs = true;
     result = false;
     print('Peticion API getCatalogs Specialties');
@@ -415,7 +428,7 @@ class AppointmentProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    final url = Uri.http(_apiUrl, '$_proyectName$endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$endPoint');
     print('Url getCatalogs: $url');
 
     try {
@@ -498,6 +511,9 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<bool> scheduleIntervals() async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API get Hours');
     _endPoint = '/api/v1/appointments/get-hours';
 
@@ -514,7 +530,7 @@ class AppointmentProvider extends ChangeNotifier {
       'scheduled_date': startDate,
     };
     print(queryParameters);
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
 
     try {
       isLoading = true;
@@ -609,6 +625,9 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<bool> workScheduleDoctor() async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API work schedule');
     _endPoint = '/api/v1/appointments/work-schedule';
 
@@ -624,7 +643,8 @@ class AppointmentProvider extends ChangeNotifier {
       'id_doctor': doctorSelected,
     };
     print('horario de trabajo del id_doctor $queryParameters');
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
+     print('url: $url');
 
     try {
       isLoading = true;
@@ -712,7 +732,10 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<bool> createAppointment() async {
-    print('Peticion API get Hours');
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
+    print('API Create Appointment');
     _endPoint = '/api/v1/appointments';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
@@ -734,7 +757,8 @@ class AppointmentProvider extends ChangeNotifier {
       'description': description,
     };
 
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
+    print('url Create Appointment: $url');
 
     try {
       isLoading = true;
@@ -823,7 +847,12 @@ class AppointmentProvider extends ChangeNotifier {
     return result;
   }
 
+
+
   Future<MyAppointment> getAppointment(String id) async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API getAppointment');
     _endPoint = '/api/v1/appointments';
 
@@ -835,11 +864,8 @@ class AppointmentProvider extends ChangeNotifier {
       'Authorization': 'Bearer $jwtToken'
     };
 
-    // final Map<String, dynamic> queryParameters = {
-    //   'id': id,
-    // };
-
-    final url = Uri.http(_apiUrl, '$_proyectName/api/v1/appointments/$id');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName/api/v1/appointments/$id');
+     print('url API getAppointment: $url');
 
     try {
       isLoading = true;
@@ -913,6 +939,7 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future getSpecialtyDoctors() async {
+
     print(doctors);
     final specialty = specialties!.firstWhere((specialty) => specialty.id.toString() == specialtySelected);
     doctors = [];
@@ -924,6 +951,9 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<List<User>> searchUsers(String query) async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API Search');
     _endPoint = '/api/v1/search/users';
 
@@ -939,7 +969,8 @@ class AppointmentProvider extends ChangeNotifier {
       'query': query,
       'type': 'patient',
     };
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint', queryParameters);
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint', queryParameters);
+     print('url API Search: $url');
 
     try {
       isLoadingCatalogs = true;
@@ -1009,8 +1040,10 @@ class AppointmentProvider extends ChangeNotifier {
     return users;
   }
 
-  Future<bool> updateAppointment(String id, String scheduledDate,
-      String scheduledTime, String scheduledTimeEnd) async {
+  Future<bool> updateAppointment(String id, String scheduledDate,String scheduledTime, String scheduledTimeEnd) async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API update appoinment ');
     _endPoint = '/api/v1/appointments/update-appointment';
 
@@ -1031,7 +1064,8 @@ class AppointmentProvider extends ChangeNotifier {
 
     print(queryParameters);
 
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
+    print('url update appoint: $url ');
 
     try {
       isLoading = true;
@@ -1120,6 +1154,9 @@ class AppointmentProvider extends ChangeNotifier {
 
 
   Future<bool> getDoctorAppointments() async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
     print('Peticion API get appointments Doctor');
     _endPoint = '/api/v1/appointments/doctor';
 
@@ -1135,15 +1172,14 @@ class AppointmentProvider extends ChangeNotifier {
       'id': doctorSelected,
     };
     print('id del doctor seleccionado $queryParameters');
-    final url = Uri.http(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
 
     try {
+       print('url Doctor Appointment: $url');
       isLoading = true;
       result = false;
 
-      final response = await http
-          .post(url, headers: headers, body: json.encode(queryParameters))
-          .timeout(const Duration(seconds: 30));
+      final response = await http.post(url, headers: headers, body: json.encode(queryParameters)).timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:

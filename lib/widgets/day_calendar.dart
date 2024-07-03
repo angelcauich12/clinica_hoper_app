@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/theme_provider.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class DayCalendar extends StatelessWidget {
@@ -11,7 +12,7 @@ class DayCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppointmentDataSource appointmentDataSource = _getCalendarDataSource(appointments);
+    final AppointmentDataSource appointmentDataSource = GeneralFunctions.getCalendarDataSource(appointments);
     final size = MediaQuery.of(context).size;
     return SizedBox(
       height: size.height * 0.53,
@@ -70,31 +71,5 @@ class DayCalendar extends StatelessWidget {
       ),
     );
   }
-
-  AppointmentDataSource _getCalendarDataSource(
-      List<MyAppointment> sourceAppointments) {
-    List<Appointment> appointments = sourceAppointments.map((myAppointment) {
-     
-      DateTime? startTime = myAppointment.scheduledTime != null
-          ? DateTime.parse(
-              '${myAppointment.scheduledDate!} ${myAppointment.scheduledTime!}')
-          : null;
-
-      DateTime? endTime = myAppointment.scheduledTime != null
-          ? DateTime.parse(
-              '${myAppointment.scheduledDate!} ${myAppointment.scheduledTimeEnd!}')
-          : null;
-
-      return Appointment(
-          id: myAppointment.id,
-          startTime: startTime!,
-          endTime: endTime!,
-          notes: myAppointment.status!.name,
-          color: ThemeProvider.blue,
-          subject:
-             'Px: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
-    }).toList();
-
-    return AppointmentDataSource(appointments);
-  }
+  
 }
