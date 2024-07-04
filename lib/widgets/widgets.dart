@@ -19,8 +19,11 @@ export 'package:hope_app/widgets/popup_menu.dart';
 export 'package:hope_app/widgets/social_media_button.dart';
 export 'package:hope_app/widgets/skeleton_home.dart';
 export 'package:hope_app/widgets/form_create_appointment.dart';
-export 'package:hope_app/widgets/day_calendar.dart';
+export 'package:hope_app/widgets/confirmed_section.dart';
 export 'package:hope_app/widgets/empty_container.dart';
 export 'package:hope_app/widgets/floating_menu.dart';
 export 'package:hope_app/widgets/dev_mode.dart';
+export 'package:hope_app/widgets/calendar_types/week_calendar.dart';
+export 'package:hope_app/widgets/calendar_types/schedule_calendar.dart';
+
 

@@ -171,7 +171,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                       ),
                     ),
                   ),
-                )),
+                )
+                ),
             SliverList(
                 delegate: SliverChildListDelegate([
               (appointmentProv.isLoadingCatalogs)
@@ -537,7 +538,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                       Container(
                                         height: size.height * 0.85,
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          // color: Colors.red,
                                           border: Border(
                                             bottom: BorderSide(
                                               color: myColor,
@@ -575,8 +576,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                     timeFormat: 'h:mm a'),
                                             allowViewNavigation: true,
                                             showDatePickerButton: true,
-                                            showNavigationArrow: false,
-                                            showWeekNumber: true,
                                             headerStyle: CalendarHeaderStyle(
                                               backgroundColor: myColor,
                                               textStyle: const TextStyle(
@@ -607,11 +606,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                     color: Colors.white),
                                             specialRegions: specialRegions,
                                             dataSource: apiUser.miPerfil.nombre != 'Doctor' ? doctorAppointments : calendarAppointments,
-                                            onTap: apiUser.miPerfil.nombre != 'Doctor' ? null : _onCalendarTapped,
-                                            // onDragStart: _onDragStart,
-                                           
-                                            onDragEnd: (details) =>
-                                                _onDragEnd(details),
+                                            onTap: apiUser.miPerfil.nombre != 'Doctor' ? null : _onCalendarTapped,           
+                                            onDragEnd: (details) => _onDragEnd(details),
                                           ),
                                         ),
                                       ),

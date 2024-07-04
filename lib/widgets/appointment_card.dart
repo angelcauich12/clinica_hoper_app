@@ -14,7 +14,7 @@ class AppointmentCard extends StatelessWidget {
   final MyAppointment appointment;
   final bool withMargin;
 
-  AppointmentCard(
+  const AppointmentCard(
       {super.key, required this.appointment, this.withMargin = true});
 
   @override

@@ -31,7 +31,7 @@ class AppointmentsTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       User apiUser = User.fromJson(Preferences.apiUser);
-       int tabLength = apiUser.miPerfil.nombre != 'Doctor' ? 2 : 1;
+      int tabLength = apiUser.miPerfil.nombre != 'Doctor' ? 2 : 1;
     return DefaultTabController(
       length: tabLength,
       child: Scaffold(

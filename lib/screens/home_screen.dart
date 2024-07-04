@@ -93,9 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         : Container(),
                     const SizedBox(height: 15),
                     apiUser.miPerfil.nombre == 'Doctor'
-                        ? DayCalendar(
-                            appointments:
-                                appointmentProvider.confirmadasList)
+                        ? ConfirmedSection(appointments: appointmentProvider.confirmadasList)
                         : Container(),
                     const SizedBox(height: 15),
                     apiUser.miPerfil.nombre != 'Doctor'

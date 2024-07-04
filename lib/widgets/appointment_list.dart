@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class AppointmentList extends StatelessWidget {
   List<MyAppointment> appointments;
 
-  AppointmentList({required this.appointments});
+  AppointmentList({super.key, required this.appointments});
 
   @override
   Widget build(BuildContext context) {

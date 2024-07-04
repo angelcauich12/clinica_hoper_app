@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/theme_provider.dart';
 import 'package:hope_app/shared/preferences.dart';
-import 'package:hope_app/utilities/general_functions.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:hope_app/widgets/calendar_types/schedule_calendar.dart';
 
-class DayCalendar extends StatelessWidget {
-  final  List<MyAppointment> appointments;
-  const DayCalendar({super.key, required this.appointments});
+class ConfirmedSection extends StatelessWidget {
+  final  List<MyAppointment>? appointments;
+  const ConfirmedSection({super.key, this.appointments});
 
   @override
   Widget build(BuildContext context) {
-    final AppointmentDataSource appointmentDataSource = GeneralFunctions.getCalendarDataSource(appointments);
     final size = MediaQuery.of(context).size;
     return SizedBox(
       height: size.height * 0.53,
@@ -48,24 +45,7 @@ class DayCalendar extends StatelessWidget {
               color: ThemeProvider.primaryColor.withAlpha(40),
               borderRadius: BorderRadius.circular(5),
             ),
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              locale: const Locale('es'),
-              supportedLocales: const [
-                Locale('es'),
-              ],
-              localizationsDelegates: const [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              home: SfCalendar(
-                view: CalendarView.schedule,
-                showDatePickerButton: true,
-                minDate: DateTime.now(),
-                dataSource: appointmentDataSource,
-              ),
-            ),
+            child: ScheduleCalendar(appointments: appointments,)
           ))
         ],
       ),

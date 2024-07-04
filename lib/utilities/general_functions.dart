@@ -208,8 +208,8 @@ class GeneralFunctions {
   }
 
   //Obtener las citas en formato del calendario
-  static AppointmentDataSource getCalendarDataSource(List<MyAppointment> sourceAppointments) {
-    User apiUser = User.fromJson(Preferences.apiUser);
+  static AppointmentDataSource getCalendarDataSource(List<MyAppointment> sourceAppointments, {bool schedule = false , Color? appointmenColor} ) {
+    User apiUser = User.fromJson(Preferences.apiUser); 
 
     List<Appointment> appointments = sourceAppointments.map((myAppointment) {
       // Convertir la cadena de hora de inicio programada a un objeto DateTime
@@ -234,10 +234,12 @@ class GeneralFunctions {
           startTime: startTime!,
           endTime: endTime!,
           notes: myAppointment.status!.name,
-          color: Colors.red,
+          color: appointmenColor ?? Colors.red,
           subject: apiUser.miPerfil.nombre != 'Doctor'
               ? '$formattedStartTime - $formattedEndTime\nOcupado '
-              : '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}');
+              : schedule ? 'Px: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}'
+              : '$formattedStartTime - $formattedEndTime\nPx: ${myAppointment.patient!.name} ${myAppointment.patient!.lastName}'
+              );
     }).toList();
 
     return AppointmentDataSource(appointments);
