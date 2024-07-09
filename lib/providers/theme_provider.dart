@@ -108,48 +108,54 @@ class ThemeProvider extends ChangeNotifier {
                 datePickerTheme: DatePickerThemeData(
                   headerBackgroundColor: lightColor,
                 ),
+                iconButtonTheme: IconButtonThemeData(
+                    style: ButtonStyle(
+                        //  backgroundColor: MaterialStatePropertyAll(primaryColor),
+                        iconColor: MaterialStatePropertyAll(white)))
                 // popupMenuTheme: const PopupMenuThemeData(
                 //   color: Colors.black,
                 // ),
-              );
+                );
 
   setLightMode() {
     currentTheme = ThemeData.light().copyWith(
-      appBarTheme: AppBarTheme(
-        backgroundColor: secondColor,
-        iconTheme: const IconThemeData(color: Colors.white, shadows: [
-          Shadow(
-            offset: Offset(2.0, 2.0),
-            blurRadius: 10.0,
-            color: Color.fromARGB(255, 0, 0, 0),
+        appBarTheme: AppBarTheme(
+          backgroundColor: secondColor,
+          iconTheme: const IconThemeData(color: Colors.white, shadows: [
+            Shadow(
+              offset: Offset(2.0, 2.0),
+              blurRadius: 10.0,
+              color: Color.fromARGB(255, 0, 0, 0),
+            ),
+          ]),
+          titleTextStyle: const TextStyle(
+            color: Colors.black,
           ),
-        ]),
-        titleTextStyle: const TextStyle(
-          color: Colors.black,
         ),
-      ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedItemColor: white,
-        unselectedItemColor: white.withOpacity(0.2),
-      ),
-      switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.all(lightGrey),
-        trackColor: MaterialStateProperty.all(Colors.grey.shade400),
-      ),
-      expansionTileTheme: ExpansionTileThemeData(
-        backgroundColor: Colors.grey.shade200,
-        textColor: lightColor,
-        iconColor: lightColor,
-      ),
-      datePickerTheme: DatePickerThemeData(
-        headerBackgroundColor: lightColor,
-      ),
-     
-    );
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          selectedItemColor: white,
+          unselectedItemColor: white.withOpacity(0.2),
+        ),
+        switchTheme: SwitchThemeData(
+          thumbColor: MaterialStateProperty.all(lightGrey),
+          trackColor: MaterialStateProperty.all(Colors.grey.shade400),
+        ),
+        expansionTileTheme: ExpansionTileThemeData(
+          backgroundColor: Colors.grey.shade200,
+          textColor: lightColor,
+          iconColor: lightColor,
+        ),
+        datePickerTheme: DatePickerThemeData(
+          headerBackgroundColor: lightColor,
+        ),
+        iconButtonTheme: IconButtonThemeData(
+            style: ButtonStyle(
+                // backgroundColor: MaterialStatePropertyAll(primaryColor),
+                iconColor: MaterialStatePropertyAll(white))));
     notifyListeners();
   }
 
@@ -186,9 +192,9 @@ class ThemeProvider extends ChangeNotifier {
             style: ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll(primaryColor))),
         iconButtonTheme: IconButtonThemeData(
-            style: ButtonStyle(iconColor: MaterialStatePropertyAll(white)))
-       
-        );
+            style: ButtonStyle(
+            
+                iconColor: MaterialStatePropertyAll(white))));
     notifyListeners();
   }
 }

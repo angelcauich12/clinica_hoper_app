@@ -25,16 +25,11 @@ class GeneralFunctions {
   }
 
   //modal para cancelar una cita
-  static Future<bool> showCancelAppointment(
-    BuildContext context,
-    String id,
-  ) async {
-    final cancelForm =
-        Provider.of<CancelAppointmentFormProvider>(context, listen: false);
-    final appointmentProv =
-        Provider.of<AppointmentProvider>(context, listen: false);
+  static Future<void> showCancelAppointment(BuildContext context,String id,) async {
+    final cancelForm = Provider.of<CancelAppointmentFormProvider>(context, listen: false);
+    final appointmentProv = Provider.of<AppointmentProvider>(context, listen: false);
     bool resultAppointment;
-    var result = await showDialog<bool>(
+   return showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         shape: const RoundedRectangleBorder(
@@ -126,8 +121,6 @@ class GeneralFunctions {
         ],
       ),
     );
-
-    return result!;
   }
 
   //obtener un archivo json
@@ -282,6 +275,7 @@ static List<TimeRegion> getTimeRegions(List<WorkScheduleDoctor> workSchedule) {
 
       for (String day in daysOfWeek.split(',')) {
         final TimeRegion region = TimeRegion(
+           
           startTime: DateTime(today.year, today.month, today.day,
               startTime.hour, startTime.minute),
           endTime: DateTime(today.year, today.month, today.day, endTime.hour, endTime.minute),

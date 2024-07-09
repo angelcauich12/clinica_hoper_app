@@ -9,7 +9,6 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../providers/providers.dart';
 import '../search/patient_search_delegate.dart';
 import '../shared/preferences.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import '../ui/input_decorations.dart';
 
 class CreateAppointmentScreen2 extends StatefulWidget {
@@ -25,11 +24,11 @@ class CreateAppointmentScreen2 extends StatefulWidget {
 class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   int _currentStep = 0;
   User apiUser = User.fromJson(Preferences.apiUser);
-  final List<TimeRegion> _selectedTimeRegions = [];
-  DateTime? _selectedDate;
-  DateTime? _intervalStartTime;
-  DateTime? _intervalEndTime;
-  bool _isTappedDate = false;
+  final List<TimeRegion> _selectedTimeRegions = []; // arreglo para las regiones seleccionadas
+  DateTime? _selectedDate; //variable para la fecha 
+  DateTime? _intervalStartTime; // variable para la hora de inicio
+  DateTime? _intervalEndTime; // variable para la hora final
+  bool _isTappedDate = false; // variable para saber si se seleccionó el calendario o no
   final DateFormat formattedDate = DateFormat('yyyy-MM-dd');
   final DateFormat formattedTime = DateFormat('h:mm a');
   final myColor = ThemeProvider.secondColor;
@@ -43,9 +42,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     final appointmentRequestProvider = context.read<AppointmentProvider>();
     print('especialidad seleccionada desde create appointment: ${appointmentRequestProvider.specialtySelected}');
 
-    if (apiUser.miPerfil.nombre == 'Doctor' && apiUser.specialties != null &&
+    if (apiUser.miPerfil.nombre == 'Doctor' &&
+        apiUser.specialties != null &&
         apiUser.specialties!.length == 1) {
-        _currentStep = 2;
+      _currentStep = 2;
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         appointmentRequestProvider.doctorSelected = apiUser.id.toString();
@@ -53,11 +53,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       });
     }
 
-    if(appointmentRequestProvider.specialtySelected != null && apiUser.miPerfil.nombre != 'Doctor' ){
+    if (appointmentRequestProvider.specialtySelected != null &&
+        apiUser.miPerfil.nombre != 'Doctor') {
       _currentStep = 1;
     }
-
-  
   }
 
   @override
@@ -65,30 +64,31 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
     final List<TimeRegion> enabledRegions = GeneralFunctions.getTimeRegions(appointmentProv.workSchedule);
-    final List<TimeRegion> disabledRegions = getDisabledRegions(enabledRegions);
-    final List<TimeRegion> specialRegions = [...disabledRegions,...enabledRegions,..._selectedTimeRegions
+    final List<TimeRegion> specialRegions = [
+      ...enabledRegions,
+      ..._selectedTimeRegions
     ];
 
-    final AppointmentDataSource calendarAppointments = GeneralFunctions.getCalendarDataSource(appointmentProv.appointments);
-    final AppointmentDataSource doctorAppointments = GeneralFunctions.getCalendarDataSource(appointmentProv.doctorAppointments);
+    final calendarAppointments = appointmentProv.appointments;
+    final doctorAppointments = appointmentProv.doctorAppointments;
     final appointmentForm = Provider.of<AppointmentProvider>(context);
-  
 
     Future<void> onRefresh() async {
       appointmentProv.isLoading = true;
       await Future.delayed(const Duration(seconds: 2));
       switch (_currentStep) {
         case 0:
-        appointmentProv.getData();
+          appointmentProv.getData();
           break;
         case 1:
-        appointmentProv.getData();
-        break;  
-         case 2:
-        appointmentProv.workScheduleDoctor();
-        appointmentProv.getAppointments();
-        break;  
-        default: appointmentProv.getData();
+          appointmentProv.getData();
+          break;
+        case 2:
+          appointmentProv.workScheduleDoctor();
+          appointmentProv.getAppointments();
+          break;
+        default:
+          appointmentProv.getData();
       }
       appointmentProv.isLoading = false;
       setState(() {});
@@ -171,8 +171,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                       ),
                     ),
                   ),
-                )
-                ),
+                )),
             SliverList(
                 delegate: SliverChildListDelegate([
               (appointmentProv.isLoadingCatalogs)
@@ -222,9 +221,11 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                     child: Text(
                                                       'Anterior',
                                                       style: TextStyle(
-                                                          color: Preferences.isDarkMode 
-                                                          ? ThemeProvider.white
-                                                          : myColor),
+                                                          color: Preferences
+                                                                  .isDarkMode
+                                                              ? ThemeProvider
+                                                                  .white
+                                                              : myColor),
                                                     ),
                                                   )
                                                 : const SizedBox.shrink(),
@@ -265,7 +266,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 9,
                                         color: _currentStep >= 0
-                                            ?  Preferences.isDarkMode ? ThemeProvider.white : myColor
+                                            ? Preferences.isDarkMode
+                                                ? ThemeProvider.white
+                                                : myColor
                                             : Colors.grey),
                                   ),
                                   content: Container(
@@ -283,8 +286,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 18,
                                                   color: Preferences.isDarkMode
-                                                  ? ThemeProvider.white 
-                                                  : myColor),
+                                                      ? ThemeProvider.white
+                                                      : myColor),
                                             ),
                                           ],
                                         ),
@@ -330,9 +333,11 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                         '',
                                                                     style:
                                                                         TextStyle(
-                                                                      color: Preferences.isDarkMode 
-                                                                      ? ThemeProvider.white
-                                                                      :ThemeProvider.primaryColor,
+                                                                      color: Preferences.isDarkMode
+                                                                          ? ThemeProvider
+                                                                              .white
+                                                                          : ThemeProvider
+                                                                              .primaryColor,
                                                                       fontFamily:
                                                                           'Roboto',
                                                                     ),
@@ -346,7 +351,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                               1
                                                                           : _currentStep +=
                                                                               2;
-                                                                      appointmentProv.specialtySelected = appointmentProv.specialties![
+                                                                      appointmentProv.specialtySelected = appointmentProv
+                                                                          .specialties![
                                                                               index]
                                                                           .id
                                                                           .toString();
@@ -399,7 +405,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 9,
                                         color: _currentStep >= 1
-                                            ?  Preferences.isDarkMode ? ThemeProvider.white : myColor
+                                            ? Preferences.isDarkMode
+                                                ? ThemeProvider.white
+                                                : myColor
                                             : Colors.grey),
                                   ),
                                   content: Container(
@@ -416,7 +424,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                   fontFamily: 'Roboto',
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 18,
-                                                  color:  Preferences.isDarkMode ? ThemeProvider.white : myColor),
+                                                  color: Preferences.isDarkMode
+                                                      ? ThemeProvider.white
+                                                      : myColor),
                                             ),
                                           ],
                                         ),
@@ -468,31 +478,39 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                         '',
                                                                     style:
                                                                         TextStyle(
-                                                                      color:  Preferences.isDarkMode ? ThemeProvider.white : ThemeProvider
-                                                                          .primaryColor,
+                                                                      color: Preferences.isDarkMode
+                                                                          ? ThemeProvider
+                                                                              .white
+                                                                          : ThemeProvider
+                                                                              .primaryColor,
                                                                       fontFamily:
                                                                           'Roboto',
                                                                     ),
                                                                   ),
-                                                                  onTap: () async {
+                                                                  onTap:
+                                                                      () async {
                                                                     setState(
-                                                                        ()  {
+                                                                        () {
                                                                       _currentStep +=
                                                                           1;
                                                                     });
 
-                                                                    appointmentProv.doctorSelected = appointmentProv
-                                                                          .doctors![
-                                                                              index]
-                                                                          .id
-                                                                          .toString();
+                                                                    appointmentProv
+                                                                            .doctorSelected =
+                                                                        appointmentProv
+                                                                            .doctors![index]
+                                                                            .id
+                                                                            .toString();
 
-                                                                      appointmentProv
-                                                                              .isLoading =
-                                                                          true;
-                                                                      appointmentProv.workSchedule = [];
-                                                                     await appointmentProv.workScheduleDoctor();
-                                                                     await appointmentProv.getDoctorAppointments();
+                                                                    appointmentProv
+                                                                            .isLoading =
+                                                                        true;
+                                                                    appointmentProv
+                                                                        .workSchedule = [];
+                                                                    await appointmentProv
+                                                                        .workScheduleDoctor();
+                                                                    await appointmentProv
+                                                                        .getDoctorAppointments();
                                                                   },
                                                                 ),
                                                               ],
@@ -530,94 +548,41 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 9,
                                         color: _currentStep >= 2
-                                            ?  Preferences.isDarkMode ? ThemeProvider.white : myColor
+                                            ? Preferences.isDarkMode
+                                                ? ThemeProvider.white
+                                                : myColor
                                             : Colors.grey),
                                   ),
                                   content: Column(
                                     children: [
                                       Container(
-                                        height: size.height * 0.85,
-                                        decoration: BoxDecoration(
-                                          // color: Colors.red,
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: myColor,
-                                              width: 0.4,
-                                            ),
-                                          ),
-                                        ),
-                                        child: MaterialApp(
-                                          debugShowCheckedModeBanner: false,
-                                          locale: const Locale('es'),
-                                          supportedLocales: const [
-                                            Locale('es'),
-                                          ],
-                                          localizationsDelegates: const [
-                                            GlobalMaterialLocalizations
-                                                .delegate,
-                                            GlobalWidgetsLocalizations.delegate,
-                                            GlobalCupertinoLocalizations
-                                                .delegate,
-                                          ],
-                                          home: SfCalendar(
-                                            view: CalendarView.week,
-                                            timeSlotViewSettings:
-                                                TimeSlotViewSettings(
-                                                    timeTextStyle:
-                                                        const TextStyle(
-                                                      fontSize: 8,
-                                                    ),
-                                                    numberOfDaysInView:
-                                                        _numberOfDays,
-                                                    timeInterval:
-                                                        const Duration(
-                                                      minutes: 30,
-                                                    ),
-                                                    timeFormat: 'h:mm a'),
-                                            allowViewNavigation: true,
-                                            showDatePickerButton: true,
-                                            headerStyle: CalendarHeaderStyle(
-                                              backgroundColor: myColor,
-                                              textStyle: const TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            todayHighlightColor: myColor,
-                                            minDate: DateTime.now(),
-                                            showCurrentTimeIndicator: true,
-                                            showTodayButton: true,
-                                            selectionDecoration: BoxDecoration(
-                                              border: Border.all(
+                                          height: size.height * 0.85,
+                                          decoration: BoxDecoration(
+                                            // color: Colors.red,
+                                            border: Border(
+                                              bottom: BorderSide(
                                                 color: myColor,
+                                                width: 0.4,
                                               ),
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(4)),
                                             ),
-                                            dragAndDropSettings:
-                                                DragAndDropSettings(
-                                                    timeIndicatorStyle:
-                                                        TextStyle(
-                                                            color: myColor)),
-                                            cellEndPadding: 0.0,
-                                            allowDragAndDrop: apiUser.miPerfil.nombre != 'Doctor' ? false :  true,
-                                            appointmentTextStyle:
-                                                const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Colors.white),
-                                            specialRegions: specialRegions,
-                                            dataSource: apiUser.miPerfil.nombre != 'Doctor' ? doctorAppointments : calendarAppointments,
-                                            onTap: apiUser.miPerfil.nombre != 'Doctor' ? null : _onCalendarTapped,           
-                                            onDragEnd: (details) => _onDragEnd(details),
                                           ),
-                                        ),
-                                      ),
+                                          child: WeekCanlendar(
+                                              timeInterval:  const Duration(minutes: 30),
+                                              allowDragAndDrop: apiUser.miPerfil.nombre != 'Doctor' ? false :  true,
+                                              specialRegions: specialRegions,
+                                              appointments: apiUser.miPerfil.nombre != 'Doctor' ? doctorAppointments : calendarAppointments,
+                                              onTap: apiUser.miPerfil.nombre != 'Doctor' ? null : _onCalendarTapped,
+                                              onDragEnd: (details) => _onDragEnd(details),
+                                              numberOfDaysInView: _numberOfDays,
+                                              )),
                                       const SizedBox(
                                         height: 5,
                                       ),
                                       apiUser.miPerfil.nombre != 'Doctor'
                                           ? Padding(
-                                            padding: const EdgeInsets.only(top: 5, left: 25),
-                                            child: Row(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5, left: 25),
+                                              child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 children: <Widget>[
@@ -637,19 +602,24 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                   apiUser.specialties!
                                                                           .length >
                                                                       1) {
-                                                                _currentStep -= 2;
+                                                                _currentStep -=
+                                                                    2;
                                                               }
                                                             });
                                                           },
                                                     child: Text(
                                                       'Anterior',
                                                       style: TextStyle(
-                                                          color:  Preferences.isDarkMode ? ThemeProvider.white : myColor),
+                                                          color: Preferences
+                                                                  .isDarkMode
+                                                              ? ThemeProvider
+                                                                  .white
+                                                              : myColor),
                                                     ),
                                                   )
                                                 ],
                                               ),
-                                          )
+                                            )
                                           : Container(),
                                     ],
                                   )),
@@ -699,8 +669,11 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                   ),
                                 )
                               : Container(),
-                            apiUser.miPerfil.nombre != 'Doctor' && _currentStep == 2 ?   const Positioned(  bottom: 150,
-                                  right: 20, child: FloatingMenu() ) : Container(),
+                          apiUser.miPerfil.nombre != 'Doctor' &&
+                                  _currentStep == 2
+                              ? const Positioned(
+                                  bottom: 150, right: 20, child: FloatingMenu())
+                              : Container(),
                           !_isTappedDate
                               ? Container()
                               : Positioned(
@@ -852,14 +825,20 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                           14),
                                                                   labelText:
                                                                       'Descripción',
-                                                                  labelStyle:
-                                                                      TextStyle(
-                                                                          color: Preferences.isDarkMode ? ThemeProvider.white : myColor)),
+                                                                  labelStyle: TextStyle(
+                                                                      color: Preferences
+                                                                              .isDarkMode
+                                                                          ? ThemeProvider
+                                                                              .white
+                                                                          : myColor)),
                                                               keyboardType:
                                                                   TextInputType
                                                                       .multiline,
                                                               maxLength: 40,
-                                                              onChanged: (value) => appointmentProv.description = value,
+                                                              onChanged: (value) =>
+                                                                  appointmentProv
+                                                                          .description =
+                                                                      value,
                                                               validator:
                                                                   (value) {
                                                                 return (value !=
@@ -897,7 +876,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                         await Future.delayed(const Duration(
                                                                             seconds:
                                                                                 1));
-                                                                        final result = await appointmentProv.createAppointment();
+                                                                        final result =
+                                                                            await appointmentProv.createAppointment();
                                                                         if (result) {
                                                                           appointmentProv.patientSelected =
                                                                               null;
@@ -945,71 +925,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   }
 
 
-
-
-
-// Función para deshabilitar todo el calendario
-List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
-  final List<TimeRegion> regions = [];
-  final DateTime now = DateTime.now();
-  final DateTime today = DateTime(now.year, now.month, now.day);
-
-  final List<String> daysOfWeek = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
-
-  for (String day in daysOfWeek) {
-    final List<TimeRegion> dayEnabledRegions = enabledRegions
-        .where((region) => region.recurrenceRule!.contains(day))
-        .toList();
-
-    if (dayEnabledRegions.isEmpty) {
-      // Si no hay regiones habilitadas para este día, deshabilitar todo el día
-      regions.add(TimeRegion(
-        startTime: DateTime(today.year, today.month, today.day, 0, 0),
-        endTime: DateTime(today.year, today.month, today.day, 23, 59, 59),
-        enablePointerInteraction: _isEmergency,
-        textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
-        color: !_isEmergency ? Colors.grey.withOpacity(0.2) : Colors.green.shade300.withOpacity(0.2),
-        recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-      ));
-      continue;
-    }
-
-    DateTime dayStartTime = DateTime(today.year, today.month, today.day, 0, 0);
-    DateTime dayEndTime = DateTime(today.year, today.month, today.day, 23, 59, 59);
-
-    dayEnabledRegions.sort((a, b) => a.startTime.compareTo(b.startTime));
-
-    DateTime previousEndTime = dayStartTime;
-
-    for (var region in dayEnabledRegions) {
-      if (region.startTime.isAfter(previousEndTime)) {
-        regions.add(TimeRegion(
-          startTime: previousEndTime,
-          endTime: region.startTime,
-          enablePointerInteraction: _isEmergency,
-          textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
-          color: !_isEmergency ? Colors.grey.withOpacity(0.2) : Colors.green.shade300.withOpacity(0.2),
-          recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-        ));
-      }
-      previousEndTime = region.endTime;
-    }
-
-    if (previousEndTime.isBefore(dayEndTime)) {
-      regions.add(TimeRegion(
-        startTime: previousEndTime,
-        endTime: dayEndTime,
-        enablePointerInteraction: _isEmergency,
-        textStyle: const TextStyle(color: Colors.black45, fontSize: 15),
-        color: !_isEmergency ? Colors.grey.withOpacity(0.2) : Colors.green.shade300.withOpacity(0.2),
-        recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
-      ));
-    }
-  }
-
-  return regions;
-}
-
   void _onCalendarTapped(CalendarTapDetails calendarTapDetails) {
     if (calendarTapDetails.targetElement == CalendarElement.header ||
         calendarTapDetails.targetElement == CalendarElement.resourceHeader) {
@@ -1017,7 +932,8 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
     }
 
     if (calendarTapDetails.targetElement == CalendarElement.calendarCell) {
-      _isTappedDate = true;
+        _isTappedDate = true;
+    
       final DateTime tappedDate = calendarTapDetails.date!;
       final DateTime selectedDate = DateTime(
         tappedDate.year,
@@ -1052,6 +968,35 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
         return;
       }
 
+      final List<TimeRegion> enabledRegions = GeneralFunctions.getTimeRegions(Provider.of<AppointmentProvider>(context, listen: false).workSchedule); 
+
+       // Agregar impresiones para diagnóstico
+     // Imprimir las regiones habilitadas para diagnóstico
+    print("enabledRegions:");
+    for (var region in enabledRegions) {
+      print("Region: ${region.startTime} - ${region.endTime}");
+    }
+
+    // Verificar si el tiempo seleccionado está dentro de cualquier región habilitada
+    final bool isInEnabledRegion = enabledRegions.any((region) {
+      final timeOfDayStart = TimeOfDay.fromDateTime(region.startTime);
+      final timeOfDayEnd = TimeOfDay.fromDateTime(region.endTime);
+      final selectedTimeOfDayStart = TimeOfDay.fromDateTime(startTime);
+      final selectedTimeOfDayEnd = TimeOfDay.fromDateTime(endTime);
+
+      return (selectedTimeOfDayStart.hour > timeOfDayStart.hour || 
+              (selectedTimeOfDayStart.hour == timeOfDayStart.hour && selectedTimeOfDayStart.minute >= timeOfDayStart.minute)) &&
+             (selectedTimeOfDayEnd.hour < timeOfDayEnd.hour || 
+              (selectedTimeOfDayEnd.hour == timeOfDayEnd.hour && selectedTimeOfDayEnd.minute <= timeOfDayEnd.minute));
+    });
+
+    print("Tapped date: ${startTime} - ${endTime}");
+    print("isInEnabledRegion: $isInEnabledRegion");
+      if(!isInEnabledRegion){
+        return;
+      }
+
+    
       final TimeRegion newRegion = TimeRegion(
         startTime: startTime,
         endTime: endTime,
@@ -1061,19 +1006,17 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
       setState(() {
         _selectedTimeRegions.add(newRegion);
 
-        if (_intervalStartTime == null ||
-            startTime.isBefore(_intervalStartTime!)) {
+        if (_intervalStartTime == null || startTime.isBefore(_intervalStartTime!)) {
           _intervalStartTime = startTime;
         }
         if (_intervalEndTime == null || endTime.isAfter(_intervalEndTime!)) {
           _intervalEndTime = endTime;
         }
+
       });
     } else {
       if (calendarTapDetails.appointments != null && calendarTapDetails.targetElement == CalendarElement.appointment) {
-        print(calendarTapDetails.appointments!.first);
-        final Appointment appointment =
-            calendarTapDetails.appointments!.first as Appointment;
+        final Appointment appointment = calendarTapDetails.appointments!.first as Appointment;
 
         // Extraer el nombre del paciente del subject
         final RegExp regex = RegExp(r'Px: (.+)');
@@ -1083,115 +1026,20 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
 
         final String startTime = formattedTime.format(appointment.startTime);
         final String endTime = formattedTime.format(appointment.endTime);
-        final String date = DateFormat('EEEE, MMM dd, yyyy', 'es').format(appointment.startTime);
+        final String date = DateFormat('EEEE, MMM dd, yyyy', 'es')
+            .format(appointment.startTime);
         final String appointmentId = appointment.id.toString();
         final String status = appointment.notes.toString();
 
-        GeneralFunctions.showDetails(patientName, date, startTime, endTime, appointmentId, status, context);
+        GeneralFunctions.showDetails(patientName, date, startTime, endTime,
+            appointmentId, status, context);
       }
     }
   }
 
-  
-  Future<String?> showCancelAppointment(BuildContext context, String id) {
-    final cancelForm = Provider.of<CancelAppointmentFormProvider>(context, listen: false);
-    final appointmentProv =
-        Provider.of<AppointmentProvider>(context, listen: false);
 
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        title: const Text(
-          'Cancelar Cita',
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              '¿Realmente desea cancelar esta cita?',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            Form(
-                key: cancelForm.formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      autocorrect: false,
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecorations.authInputDecoration(
-                        color: Colors.grey[350]!,
-                        hintText: 'Motivo de Cancelación',
-                        labelText: 'Justificación',
-                      ),
-                      onChanged: (value) => cancelForm.justification = value,
-                      validator: (value) {
-                        return (value != null && value.length >= 3)
-                            ? null
-                            : 'Escriba una justificación para cancelar';
-                      },
-                    ),
-                  ],
-                ))
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'Cerrar'),
-            style: TextButton.styleFrom(
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              backgroundColor: ThemeProvider.lightRed,
-            ),
-            child: Text(
-              'Cerrar',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 12,
-                color: ThemeProvider.white,
-              ),
-            ),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(4))),
-                backgroundColor: ThemeProvider.secondColor),
-            onPressed: () {
-              if (!cancelForm.isValidForm()) return;
-              Navigator.pop(context);
-              appointmentProv.cancelAppointment(id, cancelForm.justification);
-            },
-            child: Text(
-              'Confirmar',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 12,
-                color: ThemeProvider.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  void _onDragEnd(AppointmentDragEndDetails appointmentDragEndDetails) {
 
-  
-
-  void _onDragEnd( AppointmentDragEndDetails appointmentDragEndDetails) {
     final appointmentProv = Provider.of<AppointmentProvider>(context, listen: false);
     Appointment detail = appointmentDragEndDetails.appointment as Appointment;
     Duration duration = detail.endTime.difference(detail.startTime);
@@ -1302,7 +1150,9 @@ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
       ),
     );
   }
+
+
+
 }
 
-// Clase para crear las citas en el calendario
 

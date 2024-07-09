@@ -13,22 +13,26 @@ class WeekCanlendar extends StatelessWidget {
   final bool? showCurrentTimeIndicator;
   final bool? showDatePickerButton;
   final List<TimeRegion>? specialRegions;
+  final List<MyAppointment>? appointments;
+  final bool? allowDragAndDrop; 
+  final void Function(AppointmentDragEndDetails)? onDragEnd;
   final void Function(CalendarTapDetails)? onTap;
- final  List<MyAppointment>?  appointments;
+  final List<DateTime>? blackoutDates;
+  final void Function(CalendarSelectionDetails)? onSelectionChanged;
   const WeekCanlendar(
       {super.key,
       this.showTodayButton = false,
       this.numberOfDaysInView,
-      this.timeInterval, 
-      this.showCurrentTimeIndicator, 
-      this.showDatePickerButton, 
-      this.specialRegions, 
-      this.onTap, 
-      this.appointments});
+      this.timeInterval,
+      this.showCurrentTimeIndicator,
+      this.showDatePickerButton,
+      this.specialRegions,
+      this.onTap,
+      this.appointments, this.allowDragAndDrop, this.onDragEnd, this.blackoutDates, this.onSelectionChanged,});
 
   @override
   Widget build(BuildContext context) {
-    final AppointmentDataSource appointmentDataSource = GeneralFunctions.getCalendarDataSource(appointments ?? [], appointmenColor: Colors.blue, schedule: true);
+    final AppointmentDataSource appointmentDataSource = GeneralFunctions.getCalendarDataSource(appointments ?? []);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       locale: const Locale('es'),
@@ -41,15 +45,21 @@ class WeekCanlendar extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       home: SfCalendar(
+        onSelectionChanged: onSelectionChanged,
+       allowAppointmentResize: true,
         showTodayButton: showTodayButton ?? false,
         showCurrentTimeIndicator: showCurrentTimeIndicator ?? false,
         showDatePickerButton: showDatePickerButton ?? false,
+        allowDragAndDrop: allowDragAndDrop ?? false,
         specialRegions: specialRegions ?? [],
         onTap: onTap,
+        onDragEnd: onDragEnd,
+        blackoutDates: blackoutDates ?? [],
         dataSource: appointmentDataSource,
         todayHighlightColor: ThemeProvider.primaryColor,
         view: CalendarView.week,
         minDate: DateTime.now(),
+        cellEndPadding: 0.0,
         headerStyle: CalendarHeaderStyle(
           backgroundColor: ThemeProvider.primaryColor,
           textStyle: const TextStyle(color: Colors.white),
@@ -68,6 +78,8 @@ class WeekCanlendar extends StatelessWidget {
             fontSize: 8,
           ),
         ),
+        dragAndDropSettings: DragAndDropSettings(
+            timeIndicatorStyle: TextStyle(color: ThemeProvider.primaryColor)),
       ),
     );
   }
