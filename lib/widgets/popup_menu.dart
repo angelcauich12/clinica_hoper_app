@@ -48,7 +48,7 @@ class PopupMenuList extends StatelessWidget {
         PopupMenuItem(
           height: 30,
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: const Text('Logout'),
+          child: const Text('Cerrar sesión'),
           onTap: () async {
             await authService.logout();
             print('Is Google: ${apiUser.isGoogle}');

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/screens/guest_screen.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
@@ -118,6 +119,7 @@ class MyApp extends StatelessWidget {
         MyAppointmentsScreen.routeName: (context) => const MyAppointmentsScreen(),
         MedicalRecordsScreen.routeName: (context) => MedicalRecordsScreen(),
         UnderConstructionScreen.routeName: (context) => const UnderConstructionScreen(),
+        GuestScreen.routeName: (context) => const GuestScreen(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

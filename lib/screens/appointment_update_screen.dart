@@ -81,7 +81,7 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Su cita con el doctor ${appointment!.doctor?.name} ${appointment.doctor?.lastName} es el $formattedDate a las $formattedTime. Favor de confirmar su asistencia y llegar con anticipación. Gracias!',
+                                'Su cita con el doctor ${appointment.doctor?.name} ${appointment.doctor?.lastName} es el $formattedDate a las $formattedTime. Favor de confirmar su asistencia y llegar con anticipación. Gracias!',
                                 style: const TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w400,
@@ -108,9 +108,7 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                                       setState(() {
                                         isLoading = true;
                                       });
-                                      final result = await appointmentProvider
-                                          .confirmAppointment(
-                                              appointment.id.toString());
+                                      final result = await appointmentProvider.confirmAppointment(appointment.id.toString());
                                       setState(() {
                                         isLoading = false;
                                       });
@@ -141,7 +139,13 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                                     ),
                                     // ignore: void_checks
                                     onPressed: () async {
-                                     await GeneralFunctions.showConfirmModal(context, id);
+                                    await GeneralFunctions.showConfirmModal(
+                                      context, id,
+                                      title: 'Cancelar cita', 
+                                      question: '¿Realmente desea cancelar la cita?', haveDescription: true,
+                                      isAppointment: true
+                                      );
+                                    if(appointmentProvider.result){
                                         Future.microtask(
                                           () {
                                             Navigator.pushNamed(
@@ -150,6 +154,8 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                                             );
                                           },
                                         );
+                                    }
+                                      
                                     },
                                     child: const Text('Cancelar Cita'),
                                   ),

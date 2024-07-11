@@ -153,7 +153,6 @@ class ManageScheduleProvider  extends ChangeNotifier{
     return result;
   }
 
-
   Future<bool> createNonWorkingDay() async{
     _apiUrl = Preferences.apiServer;
     _proyectName = Preferences.projectName;
@@ -205,6 +204,112 @@ class ManageScheduleProvider  extends ChangeNotifier{
             break;
           }
           serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          // print(serverResponse);
+          print('422: ${response.body}');
+          break;
+        case 500:
+          isLoading = false;
+          result = false;
+          // print('response: ${response.body}');
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(serverResponse?.message ?? '500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      Notifications.showSnackBar('$e');
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+
+  }
+
+  Future<bool> deleteNonWorkingDay(String id) async {
+    _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
+    print('petición delete non-working day');
+    _endPoint = '/api/v1/schedule/delete/horario-exclusion';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept':       'application/json',
+      'Authorization':'Bearer $jwtToken'
+    };
+
+   final Map<String, dynamic> queryParameters = {
+      'id' : id
+    };
+
+    print('queryParameters: $queryParameters');
+    
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
+    print('url delete working-day: $url');
+
+    try {
+      isLoading = true;
+      result = false;
+
+      final response = await http.post(url, headers: headers,body: json.encode(queryParameters)).timeout(const Duration(seconds: 30));
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Deleted non working day ${response.body}');
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(serverResponse?.message ?? 'Horario eliminado satisfactoriamente');
+          getNonWorkingDays();
+          notifyListeners();
+          break;
+        case 401:
+          isLoading = false;
+          result = false;
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          serverResponse = ServerResponse.fromJson(response.body);
           Notifications.showSnackBar(
               serverResponse?.message ?? 'Error de Autenticación.');
           break;
@@ -240,8 +345,9 @@ class ManageScheduleProvider  extends ChangeNotifier{
         case 500:
           isLoading = false;
           result = false;
-          print('response: ${response.body}');
-          Notifications.showSnackBar('500 Server Error.');
+          print('500 response: ${response.body}');
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(serverResponse?.message ?? '500 Server Error.');
           
           break;
         default:
@@ -261,7 +367,6 @@ class ManageScheduleProvider  extends ChangeNotifier{
       notifyListeners();
     }
     return result;
-
   }
 
   Future logout() async {

@@ -10,8 +10,6 @@ import 'package:hope_app/utilities/general_functions.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
-const LatLng currentLocation = LatLng(20.988331640730305, -89.60906162570994);
-
 class HomeScreen extends StatefulWidget {
   static const String routeName = 'home';
 
@@ -513,6 +511,7 @@ class _FindUsState extends State<_FindUs> {
 
   final Map<String, Marker> _markers = {};
   bool isMapCreated = false;
+  LatLng currentLocation = LatLng(20.988331640730305, -89.60906162570994);
 
   changeMapMode(){
     if(Preferences.isDarkMode){
@@ -561,7 +560,7 @@ class _FindUsState extends State<_FindUs> {
               ],
             ),
             child: GoogleMap(
-              initialCameraPosition: const CameraPosition(
+              initialCameraPosition: CameraPosition(
                 target: currentLocation,
                 zoom: 18,
               ),

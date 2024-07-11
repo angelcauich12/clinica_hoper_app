@@ -132,10 +132,10 @@ class LoginScreen extends StatelessWidget {
                               TextButton(
                                 onPressed: () => Navigator.pushReplacementNamed(
                                   context,
-                                  RegisterScreen.routeName,
+                                  GuestScreen.routeName,
                                 ),
                                 child: const Text(
-                                  'Crear cuenta',
+                                  'Entrar como invitado',
                                   style: TextStyle(
                                       color: Colors.blue,
                                       fontWeight: FontWeight.bold),

@@ -38,7 +38,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
   Widget build(BuildContext context) {
     final scheduleProv = Provider.of<ManageScheduleProvider>(context);
     final size = MediaQuery.of(context).size;
-    final  nonWorkingDays = GeneralFunctions.convertToBlackoutDates(scheduleProv.nonWorkingDays) ;
+    final  nonWorkingDays = GeneralFunctions.getBlackoutDates(scheduleProv.nonWorkingDays) ;
 
     return DefaultTabController(
       length: 1,

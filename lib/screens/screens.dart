@@ -1,5 +1,4 @@
 
-
 export 'package:hope_app/screens/appointment_update_screen.dart';
 export 'package:hope_app/screens/about_screen.dart';
 export 'package:hope_app/screens/activation_screen.dart';
@@ -21,4 +20,7 @@ export 'package:hope_app/screens/specialty_details_screen.dart';
 export 'package:hope_app/screens/under_construction_screen.dart';
 export 'package:hope_app/screens/create_appointment_screen2.dart';
 export 'package:hope_app/screens/manage_schedule_screen.dart';
+export 'package:hope_app/screens/guest_screen.dart';
+
+
 

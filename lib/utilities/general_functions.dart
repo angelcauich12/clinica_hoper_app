@@ -137,7 +137,12 @@ class GeneralFunctions {
                 Navigator.pop(context,);
               }
             }
-            :() => {}
+            :() async {
+              await Provider.of<ManageScheduleProvider>(context, listen: false).deleteNonWorkingDay(id);
+              if (context.mounted) {
+                Navigator.pop(context,);
+              }
+            }
             ,
             child: Text(
               'Confirmar',
@@ -266,8 +271,7 @@ class GeneralFunctions {
     return AppointmentDataSource(appointments);
   }
   
-
-  // Función para convertir cadena de tiempo a DateTime
+// Función para convertir cadena de tiempo a DateTime
   static DateTime parseTimeString(String timeString) {
     final List<String> parts = timeString.split(':');
     final int hours = int.parse(parts[0]);
@@ -275,9 +279,8 @@ class GeneralFunctions {
     return DateTime(0, 1, 1, hours, minutes);
   }
 
-
-  // Función habilitar el horario del doctor
-static List<TimeRegion> getTimeRegions(List<WorkScheduleDoctor> workSchedule) {
+// Función habilitar el horario del doctor
+static List<TimeRegion> getWorkScheduleRegions(List<WorkScheduleDoctor> workSchedule) {
   User apiUser = User.fromJson(Preferences.apiUser);
   final List<TimeRegion> regions = [];
   if (workSchedule.isNotEmpty) {
@@ -301,29 +304,36 @@ static List<TimeRegion> getTimeRegions(List<WorkScheduleDoctor> workSchedule) {
       final DateTime startTime = parseTimeString(schedule.startTime);
       final DateTime endTime = parseTimeString(schedule.endTime);
 
+
       for (String day in daysOfWeek.split(',')) {
         final TimeRegion region = TimeRegion(
-           
-          startTime: DateTime(today.year, today.month, today.day,
-              startTime.hour, startTime.minute),
+          startTime: DateTime(today.year, today.month, today.day,startTime.hour, startTime.minute),
           endTime: DateTime(today.year, today.month, today.day, endTime.hour, endTime.minute),
-          color: Colors.green.shade300.withOpacity(0.2),
+          color: Colors.green.shade100,
           enablePointerInteraction: apiUser.miPerfil.nombre != 'Doctor' ? false : true,
-          recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$day',
+          recurrenceRule: 'FREQ=WEEKLY;BYDAY=$day;INTERVAL=1;',
         );
 
-        if (!regions.any((existingRegion) =>
-            existingRegion.startTime == region.startTime &&
-            existingRegion.endTime == region.endTime &&
-            existingRegion.recurrenceRule == region.recurrenceRule)) {
-          regions.add(region);
-        }
+        regions.add(region);
       }
     }
   }
   return regions;
 }
 
+
+static  String dayToWeekDay(int day) {
+    switch (day) {
+      case 0: return 'SU';
+      case 1: return 'MO';
+      case 2: return 'TU';
+      case 3: return 'WE';
+      case 4: return 'TH';
+      case 5: return 'FR';
+      case 6: return 'SA';
+      default: return '';
+    }
+  }
 //Modal para ver los detalles de una cita
 static Future<void> showDetails(String date, String startTime, String endTime, String id, BuildContext context, {bool? isAppointment,  String? head , String? patientName, String? endDate, String? status,}) {
     return showDialog(
@@ -541,7 +551,7 @@ static Future<void> showDetails(String date, String startTime, String endTime, S
     }
  }
 
- static AppointmentDataSource convertToBlackoutDates(List<NonWorkingDay> sourceNonWorkingDays) {
+ static AppointmentDataSource getBlackoutDates(List<NonWorkingDay> sourceNonWorkingDays) {
   List<Appointment> nonWorkingDays = sourceNonWorkingDays.map((myAppointment) {
     DateTime startTime = DateTime.parse(myAppointment.start.trim());
     DateTime endTime = DateTime.parse(myAppointment.end.trim());
@@ -563,6 +573,5 @@ static Future<void> showDetails(String date, String startTime, String endTime, S
   return AppointmentDataSource(nonWorkingDays);
 }
 
-
-
 }
+

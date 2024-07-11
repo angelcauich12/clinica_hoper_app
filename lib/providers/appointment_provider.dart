@@ -340,8 +340,7 @@ class AppointmentProvider extends ChangeNotifier {
           isLoading = false;
           print('200: Cancel ${response.body}');
           serverResponse = ServerResponse.fromJson(response.body);
-          Notifications.showSnackBar(
-              serverResponse?.message ?? 'Cita $id cancelada correctamente.');
+          Notifications.showSnackBar(serverResponse?.message ?? 'Cita $id cancelada correctamente.');
           getAppointments();
           notifyListeners();
           break;
@@ -842,8 +841,6 @@ class AppointmentProvider extends ChangeNotifier {
     }
     return result;
   }
-
-
 
   Future<MyAppointment> getAppointment(String id) async {
      _apiUrl = Preferences.apiServer;

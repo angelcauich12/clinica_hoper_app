@@ -35,6 +35,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   final TextEditingController _searchController = TextEditingController();
   int _numberOfDays = 3;
   bool _isEmergency = false;
+  List<TimeRegion> specialRegions = [];
 
   @override
   void initState() {
@@ -63,8 +64,11 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   Widget build(BuildContext context) {
     final appointmentProv = Provider.of<AppointmentProvider>(context);
     final size = MediaQuery.of(context).size;
-    final List<TimeRegion> enabledRegions = GeneralFunctions.getTimeRegions(appointmentProv.workSchedule);
-    final List<TimeRegion> specialRegions = [
+   
+    final List<TimeRegion> enabledRegions = GeneralFunctions.getWorkScheduleRegions(appointmentProv.workSchedule);
+    final desabledRegions = getDisabledRegions(enabledRegions);
+    specialRegions = [
+      ...desabledRegions,
       ...enabledRegions,
       ..._selectedTimeRegions
     ];
@@ -93,6 +97,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       appointmentProv.isLoading = false;
       setState(() {});
     }
+
+    
 
     return Scaffold(
       body: RefreshIndicator(
@@ -574,6 +580,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                               onTap: apiUser.miPerfil.nombre != 'Doctor' ? null : _onCalendarTapped,
                                               onDragEnd: (details) => _onDragEnd(details),
                                               numberOfDaysInView: _numberOfDays,
+                                              showTodayButton: true,
                                               )),
                                       const SizedBox(
                                         height: 5,
@@ -645,7 +652,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                             child: FittedBox(
                                               fit: BoxFit.fill,
                                               child: Switch.adaptive(
-                                                inactiveTrackColor: Colors.grey,
+                                               inactiveTrackColor: Colors.grey,
+                                                activeColor: Colors.blue,
+                                                activeTrackColor: Colors.blue,
                                                 value: _isEmergency,
                                                 onChanged: (bool value) {
                                                   _isEmergency = value;
@@ -925,7 +934,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     }
 
     if (calendarTapDetails.targetElement == CalendarElement.calendarCell) {
-        _isTappedDate = true;
     
       final DateTime tappedDate = calendarTapDetails.date!;
       final DateTime selectedDate = DateTime(tappedDate.year,tappedDate.month,tappedDate.day,
@@ -941,13 +949,12 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       final DateTime startTime = tappedDate;
       final DateTime endTime = startTime.add(const Duration(minutes: 30));
 
-      final bool isAlreadySelected = _selectedTimeRegions.any((region) =>
-          region.startTime.isAtSameMomentAs(startTime) &&
-          region.endTime.isAtSameMomentAs(endTime));
+      final bool isAlreadySelected = _selectedTimeRegions.any((region) =>region.startTime.isAtSameMomentAs(startTime) && region.endTime.isAtSameMomentAs(endTime));
 
       if (isAlreadySelected) {
         return;
       }
+       _isTappedDate = true;
 
       // Verificar si es adyacente a alguna selección existente
       final bool isAdjacent = _selectedTimeRegions.any((region) =>
@@ -958,35 +965,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         return;
       }
 
-      final List<TimeRegion> enabledRegions = GeneralFunctions.getTimeRegions(Provider.of<AppointmentProvider>(context, listen: false).workSchedule); 
-
-       // Agregar impresiones para diagnóstico
-     // Imprimir las regiones habilitadas para diagnóstico
-    print("enabledRegions:");
-    for (var region in enabledRegions) {
-      print("Region: ${region.startTime} - ${region.endTime}");
-    }
-
-    // Verificar si el tiempo seleccionado está dentro de cualquier región habilitada
-    final bool isInEnabledRegion = enabledRegions.any((region) {
-      final timeOfDayStart = TimeOfDay.fromDateTime(region.startTime);
-      final timeOfDayEnd = TimeOfDay.fromDateTime(region.endTime);
-      final selectedTimeOfDayStart = TimeOfDay.fromDateTime(startTime);
-      final selectedTimeOfDayEnd = TimeOfDay.fromDateTime(endTime);
-
-      return (selectedTimeOfDayStart.hour > timeOfDayStart.hour || 
-              (selectedTimeOfDayStart.hour == timeOfDayStart.hour && selectedTimeOfDayStart.minute >= timeOfDayStart.minute)) &&
-             (selectedTimeOfDayEnd.hour < timeOfDayEnd.hour || 
-              (selectedTimeOfDayEnd.hour == timeOfDayEnd.hour && selectedTimeOfDayEnd.minute <= timeOfDayEnd.minute));
-    });
-
-    print("Tapped date: ${startTime} - ${endTime}");
-    print("isInEnabledRegion: $isInEnabledRegion");
-      if(!isInEnabledRegion){
-        return;
-      }
-
-    
+     
       final TimeRegion newRegion = TimeRegion(
         startTime: startTime,
         endTime: endTime,
@@ -1144,6 +1123,86 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   }
 
 
+ List<TimeRegion> getDisabledRegions(List<TimeRegion> enabledRegions) {
+    final List<TimeRegion> disabledRegions = [];
+    DateTime now = DateTime.now();
+    List<int> enabledDaysOfWeek = [];
+
+    for (var region in enabledRegions) {
+      // Obtener los días permitidos de las regiones habilitadas
+      if (region.recurrenceRule != null) {
+        String days = region.recurrenceRule!.split('BYDAY=')[1].split(';')[0];
+        enabledDaysOfWeek.addAll(days.split(',').map((day) {
+          switch (day) {
+            case 'MO': return 1;
+            case 'TU': return 2;
+            case 'WE': return 3;
+            case 'TH': return 4;
+            case 'FR': return 5;
+            case 'SA': return 6;
+            case 'SU': return 0;
+            default: return -1;
+          }
+        }));
+      }
+    }
+
+    // Deshabilitar todas las horas para los días que no están permitidos
+    for (int day = 0; day < 7; day++) {
+      if (!enabledDaysOfWeek.contains(day)) {
+        for (int hour = 0; hour < 24; hour++) {
+          disabledRegions.add(TimeRegion(
+            startTime: DateTime(now.year, now.month, now.day + (day - now.weekday + 7) % 7, hour, 0),
+            endTime: DateTime(now.year, now.month, now.day + (day - now.weekday + 7) % 7, hour + 1, 0),
+            color:  _isEmergency ? Colors.green.shade100 :Colors.grey.shade200,
+            enablePointerInteraction: _isEmergency ? true : false,
+            recurrenceRule: 'FREQ=WEEKLY;BYDAY=${GeneralFunctions.dayToWeekDay(day)};INTERVAL=1',
+          ));
+        }
+      }
+    }
+
+    // Deshabilitar las horas no permitidas en los días habilitados
+    for (int day in enabledDaysOfWeek) {
+      for (int hour = 0; hour < 24; hour++) {
+        bool isEnabled = enabledRegions.any((region) {
+          return region.startTime.hour <= hour && region.endTime.hour > hour && region.recurrenceRule!.contains(GeneralFunctions.dayToWeekDay(day));
+        });
+
+        if (!isEnabled) {
+          DateTime startTime = DateTime(now.year, now.month, now.day + (day - now.weekday + 7) % 7, hour, 0);
+          DateTime endTime = DateTime(now.year, now.month, now.day + (day - now.weekday + 7) % 7, hour + 1, 0);
+
+          disabledRegions.add(TimeRegion(
+            startTime: startTime,
+            endTime: endTime,
+            color:  _isEmergency  ? Colors.green.shade100 :Colors.grey.shade200,
+            enablePointerInteraction: _isEmergency  ? true : false,
+            recurrenceRule: 'FREQ=WEEKLY;BYDAY=${GeneralFunctions.dayToWeekDay(day)};INTERVAL=1',
+          ));
+        }
+      }
+    }
+
+    // Deshabilitar intervalos entre regiones habilitadas
+    for (int day in enabledDaysOfWeek) {
+      for (int i = 0; i < enabledRegions.length - 1; i++) {
+        final region = enabledRegions[i];
+        final nextRegion = enabledRegions[i + 1];
+        if (region.endTime.minute != nextRegion.startTime.minute) {
+          disabledRegions.add(TimeRegion(
+            startTime: region.endTime,
+            endTime: nextRegion.startTime,
+            color:  _isEmergency  ? Colors.green.shade100 :Colors.grey.shade200,
+            enablePointerInteraction: _isEmergency ? true : false,
+            recurrenceRule: 'FREQ=WEEKLY;BYDAY=${GeneralFunctions.dayToWeekDay(day)};INTERVAL=1',
+          ));
+        }
+      }
+    }
+
+    return disabledRegions;
+  }
 
 }
 
