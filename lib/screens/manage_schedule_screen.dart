@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:hope_app/widgets/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import '../models/models.dart';
 import '../providers/providers.dart';
+import '../shared/preferences.dart';
 
 class ManageScheduleScreen extends StatefulWidget {
   static const String routeName = 'manage-schedule';
@@ -12,15 +18,28 @@ class ManageScheduleScreen extends StatefulWidget {
 }
 
 class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
-  final List<TimeRegion> _selectedTimeRegions =
-      []; // arreglo para las regiones seleccionadas
-  DateTime? _selectedDate; //variable para la fecha
+  User apiUser = User.fromJson(Preferences.apiUser);
+  final List<TimeRegion> _selectedTimeRegions =[]; // arreglo para las regiones seleccionadas
   DateTime? _intervalStartTime; // variable para la hora de inicio
   DateTime? _intervalEndTime; // variable para la hora final
   bool _isTappedDate = false; // variable para saber si se seleccionó el calendario o no
 
   @override
+    initState()  {
+    super.initState();
+    final requestProvider = context.read<ManageScheduleProvider>();
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+        requestProvider.doctorSelected =  apiUser.id.toString();
+        requestProvider.getNonWorkingDays();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final scheduleProv = Provider.of<ManageScheduleProvider>(context);
+    final size = MediaQuery.of(context).size;
+    final  nonWorkingDays = GeneralFunctions.convertToBlackoutDates(scheduleProv.nonWorkingDays) ;
+
     return DefaultTabController(
       length: 1,
       child: Scaffold(
@@ -53,14 +72,29 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
                 ]),
             centerTitle: true,
           ),
-          body: TabBarView(
+          body: Stack(
             children: [
-              WeekCanlendar(
-                showDatePickerButton: true,
-                timeInterval: const Duration(minutes: 30),
-                onTap: _onCalendarTapped,
-                specialRegions: _selectedTimeRegions,
-              )
+              TabBarView(
+                children: [
+                  WeekCanlendar(
+                    showDatePickerButton: true,
+                    timeInterval: const Duration(minutes: 30),
+                    onTap: _onCalendarTapped,
+                    specialRegions: _selectedTimeRegions,
+                    appointments: nonWorkingDays,
+                    showTodayButton: true,
+                   
+                  )
+                ],
+              ), scheduleProv.isLoading ? SizedBox(
+                      width: size.width,
+                      height: size.height * 0.6,
+                      child: Center(
+                        child: SpinKitCubeGrid(
+                        color: ThemeProvider.secondColor,
+                        ),
+                      ),
+              ): Container()
             ],
           ),
           floatingActionButton: !_isTappedDate
@@ -69,29 +103,42 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
                   onPressedClose: () {
                     _isTappedDate = false;
                     _selectedTimeRegions.clear();
-                    _selectedDate = null;
                     _intervalStartTime = null;
                     _intervalEndTime = null;
                     setState(() {});
                   },
-                  onPressedSucess: () => {},
+                  onPressedSucess: () async {
+                  scheduleProv.initialTime = GeneralFunctions.formatTime('$_intervalStartTime',timeFormat:'HH:mm');
+                  scheduleProv.endTime = GeneralFunctions.formatTime('$_intervalEndTime', timeFormat: 'HH:mm');
+                  scheduleProv.initialDate = DateFormat('dd/MM/yyyy').format(_intervalStartTime!);
+                  scheduleProv.endDate = DateFormat('dd/MM/yyyy').format(_intervalEndTime!);
+                  final result = await scheduleProv.createNonWorkingDay();
+                  if(result){
+                    _isTappedDate = false;
+                    _selectedTimeRegions.clear();
+                    _intervalStartTime = null;
+                    _intervalEndTime = null;
+                    scheduleProv.initialTime = null;
+                    scheduleProv.endTime = null;
+                    scheduleProv.initialDate = null;
+                    scheduleProv.endDate = null;
+                  }
+                 
+                  },
                 )),
     );
   }
 
   void _onCalendarTapped(CalendarTapDetails calendarTapDetails) {
-    final DateTime tappedDate = calendarTapDetails.date!; //Fecha seleccionada
-    if (calendarTapDetails.targetElement == CalendarElement.header ||
-        calendarTapDetails.targetElement == CalendarElement.resourceHeader) {
+  final DateTime tappedDate = calendarTapDetails.date!; //Fecha seleccionada
+  if (calendarTapDetails.targetElement == CalendarElement.header || calendarTapDetails.targetElement == CalendarElement.resourceHeader) {
       return;
-    }
+  }
 
-     if (calendarTapDetails.targetElement == CalendarElement.viewHeader) {
-  final DateTime tappedDate = calendarTapDetails.date!;
-  final DateTime startTime =
-      DateTime(tappedDate.year, tappedDate.month, tappedDate.day, 0, 0);
-  final DateTime endTime =
-      DateTime(tappedDate.year, tappedDate.month, tappedDate.day, 23, 59);
+  if (calendarTapDetails.targetElement == CalendarElement.viewHeader) {
+  // final DateTime tappedDate = calendarTapDetails.date!;
+  final DateTime startTime = DateTime(tappedDate.year, tappedDate.month, tappedDate.day, 0, 0);
+  final DateTime endTime = DateTime(tappedDate.year, tappedDate.month, tappedDate.day, 23, 59);
 
   // Verificar si ya está seleccionado el día completo
   final bool isAlreadySelected = _selectedTimeRegions.any((region) =>
@@ -111,14 +158,43 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
       region.startTime.day == startTime.day &&
       region.endTime.hour != 23 && region.endTime.minute != 59);
 
-  // Pintar intervalos no seleccionados entre dos días
+  // Pintar días completos entre dos selecciones de días completos
+  if (_intervalStartTime != null && _intervalEndTime != null) {
+    DateTime earlierTime = _intervalStartTime!.isBefore(startTime)
+        ? _intervalStartTime!
+        : startTime;
+    DateTime laterTime =
+        _intervalEndTime!.isAfter(endTime) ? _intervalEndTime! : endTime;
+    DateTime tempTime = earlierTime.add(const Duration(days: 1));
+
+    while (tempTime.isBefore(laterTime)) {
+      final DateTime nextDayStart = DateTime(tempTime.year, tempTime.month, tempTime.day, 0, 0);
+      final DateTime nextDayEnd = DateTime(tempTime.year, tempTime.month, tempTime.day, 23, 59);
+          final DateTime nextTime = tempTime.add(const Duration(minutes: 30));
+
+      if (!_selectedTimeRegions.any((region) =>
+          region.startTime.isAtSameMomentAs(tempTime) && region.endTime.isAtSameMomentAs(nextTime)) && !_selectedTimeRegions.any((region) =>
+          region.startTime.isAtSameMomentAs(nextDayStart) &&
+          region.endTime.isAtSameMomentAs(nextDayEnd))) {
+        final TimeRegion fillRegion = TimeRegion(
+          startTime: nextDayStart,
+          endTime: nextDayEnd,
+          color: Colors.red.withOpacity(0.5),
+        );
+        _selectedTimeRegions.add(fillRegion);
+      }
+      tempTime = tempTime.add(const Duration(days: 1));
+    }
+  }
+
+  // Pintar intervalos no seleccionados entre hora individal y día completo
   if (_intervalStartTime != null && _intervalEndTime != null) {
     DateTime tempTime = _intervalEndTime!;
     while (tempTime.isBefore(startTime)) {
       final DateTime nextTime = tempTime.add(const Duration(minutes: 30));
       if (!_selectedTimeRegions.any((region) =>
-          region.startTime.isAtSameMomentAs(tempTime) &&
-          region.endTime.isAtSameMomentAs(nextTime)) && !_selectedTimeRegions.any((region) =>
+          region.startTime.isAtSameMomentAs(tempTime) && region.endTime.isAtSameMomentAs(nextTime)) && 
+          !_selectedTimeRegions.any((region) =>
               region.startTime.isAtSameMomentAs(DateTime(tempTime.year, tempTime.month, tempTime.day, 0, 0)) &&
               region.endTime.isAtSameMomentAs(DateTime(tempTime.year, tempTime.month, tempTime.day, 23, 59)))) {
         final TimeRegion fillRegion = TimeRegion(
@@ -132,14 +208,17 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
     }
   }
 
-  // Pintar el día completo como región seleccionada
-  final TimeRegion newRegion = TimeRegion(
-    startTime: startTime,
-    endTime: endTime,
-    color: Colors.red.withOpacity(0.5),
-  );
+  // Verificar si el nuevo segmento ya está seleccionado antes de añadirlo
+  if (!_selectedTimeRegions.any((region) => region.startTime.isAtSameMomentAs(startTime) &&region.endTime.isAtSameMomentAs(endTime))) {
+    final TimeRegion newRegion = TimeRegion(
+      startTime: startTime,
+      endTime: endTime,
+      color: Colors.red.withOpacity(0.5),
+    );
 
-  _selectedTimeRegions.add(newRegion);
+    _selectedTimeRegions.add(newRegion);
+  }
+
   setState(() {});
 
   if (_intervalStartTime == null || startTime.isBefore(_intervalStartTime!)) {
@@ -149,8 +228,9 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
     _intervalEndTime = endTime;
   }
 
-  // print('intervalo de inicio $_intervalStartTime');
-  // print('intervalo de fin: $_intervalEndTime');
+
+      // print('intervalo de inicio $_intervalStartTime');
+      // print('intervalo de fin: $_intervalEndTime');
 }
     //Tap en celda vacía
     if (calendarTapDetails.targetElement == CalendarElement.calendarCell) {
@@ -223,26 +303,19 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
       // print('intervalo de fin: $_intervalEndTime');
     }
 
-    //  else {
-    //   if (calendarTapDetails.appointments != null && calendarTapDetails.targetElement == CalendarElement.appointment) {
-    //     final Appointment appointment = calendarTapDetails.appointments!.first as Appointment;
-
-    //     // Extraer el nombre del paciente del subject
-    //     final RegExp regex = RegExp(r'Px: (.+)');
-    //     final RegExpMatch? match = regex.firstMatch(appointment.subject);
-    //     final String patientName =
-    //         match != null ? match.group(1)! : 'Desconocido';
-
-    //     final String startTime = formattedTime.format(appointment.startTime);
-    //     final String endTime = formattedTime.format(appointment.endTime);
-    //     final String date = DateFormat('EEEE, MMM dd, yyyy', 'es')
-    //         .format(appointment.startTime);
-    //     final String appointmentId = appointment.id.toString();
-    //     final String status = appointment.notes.toString();
-
-    //     GeneralFunctions.showDetails(patientName, date, startTime, endTime,
-    //         appointmentId, status, context);
-    //   }
-    // }
+     else {
+      if (calendarTapDetails.appointments != null && calendarTapDetails.targetElement == CalendarElement.appointment) {
+        final Appointment appointment = calendarTapDetails.appointments!.first as Appointment;
+    
+        final String startTime = DateFormat('h:mm a').format(appointment.startTime);
+        final String endTime = DateFormat('h:mm a').format(appointment.endTime);
+        final String date = DateFormat('dd-MM-yyyy', ).format(appointment.startTime);
+        final String endDate =  DateFormat('dd-MM-yyyy', ).format(appointment.endTime);
+        final String appointmentId = appointment.id.toString();
+        GeneralFunctions.showDetails(
+          date, startTime, endTime, appointmentId, context , endDate: endDate, head: 'Detalles del horario'
+          );
+      }
+    }
   }
 }

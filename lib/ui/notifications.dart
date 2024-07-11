@@ -11,7 +11,7 @@ class Notifications {
         behavior: SnackBarBehavior.floating,
         backgroundColor: Preferences.isDarkMode
             ? ThemeProvider.darkColor
-            : ThemeProvider.lightColor,
+            : ThemeProvider.primaryColor,
         dismissDirection: DismissDirection.startToEnd,
         content: Text(
           message,

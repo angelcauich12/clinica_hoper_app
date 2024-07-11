@@ -141,7 +141,7 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                                     ),
                                     // ignore: void_checks
                                     onPressed: () async {
-                                     await GeneralFunctions.showCancelAppointment(context, id);
+                                     await GeneralFunctions.showConfirmModal(context, id);
                                         Future.microtask(
                                           () {
                                             Navigator.pushNamed(

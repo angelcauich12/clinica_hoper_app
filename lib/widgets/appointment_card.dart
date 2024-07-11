@@ -212,8 +212,7 @@ class AppointmentCardHeader extends StatelessWidget {
   }
 
   Future<String?> showCancelAppointment(BuildContext context) {
-    final cancelForm =
-        Provider.of<CancelAppointmentFormProvider>(context, listen: false);
+    final cancelForm =Provider.of<CancelAppointmentFormProvider>(context, listen: false);
 
     return showDialog<String>(
       context: context,

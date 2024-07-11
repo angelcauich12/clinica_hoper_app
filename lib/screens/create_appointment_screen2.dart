@@ -69,8 +69,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       ..._selectedTimeRegions
     ];
 
-    final calendarAppointments = appointmentProv.appointments;
-    final doctorAppointments = appointmentProv.doctorAppointments;
+    final calendarAppointments = GeneralFunctions.getCalendarDataSource( appointmentProv.appointments);
+    final doctorAppointments =  GeneralFunctions.getCalendarDataSource(appointmentProv.doctorAppointments);
     final appointmentForm = Provider.of<AppointmentProvider>(context);
 
     Future<void> onRefresh() async {
@@ -699,17 +699,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                           style: TextButton.styleFrom(
                                               backgroundColor: myColor),
                                           onPressed: () {
-                                            appointmentProv.doctorSelected =
-                                                apiUser.id.toString();
-                                            appointmentProv.startDate =
-                                                formattedDate
-                                                    .format(_selectedDate!);
-                                            appointmentProv.startTime =
-                                                formattedTime.format(
-                                                    _intervalStartTime!);
-                                            appointmentProv.endTime =
-                                                formattedTime
-                                                    .format(_intervalEndTime!);
+                                            appointmentProv.doctorSelected = apiUser.id.toString();
+                                            appointmentProv.startDate = formattedDate.format(_selectedDate!);
+                                            appointmentProv.startTime =formattedTime.format(_intervalStartTime!);
+                                            appointmentProv.endTime = formattedTime.format(_intervalEndTime!);
                                             (apiUser.specialties != null &&
                                                     apiUser.specialties!
                                                             .length ==
@@ -935,10 +928,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         _isTappedDate = true;
     
       final DateTime tappedDate = calendarTapDetails.date!;
-      final DateTime selectedDate = DateTime(
-        tappedDate.year,
-        tappedDate.month,
-        tappedDate.day,
+      final DateTime selectedDate = DateTime(tappedDate.year,tappedDate.month,tappedDate.day,
       );
 
       if (_selectedDate == null) {
@@ -1021,8 +1011,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         // Extraer el nombre del paciente del subject
         final RegExp regex = RegExp(r'Px: (.+)');
         final RegExpMatch? match = regex.firstMatch(appointment.subject);
-        final String patientName =
-            match != null ? match.group(1)! : 'Desconocido';
+        final String patientName = match != null ? match.group(1)! : 'Desconocido';
 
         final String startTime = formattedTime.format(appointment.startTime);
         final String endTime = formattedTime.format(appointment.endTime);
@@ -1031,8 +1020,11 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         final String appointmentId = appointment.id.toString();
         final String status = appointment.notes.toString();
 
-        GeneralFunctions.showDetails(patientName, date, startTime, endTime,
-            appointmentId, status, context);
+        GeneralFunctions.showDetails(
+          date,startTime, endTime, appointmentId,context, patientName: patientName, 
+          status: status, isAppointment: true,
+          head: 'Detalles de la cita'
+          );
       }
     }
   }

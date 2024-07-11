@@ -4,7 +4,6 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../models/models.dart';
-import '../../utilities/general_functions.dart';
 
 class WeekCanlendar extends StatelessWidget {
   final bool? showTodayButton;
@@ -13,12 +12,13 @@ class WeekCanlendar extends StatelessWidget {
   final bool? showCurrentTimeIndicator;
   final bool? showDatePickerButton;
   final List<TimeRegion>? specialRegions;
-  final List<MyAppointment>? appointments;
+  final AppointmentDataSource? appointments;
   final bool? allowDragAndDrop; 
   final void Function(AppointmentDragEndDetails)? onDragEnd;
   final void Function(CalendarTapDetails)? onTap;
-  final List<DateTime>? blackoutDates;
+
   final void Function(CalendarSelectionDetails)? onSelectionChanged;
+  final List<NonWorkingDay>? nonWorkingDays;
   const WeekCanlendar(
       {super.key,
       this.showTodayButton = false,
@@ -28,11 +28,10 @@ class WeekCanlendar extends StatelessWidget {
       this.showDatePickerButton,
       this.specialRegions,
       this.onTap,
-      this.appointments, this.allowDragAndDrop, this.onDragEnd, this.blackoutDates, this.onSelectionChanged,});
+      this.appointments, this.allowDragAndDrop, this.onDragEnd, this.onSelectionChanged, this.nonWorkingDays,});
 
   @override
   Widget build(BuildContext context) {
-    final AppointmentDataSource appointmentDataSource = GeneralFunctions.getCalendarDataSource(appointments ?? []);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       locale: const Locale('es'),
@@ -46,7 +45,7 @@ class WeekCanlendar extends StatelessWidget {
       ],
       home: SfCalendar(
         onSelectionChanged: onSelectionChanged,
-       allowAppointmentResize: true,
+        allowAppointmentResize: true,
         showTodayButton: showTodayButton ?? false,
         showCurrentTimeIndicator: showCurrentTimeIndicator ?? false,
         showDatePickerButton: showDatePickerButton ?? false,
@@ -54,8 +53,7 @@ class WeekCanlendar extends StatelessWidget {
         specialRegions: specialRegions ?? [],
         onTap: onTap,
         onDragEnd: onDragEnd,
-        blackoutDates: blackoutDates ?? [],
-        dataSource: appointmentDataSource,
+        dataSource: appointments,
         todayHighlightColor: ThemeProvider.primaryColor,
         view: CalendarView.week,
         minDate: DateTime.now(),

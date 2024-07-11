@@ -125,8 +125,7 @@ class AppointmentProvider extends ChangeNotifier {
 
   final debouncer = Debouncer(duration: const Duration(milliseconds: 500));
 
-  final StreamController<List<User>> _userStreamController =
-      new StreamController.broadcast();
+  final StreamController<List<User>> _userStreamController = StreamController.broadcast();
 
   Stream<List<User>> get userStream => this._userStreamController.stream;
 
@@ -432,9 +431,7 @@ class AppointmentProvider extends ChangeNotifier {
     print('Url getCatalogs: $url');
 
     try {
-      final response = await http
-          .get(url, headers: headers)
-          .timeout(const Duration(seconds: 30));
+      final response = await http.get(url, headers: headers).timeout(const Duration(seconds: 30));
 
       switch (response.statusCode) {
         case 200:
@@ -642,6 +639,7 @@ class AppointmentProvider extends ChangeNotifier {
     final Map<String, dynamic> queryParameters = {
       'id_doctor': doctorSelected,
     };
+    
     print('horario de trabajo del id_doctor $queryParameters');
     final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
      print('url: $url');
@@ -659,8 +657,7 @@ class AppointmentProvider extends ChangeNotifier {
           result = true;
           isLoading = false;
           print('200: Get work schedule ${response.body}');
-          doctorScheduleResponse =
-              DoctorScheduleResponse.fromJson(response.body);
+          doctorScheduleResponse = DoctorScheduleResponse.fromJson(response.body);
           workSchedule = doctorScheduleResponse!.doctorSchedule;
           Notifications.showSnackBar(
               'Horario del médico obtenido correctamente.');
@@ -773,8 +770,7 @@ class AppointmentProvider extends ChangeNotifier {
           result = true;
           isLoading = false;
           print('200: Create ${response.body}');
-          final appointmentCreatedResponse =
-              AppointmentCreatedResponse.fromJson(response.body);
+          final appointmentCreatedResponse = AppointmentCreatedResponse.fromJson(response.body);
           reservadasList.add(appointmentCreatedResponse.appointment!);
           appointments.add(appointmentCreatedResponse.appointment!);
           Notifications.showSnackBar(appointmentCreatedResponse.message ??

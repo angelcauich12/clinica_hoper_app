@@ -76,3 +76,120 @@ class WorkScheduleDoctor {
         "display": display,
       };
 }
+
+
+class NonWorkingDaysResponse {
+    int code;
+    String estatus;
+    String message;
+    List<NonWorkingDay> nonWorkingDays;
+
+    NonWorkingDaysResponse({
+       required this.code,
+       required this.estatus,
+       required this.message,
+       required this.nonWorkingDays,
+    });
+
+    factory NonWorkingDaysResponse.fromJson(String str) => NonWorkingDaysResponse.fromMap(json.decode(str));
+
+    String toJson() => json.encode(toMap());
+
+    factory NonWorkingDaysResponse.fromMap(Map<String, dynamic> json) => NonWorkingDaysResponse(
+        code: json["code"],
+        estatus: json["estatus"],
+        message: json["message"],
+        nonWorkingDays: List<NonWorkingDay>.from(json["non_working_days"]!.map((x) => NonWorkingDay.fromMap(x))),
+    );
+
+    Map<String, dynamic> toMap() => {
+        "code": code,
+        "estatus": estatus,
+        "message": message,
+        "non_working_days": List<dynamic>.from(nonWorkingDays.map((x) => x.toMap())),
+    };
+}
+
+class NonWorkingDay {
+    int id;
+    String title;
+    String description;
+    String start;
+    String end;
+    String backgroundColor;
+    String display;
+
+    NonWorkingDay({
+       required this.id,
+       required this.title,
+       required this.description,
+       required this.start,
+       required this.end,
+       required this.backgroundColor,
+       required this.display,
+    });
+
+    factory NonWorkingDay.fromJson(String str) => NonWorkingDay.fromMap(json.decode(str));
+
+    String toJson() => json.encode(toMap());
+
+    factory NonWorkingDay.fromMap(Map<String, dynamic> json) => NonWorkingDay(
+        id: json["id"],
+        title: json["title"],
+        description: json["description"],
+        start: json["start"],
+        end: json["end"],
+        backgroundColor: json["backgroundColor"],
+        display: json["display"],
+    );
+
+    Map<String, dynamic> toMap() => {
+        "id": id,
+        "title": title,
+        "description": description,
+        "start": start,
+        "end": end,
+        "backgroundColor": backgroundColor,
+        "display": display,
+    };
+}
+
+
+
+
+class CreateNonWorkingResponse {
+    int code;
+    String estatus;
+    String message;
+    NonWorkingDay nonWorkingDay;
+
+    CreateNonWorkingResponse({
+        required this.code,
+        required this.estatus,
+        required this.message,
+        required this.nonWorkingDay,
+    });
+
+    factory CreateNonWorkingResponse.fromJson(String str) => CreateNonWorkingResponse.fromMap(json.decode(str));
+
+    String toJson() => json.encode(toMap());
+
+    factory CreateNonWorkingResponse.fromMap(Map<String, dynamic> json) => CreateNonWorkingResponse(
+        code: json["code"],
+        estatus: json["estatus"],
+        message: json["message"],
+        nonWorkingDay: NonWorkingDay.fromMap(json["non_working_day"]),
+    );
+
+    Map<String, dynamic> toMap() => {
+        "code": code,
+        "estatus": estatus,
+        "message": message,
+        "non_working_day": nonWorkingDay.toMap(),
+    };
+}
+
+
+
+
+

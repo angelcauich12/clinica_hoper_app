@@ -11,32 +11,59 @@ import '../shared/preferences.dart';
 import '../ui/input_decorations.dart';
 
 class GeneralFunctions {
-  //format time 12 hours
-  static String formatTime(String value) {
-    DateTime parsedValue = DateFormat('HH:mm').parse(value);
-    final DateFormat formattedTime = DateFormat('HH:mm a');
+
+  static String formatTime(String value, {String? timeFormat}) {
+    // Asume que la entrada puede ser una cadena de fecha completa
+    DateTime parsedValue;
+    try {
+      // Intenta analizar la cadena como una fecha completa primero
+      parsedValue = DateTime.parse(value);
+    } catch (e) {
+      // Si falla, asume que la cadena solo contiene horas y minutos
+      parsedValue = DateFormat('HH:mm').parse(value);
+    }
+
+    // Formatea la hora usando el formato deseado
+    final DateFormat formattedTime = DateFormat(timeFormat ?? 'HH:mm a');
     return formattedTime.format(parsedValue);
   }
 
-  static String formatDate(String value) {
-    DateTime parsedValue = DateFormat('yyyy-MM-dd').parse(value);
-    final DateFormat formattedTime = DateFormat('MM/dd/yyyy');
-    return formattedTime.format(parsedValue);
-  }
 
+   static String formatDate(dynamic value, {String? dateFormat}) {
+    if (value == null) {
+    return 'N/A'; 
+  }
+  
+    DateTime parsedValue;
+    
+    if (value is String) {
+      try {
+        parsedValue = DateTime.parse(value);
+      } catch (e) {
+        parsedValue = DateFormat('yyyy-MM-dd').parse(value);
+      }
+    } else if (value is DateTime) {
+      parsedValue = value;
+    } else {
+      throw ArgumentError('El valor proporcionado no es ni una cadena ni un DateTime');
+    }
+    
+    final DateFormat formattedDate = DateFormat(dateFormat ?? 'MM/dd/yyyy');
+    return formattedDate.format(parsedValue);
+  }
   //modal para cancelar una cita
-  static Future<void> showCancelAppointment(BuildContext context,String id,) async {
+  static Future<void> showConfirmModal(BuildContext context,String id, {String? title, String?
+   question, bool? haveDescription, bool? isAppointment }) async {
     final cancelForm = Provider.of<CancelAppointmentFormProvider>(context, listen: false);
     final appointmentProv = Provider.of<AppointmentProvider>(context, listen: false);
-    bool resultAppointment;
    return showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        title: const Text(
-          'Cancelar Cita',
-          style: TextStyle(
+        title:  Text(
+          title ?? 'sin título',
+          style: const TextStyle(
             fontFamily: 'Roboto',
             fontWeight: FontWeight.w600,
             fontSize: 16,
@@ -46,16 +73,17 @@ class GeneralFunctions {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              '¿Realmente desea cancelar esta cita?',
+           Text(
+              question ?? 'no tiene pregunta',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            Form(
+            haveDescription ?? false
+            ? Form(
                 key: cancelForm.formKey,
                 child: Column(
                   children: [
@@ -72,11 +100,11 @@ class GeneralFunctions {
                       validator: (value) {
                         return (value != null && value.length >= 3)
                             ? null
-                            : 'Escriba una justificación para cancelar';
+                            : 'Escriba una justificación';
                       },
                     ),
                   ],
-                ))
+                )) : Container()
           ],
         ),
         actions: <Widget>[
@@ -101,14 +129,16 @@ class GeneralFunctions {
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(4))),
                 backgroundColor: ThemeProvider.secondColor),
-            onPressed: () async {
+            onPressed: isAppointment ?? false 
+            ? () async {
               if (!cancelForm.isValidForm()) return;
-              resultAppointment = await appointmentProv.cancelAppointment(
-                  id, cancelForm.justification);
+             await appointmentProv.cancelAppointment(id, cancelForm.justification);
               if (context.mounted) {
-                Navigator.pop(context, resultAppointment);
+                Navigator.pop(context,);
               }
-            },
+            }
+            :() => {}
+            ,
             child: Text(
               'Confirmar',
               style: TextStyle(
@@ -217,10 +247,8 @@ class GeneralFunctions {
           : null;
 
       // Dar formato a las horas en el formato 'hh:mm a'
-      String formattedStartTime =
-          startTime != null ? DateFormat('hh:mm ').format(startTime) : 'N/A';
-      String formattedEndTime =
-          endTime != null ? DateFormat('hh:mm ').format(endTime) : 'N/A';
+      String formattedStartTime = startTime != null ? DateFormat('hh:mm ').format(startTime) : 'N/A';
+      String formattedEndTime = endTime != null ? DateFormat('hh:mm ').format(endTime) : 'N/A';
 
       return Appointment(
           id: myAppointment.id,
@@ -297,8 +325,7 @@ static List<TimeRegion> getTimeRegions(List<WorkScheduleDoctor> workSchedule) {
 }
 
 //Modal para ver los detalles de una cita
-static Future<void> showDetails(String patientName, String date, String startTime,
-      String endTime, String id, String status, BuildContext context) {
+static Future<void> showDetails(String date, String startTime, String endTime, String id, BuildContext context, {bool? isAppointment,  String? head , String? patientName, String? endDate, String? status,}) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -316,7 +343,18 @@ static Future<void> showDetails(String patientName, String date, String startTim
                   IconButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        showCancelAppointment(context, id);
+                        isAppointment ?? false
+                         ? showConfirmModal(
+                          context, id,  
+                          title: 'Cancelar cita', 
+                          question: '¿Realmente desea cancelar la cita?', haveDescription: true,
+                          isAppointment: isAppointment
+                           )
+                         : showConfirmModal(
+                          context, id, 
+                          title: 'Eliminar exclusión de horario', 
+                          question: '¿Realmente desea eliminar este horario?',
+                          );                  
                       },
                       icon: Icon(
                         Icons.delete_outline_rounded,
@@ -339,13 +377,13 @@ static Future<void> showDetails(String patientName, String date, String startTim
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Detalles de la cita',
+                    head ?? 'sin cabecera',
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Preferences.isDarkMode ? ThemeProvider.white : ThemeProvider.secondColor),
                   ),
-                  StatusLabel(
+                  if(status != null) StatusLabel(
                     status: status,
                   )
                 ],
@@ -353,7 +391,8 @@ static Future<void> showDetails(String patientName, String date, String startTim
               const SizedBox(
                 height: 12.0,
               ),
-              Container(
+              isAppointment ?? false
+              ? Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 margin: const EdgeInsets.only(bottom: 10),
@@ -379,7 +418,7 @@ static Future<void> showDetails(String patientName, String date, String startTim
                         Expanded(
                           flex: 1,
                           child: Text(
-                            patientName,
+                            patientName ?? 'sin contenido',
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -416,6 +455,73 @@ static Future<void> showDetails(String patientName, String date, String startTim
                     ),
                   ],
                 ),
+              )
+              : Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Preferences.isDarkMode
+                      ? Colors.grey.withOpacity(0.15)
+                      : ThemeProvider.secondColor.withAlpha(70),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Fecha de inicio', style: TextStyle(fontWeight: FontWeight.bold,),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.calendar_month_outlined),
+                        const SizedBox(width: 5,),
+                        Text(date),
+                         const SizedBox(width: 5,),
+                        const Icon(Icons.timer_outlined),
+                        const SizedBox(width: 5,),
+                        Text(startTime)
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                     const Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Fecha final', style: TextStyle(fontWeight: FontWeight.bold,),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.calendar_month_outlined),
+                        const SizedBox(width: 5,),
+                        Text(endDate ?? 'sin fecha final'),
+                         const SizedBox(width: 5,),
+                        const Icon(Icons.timer_outlined),
+                        const SizedBox(width: 5,),
+                        Text(endTime)
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -434,6 +540,28 @@ static Future<void> showDetails(String patientName, String date, String startTim
       return Uri.http(apiServer, projectName, queryParameters);
     }
  }
+
+ static AppointmentDataSource convertToBlackoutDates(List<NonWorkingDay> sourceNonWorkingDays) {
+  List<Appointment> nonWorkingDays = sourceNonWorkingDays.map((myAppointment) {
+    DateTime startTime = DateTime.parse(myAppointment.start.trim());
+    DateTime endTime = DateTime.parse(myAppointment.end.trim());
+
+      String formattedStartTime = DateFormat('hh:mm').format(startTime);
+      String formattedEndTime =  DateFormat('hh:mm').format(endTime) ;
+
+
+    return Appointment(
+      subject: "$formattedStartTime - $formattedEndTime",
+      color: Colors.red,
+      id: myAppointment.id,
+      startTime: startTime,
+      endTime: endTime,
+      // subject: '$startTime'
+    );
+  }).toList();
+
+  return AppointmentDataSource(nonWorkingDays);
+}
 
 
 

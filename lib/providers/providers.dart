@@ -1,3 +1,4 @@
+
 export 'package:hope_app/providers/create_user_form_provider.dart';
 
 export 'package:hope_app/providers/appointment_provider.dart';
@@ -11,3 +12,4 @@ export 'package:hope_app/providers/onesignal_provider.dart';
 export 'package:hope_app/providers/register_form_provider.dart';
 export 'package:hope_app/providers/social_media_form_provider.dart';
 export 'package:hope_app/providers/theme_provider.dart';
+export 'package:hope_app/providers/manage_schedule_provider.dart';
