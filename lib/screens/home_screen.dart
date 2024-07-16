@@ -73,8 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: const ClampingScrollPhysics(),
                 child: Column(
                   children: [
-                    (apiUser.medicalHistory == null &&
-                            apiUser.miPerfil.nombre == 'Patient')
+                    (apiUser.medicalHistory == null && apiUser.miPerfil.nombre == 'Patient')
                         ? Column(
                             children: [
                               const SizedBox(height: 35),
@@ -226,7 +225,7 @@ class _homeButtons extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        (profile != 'Patient')
+        (profile == 'Doctor')
             ? HomeActionButton(
                 title: "Bienvenid@ $profile!",
                 subtitle: "Programa una cita",
@@ -249,14 +248,14 @@ class _homeButtons extends StatelessWidget {
 }
 
 class HomeActionButton extends StatelessWidget {
-  Color backgroundColor;
-  String backgroundImg;
-  Color iconColor;
-  String subtitle;
-  String title;
-  IconData icon;
+  final  Color backgroundColor;
+  final  String backgroundImg;
+  final Color iconColor;
+  final  String subtitle;
+  final String title;
+  final IconData icon;
 
-  HomeActionButton({
+  const HomeActionButton({
     super.key,
     required this.backgroundColor,
     required this.backgroundImg,
@@ -270,10 +269,7 @@ class HomeActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: () => Navigator.pushNamed(
-          context,
-          CreateAppointmentScreen2.routeName,
-        ),
+        onTap: () => Navigator.pushNamed(context, CreateAppointmentScreen2.routeName),
         child: Container(
           height: 130,
           margin: const EdgeInsets.only(left: 15, right: 15),
@@ -402,9 +398,9 @@ class SpecialtySlider extends StatelessWidget {
 }
 
 class SpecialtyImageCard extends StatelessWidget {
-  SpecialtyDTO specialty;
+ final  SpecialtyDTO specialty;
 
-  SpecialtyImageCard({required this.specialty});
+  const SpecialtyImageCard({required this.specialty});
 
   @override
   Widget build(BuildContext context) {
@@ -511,7 +507,7 @@ class _FindUsState extends State<_FindUs> {
 
   final Map<String, Marker> _markers = {};
   bool isMapCreated = false;
-  LatLng currentLocation = LatLng(20.988331640730305, -89.60906162570994);
+  LatLng currentLocation = const LatLng(20.988331640730305, -89.60906162570994);
 
   changeMapMode(){
     if(Preferences.isDarkMode){

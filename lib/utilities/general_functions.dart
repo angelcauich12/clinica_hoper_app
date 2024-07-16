@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hope_app/models/models.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/ui/notifications.dart';
+import 'package:hope_app/widgets/guest_dialog.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -165,12 +167,13 @@ class GeneralFunctions {
 
 //modal para el código del modo desarrollador
   static showModalCode(BuildContext context) {
+     final loginForm = Provider.of<LoginFormProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           content: Form(
-            // key: createUserForm.createUserFormKey,
+            key: loginForm.devKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -186,19 +189,23 @@ class GeneralFunctions {
                     labelText: 'Código',
                     prefixIcon: Icons.verified_user_outlined,
                   ),
-                  // onChanged: (value) =>createUserForm.phone = value,
+                  onChanged: (value) => loginForm.devCode = value,
                   validator: (value) {
-                    String pattern =
-                        r'^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$';
-                    RegExp regExp = RegExp(pattern);
-                    return regExp.hasMatch(value ?? '')
-                        ? null
-                        : 'Número Inválido';
+                     if (value == null || value.isEmpty) return 'Escriba el código de verificación';
+                    return null;
+                  
                   },
                 ),
                 const SizedBox(height: 25),
                 MaterialButton(
                   onPressed: () {
+                    // print('devCode: ${loginForm.devCode}');
+                    if (!loginForm.isValidFormDev()) return;
+                    if(loginForm.devCode != Preferences.devCode) {
+                      Notifications.showSnackBar('Código inválido');
+                      return;
+                    }
+                    loginForm.devCode = null;
                     Navigator.pop(context);
                     showDialog(
                         context: context,
@@ -235,6 +242,13 @@ class GeneralFunctions {
     );
   }
 
+//Alerta de modo guest
+static showGuestAlert(BuildContext context){
+ showDialog(context: context, 
+ builder: (BuildContext context){
+  return const GuestDialog();
+ });
+}
   //Obtener las citas en formato del calendario
   static AppointmentDataSource getCalendarDataSource(List<MyAppointment> sourceAppointments, {bool schedule = false , Color? appointmenColor} ) {
     User apiUser = User.fromJson(Preferences.apiUser); 
@@ -271,7 +285,7 @@ class GeneralFunctions {
     return AppointmentDataSource(appointments);
   }
   
-// Función para convertir cadena de tiempo a DateTime
+// Función para convertir cadena de tiempo a DateTimeº
   static DateTime parseTimeString(String timeString) {
     final List<String> parts = timeString.split(':');
     final int hours = int.parse(parts[0]);
@@ -321,6 +335,21 @@ static List<TimeRegion> getWorkScheduleRegions(List<WorkScheduleDoctor> workSche
   return regions;
 }
 
+//Función para pintar el horario inhábil
+static List<TimeRegion> getNonWorkingDays(List<NonWorkingDay> sourceNonWorkingDays) {
+  return sourceNonWorkingDays.map((nonWorkingDay) {
+    DateTime startTime = DateTime.parse(nonWorkingDay.start.trim());
+    DateTime endTime = DateTime.parse(nonWorkingDay.end.trim());
+
+    return TimeRegion(
+      startTime: startTime,
+      endTime: endTime,
+      color: Colors.yellow,
+      enablePointerInteraction: false, 
+      text: nonWorkingDay.title,
+    );
+  }).toList();
+}
 
 static  String dayToWeekDay(int day) {
     switch (day) {

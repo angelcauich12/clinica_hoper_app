@@ -20,7 +20,17 @@ class Preferences {
   static String _gender = 'F';
   static int _specialty = 1;
   static bool _isHttps = true; 
+  static String _devCode = 'h093r'; // código para modo desarrollador
+  static String guestEmail = 'guest@clinicahoper.com';
+  static String guesPassword = 'Hoper2023';
 
+
+
+  static String get devCode => _prefs.getString('devCode') ?? _devCode;
+  static set devCode(String value){
+    _devCode = value;
+    _prefs.setString('devCode', value);
+  }
 
   static String get activacionServer {
     return _prefs.getString('activacionServer') ?? _activacionServer;

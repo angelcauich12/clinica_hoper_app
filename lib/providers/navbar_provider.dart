@@ -18,6 +18,7 @@ class NavbarProvider extends ChangeNotifier {
         label: 'Mis Citas',
         iconData: const Icon(FontAwesomeIcons.calendarDay, size: 25),
         widget: const MyAppointmentsScreen(),
+        requiresProfile: true
       ),
       // NavbarDTO(
       //   label: 'Configuración',
@@ -50,9 +51,9 @@ class NavbarProvider extends ChangeNotifier {
 }
 
 class NavbarDTO {
-  Widget? widget;
-  String? label;
-  Widget? iconData;
-
-  NavbarDTO({this.widget, this.label, this.iconData});
+  final Widget? widget;
+  final String? label;
+  final Widget? iconData;
+  final bool requiresProfile;
+  NavbarDTO({this.widget, this.label, this.iconData, this.requiresProfile = false});
 }

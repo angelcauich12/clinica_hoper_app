@@ -4,12 +4,13 @@ import 'package:hope_app/providers/providers.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/services/services.dart';
 import 'package:hope_app/shared/preferences.dart';
+import 'package:hope_app/utilities/general_functions.dart';
 import 'package:provider/provider.dart';
 
 class PopupMenuList extends StatelessWidget {
-  User apiUser;
+  final User apiUser;
 
-  PopupMenuList({required this.apiUser});
+  const PopupMenuList({super.key, required this.apiUser});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,7 @@ class PopupMenuList extends StatelessWidget {
     User apiUser = User.fromJson(Preferences.apiUser);
 
     return PopUpMenu(
+      profile: apiUser.miPerfil.nombre,
       menuList: [
         const PopupMenuItem(
           height: 30,
@@ -48,8 +50,8 @@ class PopupMenuList extends StatelessWidget {
         PopupMenuItem(
           height: 30,
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: const Text('Cerrar sesión'),
-          onTap: () async {
+          onTap:  apiUser.miPerfil.nombre != 'guest' 
+            ? () async {
             await authService.logout();
             print('Is Google: ${apiUser.isGoogle}');
             if (apiUser.isGoogle != 0) {
@@ -62,7 +64,16 @@ class PopupMenuList extends StatelessWidget {
                 Navigator.pushReplacementNamed(context, LoginScreen.routeName);
               },
             );
+          } 
+          : () async {
+            await authService.logout();
+            Future.microtask(
+              () {
+                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+              },
+            );
           },
+          child:  Text( apiUser.miPerfil.nombre != 'guest' ? 'Cerrar sesión' : 'Iniciar sesión') ,
         ),
       ],
       icon: (apiUser.image == null)
@@ -85,8 +96,9 @@ class PopupMenuList extends StatelessWidget {
 class PopUpMenu extends StatelessWidget {
   final List<PopupMenuEntry> menuList;
   final Widget? icon;
+  final String profile;
 
-  const PopUpMenu({super.key, required this.menuList, this.icon});
+  const PopUpMenu({super.key, required this.menuList, this.icon, required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -99,16 +111,20 @@ class PopUpMenu extends StatelessWidget {
       onSelected: (result) {
         switch (result) {
           case 0:
-            Navigator.push(
+          profile != 'guest'
+            ? Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SettingsScreen()),
-            );
+            )
+            : GeneralFunctions.showGuestAlert(context);
             break;
           case 1:
-            Navigator.push(
+          profile != 'guest'
+            ? Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProfileScreen()),
-            );
+            )
+            : GeneralFunctions.showGuestAlert(context);
             break;
           default:
         }

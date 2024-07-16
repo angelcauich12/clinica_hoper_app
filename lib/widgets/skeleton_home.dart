@@ -21,7 +21,7 @@ class SkeletonHome extends StatelessWidget {
                   children: [
                     SkeletonAnimation(
                       child: Container(
-                        width: 60,
+                        width:  60,
                         height: 20,
                         decoration: BoxDecoration(
                           color: Colors.grey[300],

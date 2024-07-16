@@ -29,18 +29,20 @@ class ManageScheduleProvider  extends ChangeNotifier{
   bool get isLoading => _isLoading;
   String? _doctorSelected;
   NonWorkingDaysResponse? nonWorkingDaysResponse;
-  String? get doctorSelected => _doctorSelected;
   List<NonWorkingDay> nonWorkingDays = [];
   String? initialDate;
   String? endDate;
   String? initialTime;
   String? endTime;
 
+  String? get doctorSelected => _doctorSelected;
+  
   set doctorSelected(String? value) {
     _doctorSelected = value;
     print('set Doctor selected: $doctorSelected');
     notifyListeners();
   }
+
    set isLoading(bool value) {
     _isLoading = value;
     notifyListeners();

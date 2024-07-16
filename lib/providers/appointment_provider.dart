@@ -55,6 +55,8 @@ class AppointmentProvider extends ChangeNotifier {
   AppointmentResponse? singleAppointmentResponse;
   bool result = false;
   bool _isLoading = false;
+  NonWorkingDaysResponse? nonWorkingDaysResponse;
+  List<NonWorkingDay> nonWorkingDays = [];
 
   String gender = 'F';
   String email = '';
@@ -727,6 +729,107 @@ class AppointmentProvider extends ChangeNotifier {
     return result;
   }
 
+   Future<bool> getNonWorkingDays() async {
+     _apiUrl = Preferences.apiServer;
+    _proyectName = Preferences.projectName;
+
+    print('petición Get non-working days');
+    _endPoint = '/api/v1/schedule/non-working-days';
+
+    String jwtToken = await storage.read(key: 'jwtToken') ?? '';
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $jwtToken'
+    };
+
+   final Map<String, dynamic> queryParameters = {
+      'id_doctor': doctorSelected,
+    };
+    
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
+    print('url non working days: $url');
+
+    try {
+      isLoading = true;
+      result = false;
+
+      final response = await http.post(url, headers: headers,body: json.encode(queryParameters)).timeout(const Duration(seconds: 30));
+      switch (response.statusCode) {
+        case 200:
+          result = true;
+          isLoading = false;
+          print('200: Get non working days ${response.body}');
+          nonWorkingDaysResponse = NonWorkingDaysResponse.fromJson(response.body);
+          nonWorkingDays = nonWorkingDaysResponse!.nonWorkingDays;
+          notifyListeners();
+          break;
+        case 401:
+          isLoading = false;
+          result = false;
+          if (!response.body.contains('code')) {
+            logout();
+            print('logout');
+            break;
+          }
+          serverResponse = ServerResponse.fromJson(response.body);
+          Notifications.showSnackBar(
+              serverResponse?.message ?? 'Error de Autenticación.');
+          break;
+        case 404:
+          isLoading = false;
+          result = false;
+          serverResponse = ServerResponse.fromJson(response.body);
+          notifyListeners();
+          print('404 ${serverResponse?.message}');
+          break;
+        case 422:
+          isLoading = false;
+          result = false;
+          ValidatorResponse validatorResponse =
+              ValidatorResponse.fromJson(response.body);
+          final Map<String, dynamic> errors = validatorResponse.errors.toMap();
+          String messages = '${validatorResponse.message}\n';
+
+          Iterable<dynamic> values = errors.values;
+          for (final error in values) {
+            Iterable<dynamic> errorStrings = error;
+            for (final errorString in errorStrings) {
+              print('error: $errorString');
+              messages = '${messages + errorString}\n';
+            }
+          }
+
+          Notifications.showSnackBar(messages);
+          notifyListeners();
+          // print(serverResponse);
+          print('422: ${response.body}');
+          break;
+        case 500:
+          isLoading = false;
+          result = false;
+          Notifications.showSnackBar('500 Server Error.');
+          break;
+        default:
+          print('Default: ${response.body}');
+          isLoading = false;
+          result = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error $e');
+      isLoading = false;
+      Notifications.showSnackBar('$e');
+      if (e.toString().contains('TimeoutException')) {
+        Notifications.showSnackBar(
+            'Tiempo de espera agotado. Favor de reintentar');
+      }
+      notifyListeners();
+    }
+    return result;
+  }
+  
   Future<bool> createAppointment() async {
      _apiUrl = Preferences.apiServer;
     _proyectName = Preferences.projectName;

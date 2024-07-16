@@ -35,14 +35,13 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
   final TextEditingController _searchController = TextEditingController();
   int _numberOfDays = 3;
   bool _isEmergency = false;
-  List<TimeRegion> specialRegions = [];
+  
 
   @override
   void initState() {
     super.initState();
     final appointmentRequestProvider = context.read<AppointmentProvider>();
-    print('especialidad seleccionada desde create appointment: ${appointmentRequestProvider.specialtySelected}');
-
+   
     if (apiUser.miPerfil.nombre == 'Doctor' &&
         apiUser.specialties != null &&
         apiUser.specialties!.length == 1) {
@@ -50,7 +49,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         appointmentRequestProvider.doctorSelected = apiUser.id.toString();
-        appointmentRequestProvider.workScheduleDoctor();
+        appointmentRequestProvider.getNonWorkingDays();
+        // appointmentRequestProvider.workScheduleDoctor();
       });
     }
 
@@ -67,10 +67,12 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
    
     final List<TimeRegion> enabledRegions = GeneralFunctions.getWorkScheduleRegions(appointmentProv.workSchedule);
     final desabledRegions = getDisabledRegions(enabledRegions);
-    specialRegions = [
+    final List<TimeRegion>  nonWorkingDays = GeneralFunctions.getNonWorkingDays(appointmentProv.nonWorkingDays);
+   List<TimeRegion> specialRegions = [
+      ..._selectedTimeRegions,
       ...desabledRegions,
       ...enabledRegions,
-      ..._selectedTimeRegions
+      ...nonWorkingDays,
     ];
 
     final calendarAppointments = GeneralFunctions.getCalendarDataSource( appointmentProv.appointments);

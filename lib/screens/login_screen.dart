@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:easter_egg_trigger/easter_egg_trigger.dart';
@@ -21,8 +23,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
-    final googleApiService = Provider.of<GoogleSignInAPiService>(context);
-    oneSignalProvider.initOneSignal(context);
+    final googleApiService = Provider.of<GoogleSignInAPiService>(context); oneSignalProvider.initOneSignal(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -130,10 +131,15 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ),
                               TextButton(
-                                onPressed: () => Navigator.pushReplacementNamed(
-                                  context,
-                                  GuestScreen.routeName,
-                                ),
+                                onPressed: () async {
+                                  final authService = Provider.of<AuthService>(context, listen: false);
+                                  final String? loginMessage = await authService.loginUser(Preferences.guestEmail, Preferences.guesPassword);
+                                  if (loginMessage != 'true') {
+                                    Notifications.showSnackBar(loginMessage.toString());
+                                    return;
+                                  }
+                                Navigator.pushReplacementNamed(context,Home.routeName);
+                                }, 
                                 child: const Text(
                                   'Entrar como invitado',
                                   style: TextStyle(
@@ -185,8 +191,6 @@ onGoogleSignIn(
 
     if (result != false) {
       oneSignalProvider.saveUpdateId();
-
-      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(
         context,
         Home.routeName,
@@ -287,18 +291,14 @@ class _LoginForm extends StatelessWidget {
 
                   //hacer la peticion al backend para validar usuario
                   final authService = Provider.of<AuthService>(context, listen: false);
-                  final String? loginMessage = await authService.loginUser(
-                      loginForm.email, loginForm.password);
+                  final String? loginMessage = await authService.loginUser(loginForm.email, loginForm.password);
 
                   if (loginMessage != 'true') {
-                    print(
-                        'No se logueo: ${loginForm.email}, ${loginForm.password}');
-
+                    print('No se logueo: ${loginForm.email}, ${loginForm.password}');
                     Notifications.showSnackBar(loginMessage.toString());
                     loginForm.isLoading = false;
                     return;
                   }
-
                   oneSignalProvider.saveUpdateId();
                   loginForm.isLoading = false;
                   Future.microtask(
