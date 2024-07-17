@@ -15,6 +15,8 @@ class WeekCanlendar extends StatelessWidget {
   final AppointmentDataSource? appointments;
   final bool? allowDragAndDrop; 
   final void Function(AppointmentDragEndDetails)? onDragEnd;
+  final void Function(AppointmentDragStartDetails)? onDragStart;
+  final void Function(AppointmentDragUpdateDetails)? onDragUpdate;
   final void Function(CalendarTapDetails)? onTap;
 
   final void Function(CalendarSelectionDetails)? onSelectionChanged;
@@ -28,7 +30,11 @@ class WeekCanlendar extends StatelessWidget {
       this.showDatePickerButton,
       this.specialRegions,
       this.onTap,
-      this.appointments, this.allowDragAndDrop, this.onDragEnd, this.onSelectionChanged, this.nonWorkingDays,});
+      this.appointments, 
+      this.allowDragAndDrop, 
+      this.onDragEnd, this.onSelectionChanged, 
+      this.nonWorkingDays, this.onDragStart, 
+      this.onDragUpdate,});
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +59,8 @@ class WeekCanlendar extends StatelessWidget {
         specialRegions: specialRegions ?? [],
         onTap: onTap,
         onDragEnd: onDragEnd,
+        onDragStart: onDragStart,
+        onDragUpdate: onDragUpdate,
         dataSource: appointments,
         todayHighlightColor: ThemeProvider.primaryColor,
         view: CalendarView.week,

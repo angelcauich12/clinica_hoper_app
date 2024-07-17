@@ -627,7 +627,7 @@ class AppointmentProvider extends ChangeNotifier {
     _proyectName = Preferences.projectName;
 
     print('Peticion API work schedule');
-    _endPoint = '/api/v1/appointments/work-schedule';
+    String endPoint = '/api/v1/appointments/work-schedule';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -642,8 +642,8 @@ class AppointmentProvider extends ChangeNotifier {
     };
     
     print('horario de trabajo del id_doctor $queryParameters');
-    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
-     print('url: $url');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$endPoint');
+     print('url work schedule: $url');
 
     try {
       isLoading = true;
@@ -659,7 +659,7 @@ class AppointmentProvider extends ChangeNotifier {
           isLoading = false;
           print('200: Get work schedule ${response.body}');
           doctorScheduleResponse = DoctorScheduleResponse.fromJson(response.body);
-          workSchedule = doctorScheduleResponse!.doctorSchedule;
+          workSchedule = doctorScheduleResponse?.doctorSchedule ?? [];
           Notifications.showSnackBar(
               'Horario del médico obtenido correctamente.');
           notifyListeners();
@@ -734,7 +734,7 @@ class AppointmentProvider extends ChangeNotifier {
     _proyectName = Preferences.projectName;
 
     print('petición Get non-working days');
-    _endPoint = '/api/v1/schedule/non-working-days';
+    String endPoint = '/api/v1/schedule/non-working-days';
 
     String jwtToken = await storage.read(key: 'jwtToken') ?? '';
 
@@ -748,7 +748,8 @@ class AppointmentProvider extends ChangeNotifier {
       'id_doctor': doctorSelected,
     };
     
-    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
+    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$endPoint');
+    print('días inhábiles del id_doctor $queryParameters');
     print('url non working days: $url');
 
     try {
@@ -762,7 +763,7 @@ class AppointmentProvider extends ChangeNotifier {
           isLoading = false;
           print('200: Get non working days ${response.body}');
           nonWorkingDaysResponse = NonWorkingDaysResponse.fromJson(response.body);
-          nonWorkingDays = nonWorkingDaysResponse!.nonWorkingDays;
+          nonWorkingDays = nonWorkingDaysResponse?.nonWorkingDays ?? [];
           notifyListeners();
           break;
         case 401:
@@ -1227,6 +1228,7 @@ class AppointmentProvider extends ChangeNotifier {
         case 500:
           isLoading = false;
           result = false;
+          print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:

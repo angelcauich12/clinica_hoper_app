@@ -191,9 +191,8 @@ class _DevModeState extends State<DevMode> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Switch.adaptive(
-                      inactiveTrackColor: Colors.grey,
-                      activeColor: Colors.blue,
+                    Switch(
+                      activeColor: Colors.blue.shade100,
                       activeTrackColor: Colors.blue,
                       value: Preferences.isHttps,
                       onChanged: (bool value) {

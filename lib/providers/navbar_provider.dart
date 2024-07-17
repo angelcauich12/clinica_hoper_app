@@ -5,7 +5,13 @@ import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 
 class NavbarProvider extends ChangeNotifier {
-  User apiUser = User.fromJson(Preferences.apiUser);
+  User _apiUser = User.fromJson(Preferences.apiUser);
+  get apiUser => _apiUser;
+
+  set apiUSer(User value){
+    _apiUser = value;
+    notifyListeners();
+  }
 
   List<NavbarDTO> get items {
     List<NavbarDTO> items = [
@@ -48,6 +54,10 @@ class NavbarProvider extends ChangeNotifier {
     _selectedIndex = selectedIndex;
     notifyListeners();
   }
+
+
+
+
 }
 
 class NavbarDTO {

@@ -344,9 +344,10 @@ static List<TimeRegion> getNonWorkingDays(List<NonWorkingDay> sourceNonWorkingDa
     return TimeRegion(
       startTime: startTime,
       endTime: endTime,
-      color: Colors.yellow,
+      color: Colors.yellow.shade400,
       enablePointerInteraction: false, 
-      text: nonWorkingDay.title,
+      iconData: Icons.not_interested_outlined,
+      textStyle: const TextStyle(fontSize: 20)
     );
   }).toList();
 }
@@ -595,7 +596,7 @@ static Future<void> showDetails(String date, String startTime, String endTime, S
       id: myAppointment.id,
       startTime: startTime,
       endTime: endTime,
-      // subject: '$startTime'
+     isAllDay: false
     );
   }).toList();
 

@@ -14,6 +14,8 @@ import 'package:hope_app/utilities/general_functions.dart';
 import 'package:hope_app/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
+import '../models/models.dart';
+
 class LoginScreen extends StatelessWidget {
   static const String routeName = 'login';
 
@@ -138,6 +140,7 @@ class LoginScreen extends StatelessWidget {
                                     Notifications.showSnackBar(loginMessage.toString());
                                     return;
                                   }
+                                Provider.of<NavbarProvider>(context, listen: false).apiUSer = User.fromJson(Preferences.apiUser);
                                 Navigator.pushReplacementNamed(context,Home.routeName);
                                 }, 
                                 child: const Text(
@@ -299,6 +302,7 @@ class _LoginForm extends StatelessWidget {
                     loginForm.isLoading = false;
                     return;
                   }
+                  Provider.of<NavbarProvider>(context, listen: false).apiUSer = User.fromJson(Preferences.apiUser);
                   oneSignalProvider.saveUpdateId();
                   loginForm.isLoading = false;
                   Future.microtask(

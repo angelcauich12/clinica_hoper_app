@@ -49,13 +49,16 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         appointmentRequestProvider.doctorSelected = apiUser.id.toString();
-        appointmentRequestProvider.getNonWorkingDays();
-        // appointmentRequestProvider.workScheduleDoctor();
+
+        if(appointmentRequestProvider.doctorSelected != null){
+          appointmentRequestProvider.workScheduleDoctor();
+          appointmentRequestProvider.getNonWorkingDays();
+        }else{print('no hay doctor seleccionado');}
+    
       });
     }
 
-    if (appointmentRequestProvider.specialtySelected != null &&
-        apiUser.miPerfil.nombre != 'Doctor') {
+    if (appointmentRequestProvider.specialtySelected != null && apiUser.miPerfil.nombre != 'Doctor') {
       _currentStep = 1;
     }
   }
@@ -69,10 +72,10 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
     final desabledRegions = getDisabledRegions(enabledRegions);
     final List<TimeRegion>  nonWorkingDays = GeneralFunctions.getNonWorkingDays(appointmentProv.nonWorkingDays);
    List<TimeRegion> specialRegions = [
-      ..._selectedTimeRegions,
       ...desabledRegions,
       ...enabledRegions,
       ...nonWorkingDays,
+       ..._selectedTimeRegions,
     ];
 
     final calendarAppointments = GeneralFunctions.getCalendarDataSource( appointmentProv.appointments);
@@ -99,8 +102,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
       appointmentProv.isLoading = false;
       setState(() {});
     }
-
-    
 
     return Scaffold(
       body: RefreshIndicator(
@@ -581,6 +582,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                               appointments: apiUser.miPerfil.nombre != 'Doctor' ? doctorAppointments : calendarAppointments,
                                               onTap: apiUser.miPerfil.nombre != 'Doctor' ? null : _onCalendarTapped,
                                               onDragEnd: (details) => _onDragEnd(details),
+                                           
                                               numberOfDaysInView: _numberOfDays,
                                               showTodayButton: true,
                                               )),
@@ -653,9 +655,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                             height: 25,
                                             child: FittedBox(
                                               fit: BoxFit.fill,
-                                              child: Switch.adaptive(
-                                               inactiveTrackColor: Colors.grey,
-                                                activeColor: Colors.blue,
+                                              child: Switch(
+                                                activeColor: Colors.blue.shade100,
                                                 activeTrackColor: Colors.blue,
                                                 value: _isEmergency,
                                                 onChanged: (bool value) {
@@ -873,10 +874,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                             context);
                                                                         _isTappedDate =
                                                                             false;
-                                                                        _selectedTimeRegions
-                                                                            .clear();
-                                                                        appointmentProv.isLoading =
-                                                                            true;
+                                                                        _selectedTimeRegions.clear();
+                                                                        _selectedDate = null;
+                                                                        appointmentProv.isLoading =true;
                                                                         await Future.delayed(const Duration(
                                                                             seconds:
                                                                                 1));
@@ -1012,7 +1012,6 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
 
 
   void _onDragEnd(AppointmentDragEndDetails appointmentDragEndDetails) {
-
     final appointmentProv = Provider.of<AppointmentProvider>(context, listen: false);
     Appointment detail = appointmentDragEndDetails.appointment as Appointment;
     Duration duration = detail.endTime.difference(detail.startTime);

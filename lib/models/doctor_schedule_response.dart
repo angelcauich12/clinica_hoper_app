@@ -13,8 +13,7 @@ class DoctorScheduleResponse {
     required this.doctorSchedule,
   });
 
-  factory DoctorScheduleResponse.fromJson(String str) =>
-      DoctorScheduleResponse.fromMap(json.decode(str));
+  factory DoctorScheduleResponse.fromJson(String str) => DoctorScheduleResponse.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
