@@ -22,6 +22,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
             mp.selectedIndex = value;
           }
         },
-        items: mp.items.map((e) => BottomNavigationBarItem(label: e.label,icon: e.iconData!,)).toList());
+        items: mp.items.map((e) => BottomNavigationBarItem(backgroundColor: secondColor,label: e.label,icon: e.iconData!,)).toList());
   }
 }

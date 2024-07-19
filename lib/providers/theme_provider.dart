@@ -73,7 +73,9 @@ class ThemeProvider extends ChangeNotifier {
                             MaterialStatePropertyAll(primaryColor))),
                 iconButtonTheme: IconButtonThemeData(
                     style: ButtonStyle(
-                        iconColor: MaterialStatePropertyAll(white))))
+                        iconColor: MaterialStatePropertyAll(white)))
+                        
+                        )
             : ThemeData.light().copyWith(
                 appBarTheme: AppBarTheme(
                   backgroundColor: secondColor,

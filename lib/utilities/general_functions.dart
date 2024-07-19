@@ -14,7 +14,7 @@ import '../ui/input_decorations.dart';
 
 class GeneralFunctions {
 
-  static String formatTime(String value, {String? timeFormat}) {
+  static String formatTime(String value, {String? timeFormat, String? locale}) {
     // Asume que la entrada puede ser una cadena de fecha completa
     DateTime parsedValue;
     try {
@@ -26,7 +26,7 @@ class GeneralFunctions {
     }
 
     // Formatea la hora usando el formato deseado
-    final DateFormat formattedTime = DateFormat(timeFormat ?? 'HH:mm a');
+    final DateFormat formattedTime = DateFormat(timeFormat ?? 'HH:mm a', locale);
     return formattedTime.format(parsedValue);
   }
 
@@ -182,7 +182,7 @@ class GeneralFunctions {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   textCapitalization: TextCapitalization.none,
                   autocorrect: false,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecorations.authInputDecoration(
                     color: Colors.grey[350]!,
                     hintText: 'Código de verificación',

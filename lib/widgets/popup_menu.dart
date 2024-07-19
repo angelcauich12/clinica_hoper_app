@@ -40,12 +40,12 @@ class PopupMenuList extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: Text('Mi perfil'),
         ),
-        const PopupMenuItem(
-          value: 0,
-          height: 30,
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Text('Preferencias'),
-        ),
+        // const PopupMenuItem(
+        //   value: 0,
+        //   height: 30,
+        //   padding: EdgeInsets.symmetric(horizontal: 15),
+        //   child: Text('Preferencias'),
+        // ),
         const PopupMenuDivider(),
         PopupMenuItem(
           height: 30,

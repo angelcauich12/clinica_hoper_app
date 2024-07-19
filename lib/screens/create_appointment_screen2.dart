@@ -203,9 +203,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                       child: Stack(
                         children: [
                           Stepper(
+
                             physics: const NeverScrollableScrollPhysics(),
-                            connectorColor:
-                                MaterialStateProperty.resolveWith<Color>(
+                            connectorColor: MaterialStateProperty.resolveWith<Color>(
                                     (Set<MaterialState> states) {
                               if (states.contains(MaterialState.selected)) {
                                 return myColor;
@@ -403,7 +403,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                   )),
                               Step(
                                   isActive: _currentStep >= 1,
-                                  state: _currentStep > 1
+                                  state: _currentStep > 1 
                                       ? StepState.complete
                                       : StepState.indexed,
                                   title: const Text(''),
@@ -713,8 +713,8 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                           onPressed: () {
                                             appointmentProv.doctorSelected = apiUser.id.toString();
                                             appointmentProv.startDate = formattedDate.format(_selectedDate!);
-                                            appointmentProv.startTime =formattedTime.format(_intervalStartTime!);
-                                            appointmentProv.endTime = formattedTime.format(_intervalEndTime!);
+                                            appointmentProv.startTime = GeneralFunctions.formatTime('$_intervalStartTime', timeFormat: 'h:mm a', locale: 'en_US');
+                                            appointmentProv.endTime = GeneralFunctions.formatTime('$_intervalEndTime',  timeFormat: 'h:mm a', locale: 'en_US');
                                             (apiUser.specialties != null &&
                                                     apiUser.specialties!
                                                             .length ==
@@ -1047,6 +1047,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         color: detail.color,
         id: detail.id);
 
+
     showDialog<String>(
       barrierDismissible: false,
       context: context,
@@ -1106,8 +1107,9 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
               await appointmentProv.updateAppointment(
                   detail.id.toString(),
                   formattedDate.format(detail.startTime),
-                  formattedTime.format(detail.startTime),
-                  formattedTime.format(detail.endTime));
+                  GeneralFunctions.formatTime('${detail.startTime}', timeFormat: 'h:mm a', locale: 'en_US' ),
+                  GeneralFunctions.formatTime('${detail.endTime}',timeFormat:  'h:mm a',  locale: 'en_US')
+                  );
             },
             child: Text(
               'Confirmar',

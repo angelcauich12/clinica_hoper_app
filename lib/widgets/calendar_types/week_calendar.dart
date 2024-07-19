@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hope_app/providers/providers.dart';
+import 'package:hope_app/providers/theme_provider.dart';
+import 'package:hope_app/shared/preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../models/models.dart';
@@ -63,12 +65,13 @@ class WeekCanlendar extends StatelessWidget {
         onDragUpdate: onDragUpdate,
         dataSource: appointments,
         todayHighlightColor: ThemeProvider.primaryColor,
+        viewHeaderStyle: ViewHeaderStyle(dateTextStyle: TextStyle(color:Preferences.isDarkMode ? ThemeProvider.white : null)),
         view: CalendarView.week,
         minDate: DateTime.now(),
         cellEndPadding: 0.0,
         headerStyle: CalendarHeaderStyle(
           backgroundColor: ThemeProvider.primaryColor,
-          textStyle: const TextStyle(color: Colors.white),
+          textStyle: const TextStyle(color: Colors.white,),
         ),
         selectionDecoration: BoxDecoration(
           border: Border.all(
@@ -80,7 +83,8 @@ class WeekCanlendar extends StatelessWidget {
           numberOfDaysInView: numberOfDaysInView ?? -1,
           timeInterval: timeInterval ?? const Duration(minutes: 60),
           timeFormat: 'h:mm a',
-          timeTextStyle: const TextStyle(
+          timeTextStyle: TextStyle(
+            color: Preferences.isDarkMode ? ThemeProvider.white : null,
             fontSize: 8,
           ),
         ),

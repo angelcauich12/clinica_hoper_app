@@ -390,6 +390,7 @@ class AppointmentProvider extends ChangeNotifier {
           break;
         case 500:
           isLoading = false;
+          print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:
@@ -857,6 +858,8 @@ class AppointmentProvider extends ChangeNotifier {
       'description': description,
     };
 
+    print('queryParameters: $queryParameters');
+
     final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName$_endPoint');
     print('url Create Appointment: $url');
 
@@ -925,6 +928,7 @@ class AppointmentProvider extends ChangeNotifier {
         case 500:
           isLoading = false;
           result = false;
+           print('500: ${response.body}');
           Notifications.showSnackBar('500 Server Error.');
           break;
         default:

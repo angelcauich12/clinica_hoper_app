@@ -62,10 +62,8 @@ class _AppointmentUpdateScreenState extends State<AppointmentUpdateScreen> {
                     }
 
                     final appointment = snapshot.data;
-                    String formattedTime = GeneralFunctions.formatTime(
-                        appointment!.scheduledTime!);
-                    String formattedDate =
-                        GeneralFunctions.formatDate(appointment.scheduledDate!);
+                    String formattedTime = GeneralFunctions.formatTime(appointment!.scheduledTime!);
+                    String formattedDate = GeneralFunctions.formatDate(appointment.scheduledDate!, dateFormat: 'dd/MM/yyyy');
 
                     return (isLoading)
                         ? SizedBox(

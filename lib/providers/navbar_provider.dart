@@ -26,10 +26,11 @@ class NavbarProvider extends ChangeNotifier {
         widget: const MyAppointmentsScreen(),
         requiresProfile: true
       ),
-      // NavbarDTO(
-      //   label: 'Configuración',
-      //   iconData: const Icon(FontAwesomeIcons.gears),
-      //   widget: const SettingsScreen(),
+      NavbarDTO(
+        label: 'Configuración',
+        iconData: const Icon(FontAwesomeIcons.gears),
+        widget: const SettingsScreen(),
+        requiresProfile: true)
     ];
 
     // Agregar el ítem "Horarios" solo si el usuario es un Doctor
