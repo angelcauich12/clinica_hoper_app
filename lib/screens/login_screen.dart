@@ -25,7 +25,10 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
-    final googleApiService = Provider.of<GoogleSignInAPiService>(context); oneSignalProvider.initOneSignal(context);
+    final googleApiService = Provider.of<GoogleSignInAPiService>(context); 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    oneSignalProvider.initOneSignal(context);
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

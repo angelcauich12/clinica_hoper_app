@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:provider/provider.dart';
 
-import '../screens/screens.dart';
-import '../services/services.dart';
 
 class GuestDialog extends StatelessWidget {
-  const GuestDialog({super.key});
+final String? title;
+final IconData? icon;
+final String? textCloseButton;
+final String? textConfirmButton;
+final String? textBody;
+final void Function() onPressedCloseButton;
+final void Function() onPressedConfirmButton;
+const GuestDialog({super.key, this.title, this.icon, this.textCloseButton, 
+this.textConfirmButton, required this.onPressedCloseButton, required this.onPressedConfirmButton, this.textBody});
 
   @override
   Widget build(BuildContext context) {
@@ -23,33 +28,34 @@ class GuestDialog extends StatelessWidget {
               width: double.infinity,
               height: size.height * 0.2,
               decoration: BoxDecoration(color: ThemeProvider.primaryColor),
-              child: Icon(Icons.warning_amber_rounded, size: size.height * 0.2, color:Colors.grey[100], ),
+              child: Icon(icon ?? Icons.warning_amber_rounded, size: size.height * 0.2, color:Colors.grey[100], ),
             ),
             const SizedBox(height: 10,),
-            const Text(
-              'Necesita iniciar sesión',
-              style: TextStyle(
+             Text(
+              title ?? 'Necesita iniciar sesión',
+              style: const TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.bold,
+                fontSize: 18
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+             Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Text(
-                  'Es necesario iniciar sesión para acceder a este módulo.'),
+                  textBody ?? 'Es necesario iniciar sesión para acceder a este módulo.'),
             )
           ],
         ),
         actions: [
              TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: onPressedCloseButton ,
             style: TextButton.styleFrom(
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(4))),
               backgroundColor: ThemeProvider.lightRed,
             ),
             child: Text(
-              'Cerrar',
+            textCloseButton ?? 'Cerrar',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 12,
@@ -62,17 +68,9 @@ class GuestDialog extends StatelessWidget {
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(4))),
                 backgroundColor: ThemeProvider.secondColor),
-            onPressed: () async {
-               final authService = Provider.of<AuthService>(context, listen: false);
-               await authService.logout();
-            Future.microtask(
-              () {
-                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-              },
-            );
-            },
+            onPressed: onPressedConfirmButton,
             child: Text(
-              'Iniciar sesión',
+            textConfirmButton ?? 'Iniciar sesión',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 12,

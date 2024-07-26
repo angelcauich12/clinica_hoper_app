@@ -8,6 +8,7 @@ import 'package:hope_app/utilities/general_functions.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:hope_app/ui/notifications.dart';
+import '../widgets/widgets.dart';
 
 class OneSignalProvider extends ChangeNotifier {
   String _apiUrl = Preferences.apiServer;
@@ -21,6 +22,7 @@ class OneSignalProvider extends ChangeNotifier {
 
   Future<void> initOneSignal(BuildContext context) async {
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+
     OneSignal.Debug.setAlertLevel(OSLogLevel.none);
 
     /// Set App Id.
@@ -32,7 +34,15 @@ class OneSignalProvider extends ChangeNotifier {
     });
 
     OneSignal.Notifications.clearAll();
-    OneSignal.Notifications.requestPermission(true);
+
+    // Verificar si ya se ha solicitado permiso antes
+    final hasRequestedPermission =  Preferences.hasRequestedPermission;
+    final hasDeniedPermission = Preferences.hasDeniedPermission;
+    if (!hasRequestedPermission  &&  !hasDeniedPermission ) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showNotificationPermission(context);
+      });
+    }
 
     OneSignal.User.pushSubscription.addObserver((state) {
       print(OneSignal.User.pushSubscription.optedIn);
@@ -76,10 +86,7 @@ class OneSignalProvider extends ChangeNotifier {
               routeName = HomeScreen.routeName;
           }
 
-          Navigator.pushNamed(
-          context, 
-          routeName,
-          arguments: arguments);
+          Navigator.pushNamed(context, routeName, arguments: arguments);
         },
       );
     });
@@ -111,7 +118,7 @@ class OneSignalProvider extends ChangeNotifier {
   }
 
   Future<bool> saveUpdateId() async {
-     _apiUrl = Preferences.apiServer;
+    _apiUrl = Preferences.apiServer;
     _proyectName = Preferences.projectName;
     result = false;
     print('guardando one signal id en servidor...');
@@ -129,7 +136,8 @@ class OneSignalProvider extends ChangeNotifier {
       'device_token': Preferences.onesignalUserId,
     };
 
-    final url = GeneralFunctions.createUri(_apiUrl, '$_proyectName/api/v1/os/token', oneSignalData);
+    final url = GeneralFunctions.createUri(
+        _apiUrl, '$_proyectName/api/v1/os/token', oneSignalData);
     print('url onesignal: $url');
 
     try {
@@ -157,6 +165,31 @@ class OneSignalProvider extends ChangeNotifier {
 
     return result;
   }
+
+  void showNotificationPermission(BuildContext context) {
+     showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return GuestDialog(
+            title: 'Notificaciones',
+            icon: Icons.notifications_active_outlined,
+            textCloseButton: 'No',
+            textConfirmButton: 'Si',
+            textBody: '¿Le gustaría habilitar las notificaciones para recordatorios clínicos?',
+            onPressedCloseButton: () {
+            Preferences.hasDeniedPermission = true;
+            Navigator.of(context).pop();
+            },
+            onPressedConfirmButton: () {
+            Preferences.hasRequestedPermission = true;
+            OneSignal.Notifications.requestPermission(true);
+              Navigator.of(context).pop();
+            },
+          );
+        });
+  }
+
 
   disableNotifications({bool value = false}) {
     OneSignal.consentGiven(value);

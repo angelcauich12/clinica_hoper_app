@@ -23,10 +23,25 @@ class Preferences {
   static String _devCode = 'h093r'; // código para modo desarrollador
   static String guestEmail = 'guest@clinicahoper.com';
   static String guesPassword = 'Hoper2023';
+  static bool _hasRequestedPermission = false; 
+  static bool _hasDeniedPermission = false;
 
+  static bool get hasDeniedPermission => _prefs.getBool('hasDeniedPermission') ?? _hasDeniedPermission;
 
+  static set hasDeniedPermission(bool value){
+    _hasDeniedPermission = value;
+    _prefs.setBool('hasDeniedPermission', value);
+  }
+
+  static bool get hasRequestedPermission =>  _prefs.getBool('hasRequestedPermission') ?? _hasRequestedPermission;
+  
+  static set hasRequestedPermission(bool value) {
+    _hasRequestedPermission = value;
+    _prefs.setBool('hasRequestedPermission', value);
+  }
 
   static String get devCode => _prefs.getString('devCode') ?? _devCode;
+
   static set devCode(String value){
     _devCode = value;
     _prefs.setString('devCode', value);
@@ -76,6 +91,8 @@ class Preferences {
     _apiUser = value;
     _prefs.setString('apiUser', value);
   }
+
+  
 
   static bool get isActive {
     return _prefs.getBool('isActive') ?? _isActive;

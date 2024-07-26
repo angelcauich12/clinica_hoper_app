@@ -1,5 +1,6 @@
 
 
+
 export 'package:hope_app/widgets/appointment_card_doctor.dart';
 export 'package:hope_app/widgets/appointment_status_label.dart';
 export 'package:hope_app/widgets/appointment_card.dart';
@@ -25,6 +26,8 @@ export 'package:hope_app/widgets/dev_mode.dart';
 export 'package:hope_app/widgets/calendar_types/week_calendar.dart';
 export 'package:hope_app/widgets/calendar_types/schedule_calendar.dart';
 export 'package:hope_app/widgets/floating_action_buttons_calendar.dart';
+export 'package:hope_app/widgets/guest_dialog.dart';
+
 
 
 
