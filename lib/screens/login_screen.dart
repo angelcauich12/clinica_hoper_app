@@ -123,18 +123,19 @@ class LoginScreen extends StatelessWidget {
                           //         }),
                           //   ],
                           // ),
+
                           SizedBox(height: (size.height < 670) ? 0 : 25),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                '¿No estás registrado?',
-                                style: TextStyle(
-                                  color: Preferences.isDarkMode
-                                      ? ThemeProvider.white
-                                      : ThemeProvider.darkColor,
-                                ),
-                              ),
+                              // Text(
+                              //   '¿No estás registrado?',
+                              //   style: TextStyle(
+                              //     color: Preferences.isDarkMode
+                              //         ? ThemeProvider.white
+                              //         : ThemeProvider.darkColor,
+                              //   ),
+                              // ),
                               TextButton(
                                 onPressed: () async {
                                   final authService = Provider.of<AuthService>(context, listen: false);
