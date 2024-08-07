@@ -7,6 +7,7 @@ class SkeletonHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.only(top: 52, left: 13, right: 14),
@@ -21,8 +22,8 @@ class SkeletonHome extends StatelessWidget {
                   children: [
                     SkeletonAnimation(
                       child: Container(
-                        width:  60,
-                        height: 20,
+                        width: size.width * 0.20,
+                        height: size.height * 0.025,
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(20),
@@ -34,8 +35,8 @@ class SkeletonHome extends StatelessWidget {
                     ),
                     SkeletonAnimation(
                       child: Container(
-                        width: 190,
-                        height: 38,
+                        width: size.width * 0.60,
+                        height: size.height * 0.03,
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(20),
@@ -53,12 +54,12 @@ class SkeletonHome extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 13,
+              height: 20,
             ),
             SkeletonAnimation(
               child: Container(
-                width: 365,
-                height: 135,
+                width: size.width * 0.93,
+                height: size.height * 0.15,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(10),
@@ -70,8 +71,8 @@ class SkeletonHome extends StatelessWidget {
             ),
             SkeletonAnimation(
               child: Container(
-                width: 250,
-                height: 24,
+                width: size.width * 0.60,
+                height: size.height * 0.03,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(20),
@@ -79,7 +80,7 @@ class SkeletonHome extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 26,
+              height: 25,
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -87,8 +88,8 @@ class SkeletonHome extends StatelessWidget {
                 children: [
                   SkeletonAnimation(
                     child: Container(
-                      width: 305,
-                      height: 182,
+                      width: size.width * 0.73,
+                      height: size.height * 0.21,
                       decoration: BoxDecoration(
                         color: Colors.grey[300],
                         borderRadius: BorderRadius.circular(5),
@@ -100,8 +101,8 @@ class SkeletonHome extends StatelessWidget {
                   ),
                   SkeletonAnimation(
                     child: Container(
-                      width: 305,
-                      height: 182,
+                       width: size.width * 0.73,
+                       height: size.height * 0.21,
                       decoration: BoxDecoration(
                         color: Colors.grey[300],
                         borderRadius: BorderRadius.circular(5),
@@ -116,8 +117,8 @@ class SkeletonHome extends StatelessWidget {
             ),
             SkeletonAnimation(
               child: Container(
-                width: 250,
-                height: 24,
+                width: size.width * 0.60,
+                height: size.height * 0.03,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(20),
@@ -125,15 +126,14 @@ class SkeletonHome extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 13 ,
+              height: 13,
             ),
             SkeletonAnimation(
               child: Container(
-                width: 365,
-                height: 200,
+                width: size.width * 0.94,
+                height: size.height * 0.25,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
-                  
                 ),
               ),
             ),
