@@ -23,8 +23,7 @@ class Home extends StatelessWidget {
                   child: const Icon(
                     FontAwesomeIcons.question,
                   ),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, AboutScreen.routeName),
+                  onPressed: () => Navigator.pushNamed(context, AboutScreen.routeName),
                 )
               : null,
     );

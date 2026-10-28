@@ -781,8 +781,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
                                                                   delegate:
                                                                       PatientSearchDelegate(),
                                                                 );
-                                                                if (appointmentProv
-                                                                        .patientFullName !=
+                                                                if (appointmentProv.patientFullName !=
                                                                     '') {
                                                                   _searchController
                                                                           .text =
@@ -1001,8 +1000,7 @@ class _CreateAppointmentScreen2State extends State<CreateAppointmentScreen2> {
         final String appointmentId = appointment.id.toString();
         final String status = appointment.notes.toString();
 
-        GeneralFunctions.showDetails(
-          date,startTime, endTime, appointmentId,context, patientName: patientName, 
+        GeneralFunctions.showDetails(date,startTime, endTime, appointmentId,context, patientName: patientName, 
           status: status, isAppointment: true,
           head: 'Detalles de la cita'
           );

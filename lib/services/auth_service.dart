@@ -67,8 +67,7 @@ class AuthService extends ChangeNotifier {
         print("token ${decodedResp['jwt']}");
         await storage.write(key: 'jwtToken', value: decodedResp['jwt']);
         Preferences.apiUser = jsonEncode(decodedResp['user']);
-        Preferences.expirationDate =
-            Preferences.timestampToDate(decodedResp['exp']);
+        Preferences.expirationDate = Preferences.timestampToDate(decodedResp['exp']);
         return true.toString();
       } else {
         return decodedResp['message'] ?? "Servidor no disponible.";
@@ -113,8 +112,7 @@ class AuthService extends ChangeNotifier {
           print("token ${decodedResp['jwt']}");
           await storage.write(key: 'jwtToken', value: decodedResp['jwt']);
           Preferences.apiUser = jsonEncode(decodedResp['user']);
-          Preferences.expirationDate =
-              Preferences.timestampToDate(decodedResp['exp']);
+          Preferences.expirationDate = Preferences.timestampToDate(decodedResp['exp']);
           notifyListeners();
           break;
         case 400:

@@ -93,7 +93,7 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   String? get patientSelected => _patientSelected;
-
+  
   set patientSelected(String? value) {
     _patientSelected = value;
     print('Patient Selected: $value');
@@ -121,7 +121,8 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   bool isValidForm() {
-    //print('$email - $password');
+    //print('$email - $p
+    //assword');
     return formKey.currentState?.validate() ?? false;
   }
 
@@ -162,9 +163,7 @@ class AppointmentProvider extends ChangeNotifier {
           appointmentResponse = MyAppointments.fromJson(response.body);
           appointments = appointmentResponse.appointments;
           reservadasList = appointments.where((appointment) => appointment.status!.name == 'Reservada').toList();
-          confirmadasList = appointments
-              .where((appointment) => appointment.status!.name == 'Confirmada')
-              .toList();
+          confirmadasList = appointments.where((appointment) => appointment.status!.name == 'Confirmada').toList();
           result = true;
           isLoadingCatalogs = false;
           notifyListeners();
@@ -1040,7 +1039,6 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future getSpecialtyDoctors() async {
-
     print(doctors);
     final specialty = specialties!.firstWhere((specialty) => specialty.id.toString() == specialtySelected);
     doctors = [];
@@ -1356,7 +1354,6 @@ class AppointmentProvider extends ChangeNotifier {
     }
     return result;
   }
-
 
   void getUsersByQuery(String query) {
     debouncer.value = '';

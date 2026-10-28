@@ -20,8 +20,7 @@ class MyAppointments {
     this.role,
   });
 
-  factory MyAppointments.fromJson(String str) =>
-      MyAppointments.fromMap(json.decode(str));
+  factory MyAppointments.fromJson(String str) => MyAppointments.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 

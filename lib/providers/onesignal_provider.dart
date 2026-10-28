@@ -22,12 +22,9 @@ class OneSignalProvider extends ChangeNotifier {
 
   Future<void> initOneSignal(BuildContext context) async {
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-
     OneSignal.Debug.setAlertLevel(OSLogLevel.none);
-
     /// Set App Id.
     OneSignal.initialize(Preferences.oneSignalAppId);
-
     // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
     OneSignal.Notifications.addPermissionObserver((state) {
       print("Has permission " + state.toString());

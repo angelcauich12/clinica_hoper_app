@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hope_app/locator.dart';
 import 'package:hope_app/providers/providers.dart';
-import 'package:hope_app/screens/guest_screen.dart';
 import 'package:hope_app/screens/screens.dart';
 import 'package:hope_app/shared/preferences.dart';
 import 'package:hope_app/ui/notifications.dart';
@@ -54,8 +53,7 @@ class AppState extends StatelessWidget {
           create: (context) => NavbarProvider(),
         ),
         ChangeNotifierProvider<ThemeProvider>(
-          create: (context) =>
-              ThemeProvider(isDarkmode: Preferences.isDarkMode),
+          create: (context) => ThemeProvider(isDarkmode: Preferences.isDarkMode),
         ),
         ChangeNotifierProvider<ModulosProvider>(
           create: (context) => ModulosProvider(),

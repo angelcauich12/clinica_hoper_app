@@ -27,6 +27,8 @@ class LoginScreen extends StatelessWidget {
     final oneSignalProvider = Provider.of<OneSignalProvider>(context);
     final googleApiService = Provider.of<GoogleSignInAPiService>(context); 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      
     oneSignalProvider.initOneSignal(context);
     });
 
